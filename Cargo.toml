@@ -1,0 +1,14 @@
+[package]
+name = "unmtx-gpu"
+version = "0.1.0"
+authors = ["Łukasz Szpakowski <luckboy@vp.pl>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+opencl3 = { version = "0.11", optional = true }
+
+[features]
+default = ["opencl"]
+opencl = ["dep:opencl3"]
