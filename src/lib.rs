@@ -104,6 +104,7 @@ pub enum Error
     TransSize(usize, usize, usize, usize),
     ArgTransposition,
     ResTransposition,
+    ElemCount(usize, usize),
     Mutex,
     #[cfg(feature = "opencl")]
     OpenCl(opencl::ClError),
@@ -568,6 +569,9 @@ impl Frontend
 
     pub fn get_elems_and_transpose_flag(&self, a: &Matrix, elems: &mut [f32], is_transposed: &mut bool) -> Result<()>
     {
+        if a.row_count * a.col_count == elems.len() {
+            return Err(Error::ElemCount(a.row_count * a.col_count, elems.len())); 
+        }
         if !a.is_transposed {
             self.backend.load(&*a.array, elems, a.row_count, a.col_count)?;
         } else {
