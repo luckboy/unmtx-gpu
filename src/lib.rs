@@ -13,9 +13,9 @@ use std::ops::Mul;
 use std::ops::MulAssign;
 use std::ops::Div;
 use std::ops::DivAssign;
+use std::result;
 use std::sync::Arc;
 use std::sync::Mutex;
-use std::result;
 
 #[cfg(feature = "opencl")]
 pub mod opencl;
