@@ -12,6 +12,10 @@ use std::result;
 #[cfg(feature = "opencl")]
 pub mod opencl;
 
+pub trait Backend
+{
+}
+
 pub enum Error
 {
     Mutex,
@@ -21,9 +25,5 @@ pub enum Error
 }
 
 pub type Result<T> = result::Result<T, Error>;
-
-pub trait Backend
-{
-}
 
 static mut DEFAULT_BACKEND: Mutex<Option<Arc<dyn Backend>>> = Mutex::new(None);
