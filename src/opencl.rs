@@ -37,14 +37,14 @@ impl ClBackend
 
 impl Backend for ClBackend
 {
-    fn alloc(&self, n: usize, m: usize) -> Result<BackendArray>
+    unsafe fn alloc(&self, n: usize, m: usize) -> Result<BackendArray>
     { Ok(BackendArray::OpenCl(ClBackendArray {})) }
 
     fn alloc_and_store(&self, elems: &[f32], n: usize, m: usize) -> Result<BackendArray>
     { Ok(BackendArray::OpenCl(ClBackendArray {})) }
     
-    fn load(&self, a: &BackendArray, n: usize, m: usize) -> Result<Vec<f32>>
-    { Ok(Vec::new()) }
+    fn load(&self, a: &BackendArray, elems: &mut [f32], n: usize, m: usize) -> Result<()>
+    { Ok(()) }
     
     fn trans_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
     { Ok(()) }

@@ -22,11 +22,11 @@ pub mod opencl;
 
 pub trait Backend
 {
-    fn alloc(&self, n: usize, m: usize) -> Result<BackendArray>;
+    unsafe fn alloc(&self, n: usize, m: usize) -> Result<BackendArray>;
 
     fn alloc_and_store(&self, elems: &[f32], n: usize, m: usize) -> Result<BackendArray>;
     
-    fn load(&self, a: &BackendArray, n: usize, m: usize) -> Result<Vec<f32>>;
+    fn load(&self, a: &BackendArray, elems: &mut [f32], n: usize, m: usize) -> Result<()>;
 
     fn trans_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
     
@@ -195,7 +195,7 @@ impl Add for Matrix
     {
         initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
-        let res = frontend.create_matrix(self.row_count, self.col_count).unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
         frontend.add(&self, &rhs, &res).unwrap();
         res
     }
@@ -209,7 +209,7 @@ impl Add<&Matrix> for Matrix
     {
         initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
-        let res = frontend.create_matrix(self.row_count, self.col_count).unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
         frontend.add(&self, rhs, &res).unwrap();
         res
     }
@@ -223,7 +223,7 @@ impl Add<f32> for Matrix
     {
         initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
-        let res = frontend.create_matrix(self.row_count, self.col_count).unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
         frontend.add_for_scalar(&self, rhs, &res).unwrap();
         res
     }
@@ -237,7 +237,7 @@ impl Add<&f32> for Matrix
     {
         initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
-        let res = frontend.create_matrix(self.row_count, self.col_count).unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
         frontend.add_for_scalar(&self, *rhs, &res).unwrap();
         res
     }
@@ -291,7 +291,7 @@ impl Sub for Matrix
     {
         initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
-        let res = frontend.create_matrix(self.row_count, self.col_count).unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
         frontend.sub(&self, &rhs, &res).unwrap();
         res
     }
@@ -305,7 +305,7 @@ impl Sub<&Matrix> for Matrix
     {
         initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
-        let res = frontend.create_matrix(self.row_count, self.col_count).unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
         frontend.sub(&self, rhs, &res).unwrap();
         res
     }
@@ -319,7 +319,7 @@ impl Sub<f32> for Matrix
     {
         initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
-        let res = frontend.create_matrix(self.row_count, self.col_count).unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
         frontend.sub_for_scalar(&self, rhs, &res).unwrap();
         res
     }
@@ -333,7 +333,7 @@ impl Sub<&f32> for Matrix
     {
         initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
-        let res = frontend.create_matrix(self.row_count, self.col_count).unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
         frontend.sub_for_scalar(&self, *rhs, &res).unwrap();
         res
     }
@@ -387,7 +387,7 @@ impl Mul for Matrix
     {
         initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
-        let res = frontend.create_matrix(self.row_count, rhs.col_count).unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, rhs.col_count) }.unwrap();
         frontend.mul(&self, &rhs, &res).unwrap();
         res
     }
@@ -401,7 +401,7 @@ impl Mul<&Matrix> for Matrix
     {
         initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
-        let res = frontend.create_matrix(self.row_count, rhs.col_count).unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, rhs.col_count) }.unwrap();
         frontend.mul(&self, rhs, &res).unwrap();
         res
     }
@@ -415,7 +415,7 @@ impl Mul<f32> for Matrix
     {
         initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
-        let res = frontend.create_matrix(self.row_count, self.col_count).unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
         frontend.mul_for_scalar(&self, rhs, &res).unwrap();
         res
     }
@@ -429,7 +429,7 @@ impl Mul<&f32> for Matrix
     {
         initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
-        let res = frontend.create_matrix(self.row_count, self.col_count).unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
         frontend.mul_for_scalar(&self, *rhs, &res).unwrap();
         res
     }
@@ -441,7 +441,7 @@ impl MulAssign for Matrix
     {
         initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
-        let res = frontend.create_matrix(self.row_count, rhs.col_count).unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, rhs.col_count) }.unwrap();
         frontend.mul(&self, &rhs, &res).unwrap();
         *self = res;
     }
@@ -453,7 +453,7 @@ impl MulAssign<&Matrix> for Matrix
     {
         initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
-        let res = frontend.create_matrix(self.row_count, rhs.col_count).unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, rhs.col_count) }.unwrap();
         frontend.sub(&self, rhs, &res).unwrap();
         *self = res;
     }
@@ -487,7 +487,7 @@ impl Div<f32> for Matrix
     {
         initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
-        let res = frontend.create_matrix(self.row_count, self.col_count).unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
         frontend.div_for_scalar(&self, rhs, &res).unwrap();
         res
     }
@@ -501,7 +501,7 @@ impl Div<&f32> for Matrix
     {
         initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
-        let res = frontend.create_matrix(self.row_count, self.col_count).unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
         frontend.div_for_scalar(&self, *rhs, &res).unwrap();
         res
     }
@@ -546,7 +546,7 @@ impl Frontend
     pub fn new_with_backend(backend: Arc<dyn Backend>) -> Frontend
     { Frontend { backend, } }
     
-    pub fn create_matrix(&self, row_count: usize, col_count: usize) -> Result<Matrix>
+    pub unsafe fn create_matrix(&self, row_count: usize, col_count: usize) -> Result<Matrix>
     {
         Ok(Matrix {
                 row_count,
@@ -565,14 +565,24 @@ impl Frontend
                 array: Arc::new(self.backend.alloc_and_store(elems, row_count, col_count)?),
         })
     }
+
+    pub fn get_elems_and_transpose_flag(&self, a: &Matrix, elems: &mut [f32], is_transposed: &mut bool) -> Result<()>
+    {
+        if !a.is_transposed {
+            self.backend.load(&*a.array, elems, a.row_count, a.col_count)?;
+        } else {
+            self.backend.load(&*a.array, elems, a.col_count, a.row_count)?;
+        }
+        *is_transposed = true;
+        Ok(())
+    }
     
     pub fn elems_and_transpose_flag(&self, a: &Matrix) -> Result<(Vec<f32>, bool)>
     {
-        if !a.is_transposed {
-            Ok((self.backend.load(&*a.array, a.row_count, a.col_count)?, false))
-        } else {
-            Ok((self.backend.load(&*a.array, a.col_count, a.row_count)?, true))
-        }
+        let mut elems: Vec<f32> = vec![0.0; a.row_count * a.col_count];
+        let mut is_transposed = false;
+        self.get_elems_and_transpose_flag(a, elems.as_mut_slice(), &mut is_transposed)?;
+        Ok((elems, is_transposed))
     }
     
     pub fn add(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
