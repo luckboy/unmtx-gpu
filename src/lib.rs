@@ -17,6 +17,7 @@ pub enum Error
     Mutex,
     #[cfg(feature = "opencl")]
     OpenCl(opencl::ClError),
+    Compilation(String),
 }
 
 pub type Result<T> = result::Result<T, Error>;
