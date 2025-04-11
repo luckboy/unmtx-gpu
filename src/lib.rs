@@ -738,10 +738,10 @@ impl Frontend
     
     pub fn add(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
     {
-        if a.row_count == b.row_count && a.col_count == b.col_count {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
             return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
         }
-        if a.row_count == c.row_count && a.col_count == c.col_count {
+        if a.row_count != c.row_count || a.col_count != c.col_count {
             return Err(Error::OpSize(a.row_count, a.col_count, c.row_count, c.col_count)); 
         }
         if c.is_transposed {
@@ -757,10 +757,10 @@ impl Frontend
 
     pub fn sub(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
     {
-        if a.row_count == b.row_count && a.col_count == b.col_count {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
             return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
         }
-        if a.row_count == c.row_count && a.col_count == c.col_count {
+        if a.row_count != c.row_count || a.col_count != c.col_count {
             return Err(Error::OpSize(a.row_count, a.col_count, c.row_count, c.col_count)); 
         }
         if c.is_transposed {
@@ -776,13 +776,13 @@ impl Frontend
 
     pub fn mul(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
     {
-        if a.row_count == c.row_count {
+        if a.row_count != c.row_count {
             return Err(Error::MulSize(a.row_count, a.col_count, b.row_count, b.col_count, c.row_count, c.col_count)); 
         }
-        if b.col_count == c.col_count {
+        if b.col_count != c.col_count {
             return Err(Error::MulSize(a.row_count, a.col_count, b.row_count, b.col_count, c.row_count, c.col_count)); 
         }
-        if a.col_count == b.row_count {
+        if a.col_count != b.row_count {
             return Err(Error::MulSize(a.row_count, a.col_count, b.row_count, b.col_count, c.row_count, c.col_count)); 
         }
         if c.is_transposed {
@@ -798,10 +798,10 @@ impl Frontend
 
     pub fn mul_elems(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
     {
-        if a.row_count == b.row_count && a.col_count == b.col_count {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
             return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
         }
-        if a.row_count == c.row_count && a.col_count == c.col_count {
+        if a.row_count != c.row_count || a.col_count != c.col_count {
             return Err(Error::OpSize(a.row_count, a.col_count, c.row_count, c.col_count)); 
         }
         if c.is_transposed {
@@ -817,10 +817,10 @@ impl Frontend
 
     pub fn div_elems(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
     {
-        if a.row_count == b.row_count && a.col_count == b.col_count {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
             return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
         }
-        if a.row_count == c.row_count && a.col_count == c.col_count {
+        if a.row_count != c.row_count || a.col_count != c.col_count {
             return Err(Error::OpSize(a.row_count, a.col_count, c.row_count, c.col_count)); 
         }
         if c.is_transposed {
@@ -836,7 +836,7 @@ impl Frontend
 
     pub fn add_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
-        if a.row_count == c.row_count && a.col_count == c.col_count {
+        if a.row_count != c.row_count || a.col_count != c.col_count {
             return Err(Error::OpSize(a.row_count, a.col_count, c.row_count, c.col_count)); 
         }
         if c.is_transposed {
@@ -851,7 +851,7 @@ impl Frontend
 
     pub fn sub_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
-        if a.row_count == c.row_count && a.col_count == c.col_count {
+        if a.row_count != c.row_count || a.col_count != c.col_count {
             return Err(Error::OpSize(a.row_count, a.col_count, c.row_count, c.col_count)); 
         }
         if c.is_transposed {
@@ -866,7 +866,7 @@ impl Frontend
 
     pub fn rsub_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
-        if a.row_count == c.row_count && a.col_count == c.col_count {
+        if a.row_count != c.row_count || a.col_count != c.col_count {
             return Err(Error::OpSize(a.row_count, a.col_count, c.row_count, c.col_count)); 
         }
         if c.is_transposed {
@@ -881,7 +881,7 @@ impl Frontend
     
     pub fn mul_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
-        if a.row_count == c.row_count && a.col_count == c.col_count {
+        if a.row_count != c.row_count || a.col_count != c.col_count {
             return Err(Error::OpSize(a.row_count, a.col_count, c.row_count, c.col_count)); 
         }
         if c.is_transposed {
@@ -896,7 +896,7 @@ impl Frontend
     
     pub fn div_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
-        if a.row_count == c.row_count && a.col_count == c.col_count {
+        if a.row_count != c.row_count || a.col_count != c.col_count {
             return Err(Error::OpSize(a.row_count, a.col_count, c.row_count, c.col_count)); 
         }
         if c.is_transposed {
@@ -911,7 +911,7 @@ impl Frontend
 
     pub fn rdiv_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
-        if a.row_count == c.row_count && a.col_count == c.col_count {
+        if a.row_count != c.row_count || a.col_count != c.col_count {
             return Err(Error::OpSize(a.row_count, a.col_count, c.row_count, c.col_count)); 
         }
         if c.is_transposed {
@@ -926,7 +926,7 @@ impl Frontend
 
     pub fn sigmoid(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
-        if a.row_count == b.row_count && a.col_count == b.col_count {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
             return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
         }
         if b.is_transposed {
@@ -941,7 +941,7 @@ impl Frontend
 
     pub fn tanh(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
-        if a.row_count == b.row_count && a.col_count == b.col_count {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
             return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
         }
         if b.is_transposed {
@@ -956,7 +956,7 @@ impl Frontend
 
     pub fn softmax(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
-        if a.row_count == b.row_count && a.col_count == b.col_count {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
             return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
         }
         if b.is_transposed {
@@ -971,7 +971,7 @@ impl Frontend
     
     pub fn force_transpose(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
-        if a.row_count == b.col_count && a.col_count == b.row_count {
+        if a.row_count != b.col_count || a.col_count != b.row_count {
             return Err(Error::TransposeSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
         }
         if a.is_transposed {
