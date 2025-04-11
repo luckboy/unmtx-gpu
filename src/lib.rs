@@ -102,6 +102,18 @@ pub trait Backend
     fn rdiv_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     fn rdiv_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
+
+    fn sigmoid_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
+
+    fn sigmoid_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
+
+    fn tanh_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
+
+    fn tanh_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
+
+    fn softmax_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
+
+    fn softmax_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 }
 
 #[derive(Debug)]
@@ -122,6 +134,7 @@ pub enum Error
     NoDevice,
     InvalidDeviceInfoType,
     BackendArrayElemCount(usize, usize),
+    TwoBackendArrayElemCounts(usize, usize),
     InvalidBackendArray,
 }
 
@@ -148,6 +161,7 @@ impl fmt::Display for Error
             Error::NoDevice => write!(f, "no device"),
             Error::InvalidDeviceInfoType => write!(f, "no device info type"),
             Error::BackendArrayElemCount(n1, n2) => write!(f, "number of backend array elements isn't equal to number of elements ({}, {})", n1, n2),
+            Error::TwoBackendArrayElemCounts(n1, n2) => write!(f, "two numbers of elements of backend arrays aren't equal ({}, {})", n1, n2),
             Error::InvalidBackendArray => write!(f, "invalid backend array"),
         }
     }
@@ -189,6 +203,15 @@ pub fn set_default_backend(backend: Arc<dyn Backend>) -> Result<()>
     Ok(())
 }
 
+pub fn unset_default_backend() -> Result<()>
+{
+    unsafe {
+        let mut default_backend_g = mutex_lock(&DEFAULT_BACKEND)?;
+        *default_backend_g = None;
+    }
+    Ok(())
+}
+
 pub fn set_default_backend_for_uninitialized(backend: Arc<dyn Backend>) -> Result<()>
 {
     unsafe {
@@ -208,6 +231,10 @@ pub fn initialize_default_backend_for_uninitialized() -> Result<()>
     Ok(())
 }
 
+pub fn finalize_default_backend() -> Result<()>
+{ unset_default_backend() }
+
+
 #[derive(Clone, Debug)]
 pub struct Matrix
 {
@@ -221,19 +248,40 @@ impl Matrix
 {
     pub fn new(row_count: usize, col_count: usize) -> Self
     {
-        initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
         frontend.create_matrix_and_set_zeros(row_count, col_count).unwrap()
     }
 
     pub fn new_with_elems(row_count: usize, col_count: usize, elems: &[f32]) -> Self
     {
-        initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
         frontend.create_matrix_and_set_elems(row_count, col_count, elems).unwrap()
     }
+
+    pub fn row_count(&self) -> usize
+    { self.row_count }
     
-    pub fn transpose(&self) -> Matrix
+    pub fn col_count(&self) -> usize
+    { self.col_count }
+
+    pub fn is_transposed(&self) -> bool
+    { self.is_transposed }
+    
+    pub fn elems(&self) -> Vec<f32>
+    {
+        let frontend = Frontend::new().unwrap();
+        frontend.elems_and_transpose_flag(self).unwrap().0
+    }
+    
+    pub fn copy(&self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.col_count, self.row_count) }.unwrap();
+        frontend.copy(self, &res).unwrap();
+        res
+    }
+    
+    pub fn transpose(&self) -> Self
     {
         Matrix {
             row_count: self.col_count,
@@ -241,6 +289,54 @@ impl Matrix
             is_transposed: !self.is_transposed,
             array: self.array.clone(),
         }
+    }
+    
+    pub fn force_transpose(&self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.col_count, self.row_count) }.unwrap();
+        frontend.force_transpose(self, &res).unwrap();
+        res
+    }
+    
+    pub fn rsub(&self, b: f32) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.rsub_for_scalar(self, b, &res).unwrap();
+        res
+    }
+
+    pub fn rdiv(&self, b: f32) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.rdiv_for_scalar(self, b, &res).unwrap();
+        res
+    }
+
+    pub fn sigmoid(&self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.sigmoid(self, &res).unwrap();
+        res
+    }
+
+    pub fn tanh(&self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.tanh(self, &res).unwrap();
+        res
+    }
+
+    pub fn softmax(&self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.softmax(self, &res).unwrap();
+        res
     }
 }
 
@@ -250,7 +346,6 @@ impl Add for Matrix
     
     fn add(self, rhs: Self) -> Self::Output
     {
-        initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
         let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
         frontend.add(&self, &rhs, &res).unwrap();
@@ -264,7 +359,6 @@ impl Add<&Matrix> for Matrix
     
     fn add(self, rhs: &Matrix) -> Self::Output
     {
-        initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
         let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
         frontend.add(&self, rhs, &res).unwrap();
@@ -278,7 +372,6 @@ impl Add<f32> for Matrix
     
     fn add(self, rhs: f32) -> Self::Output
     {
-        initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
         let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
         frontend.add_for_scalar(&self, rhs, &res).unwrap();
@@ -292,7 +385,6 @@ impl Add<&f32> for Matrix
     
     fn add(self, rhs: &f32) -> Self::Output
     {
-        initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
         let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
         frontend.add_for_scalar(&self, *rhs, &res).unwrap();
@@ -304,7 +396,6 @@ impl AddAssign for Matrix
 {
     fn add_assign(&mut self, rhs: Self)
     {
-        initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
         frontend.add(&self, &rhs, &self).unwrap();
     }
@@ -314,7 +405,6 @@ impl AddAssign<&Matrix> for Matrix
 {
     fn add_assign(&mut self, rhs: &Self)
     {
-        initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
         frontend.add(&self, rhs, &self).unwrap();
     }
@@ -324,7 +414,6 @@ impl AddAssign<f32> for Matrix
 {
     fn add_assign(&mut self, rhs: f32)
     {
-        initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
         frontend.add_for_scalar(&self, rhs, &self).unwrap();
     }
@@ -334,7 +423,6 @@ impl AddAssign<&f32> for Matrix
 {
     fn add_assign(&mut self, rhs: &f32)
     {
-        initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
         frontend.add_for_scalar(&self, *rhs, &self).unwrap();
     }
@@ -346,7 +434,6 @@ impl Sub for Matrix
     
     fn sub(self, rhs: Self) -> Self::Output
     {
-        initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
         let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
         frontend.sub(&self, &rhs, &res).unwrap();
@@ -360,7 +447,6 @@ impl Sub<&Matrix> for Matrix
     
     fn sub(self, rhs: &Matrix) -> Self::Output
     {
-        initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
         let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
         frontend.sub(&self, rhs, &res).unwrap();
@@ -374,7 +460,6 @@ impl Sub<f32> for Matrix
     
     fn sub(self, rhs: f32) -> Self::Output
     {
-        initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
         let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
         frontend.sub_for_scalar(&self, rhs, &res).unwrap();
@@ -388,7 +473,6 @@ impl Sub<&f32> for Matrix
     
     fn sub(self, rhs: &f32) -> Self::Output
     {
-        initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
         let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
         frontend.sub_for_scalar(&self, *rhs, &res).unwrap();
@@ -400,7 +484,6 @@ impl SubAssign for Matrix
 {
     fn sub_assign(&mut self, rhs: Self)
     {
-        initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
         frontend.sub(&self, &rhs, &self).unwrap();
     }
@@ -410,7 +493,6 @@ impl SubAssign<&Matrix> for Matrix
 {
     fn sub_assign(&mut self, rhs: &Self)
     {
-        initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
         frontend.sub(&self, rhs, &self).unwrap();
     }
@@ -420,7 +502,6 @@ impl SubAssign<f32> for Matrix
 {
     fn sub_assign(&mut self, rhs: f32)
     {
-        initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
         frontend.sub_for_scalar(&self, rhs, &self).unwrap();
     }
@@ -430,7 +511,6 @@ impl SubAssign<&f32> for Matrix
 {
     fn sub_assign(&mut self, rhs: &f32)
     {
-        initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
         frontend.sub_for_scalar(&self, *rhs, &self).unwrap();
     }
@@ -442,7 +522,6 @@ impl Mul for Matrix
     
     fn mul(self, rhs: Self) -> Self::Output
     {
-        initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
         let res = unsafe { frontend.create_matrix(self.row_count, rhs.col_count) }.unwrap();
         frontend.mul(&self, &rhs, &res).unwrap();
@@ -456,7 +535,6 @@ impl Mul<&Matrix> for Matrix
     
     fn mul(self, rhs: &Matrix) -> Self::Output
     {
-        initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
         let res = unsafe { frontend.create_matrix(self.row_count, rhs.col_count) }.unwrap();
         frontend.mul(&self, rhs, &res).unwrap();
@@ -470,7 +548,6 @@ impl Mul<f32> for Matrix
     
     fn mul(self, rhs: f32) -> Self::Output
     {
-        initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
         let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
         frontend.mul_for_scalar(&self, rhs, &res).unwrap();
@@ -484,7 +561,6 @@ impl Mul<&f32> for Matrix
     
     fn mul(self, rhs: &f32) -> Self::Output
     {
-        initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
         let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
         frontend.mul_for_scalar(&self, *rhs, &res).unwrap();
@@ -496,7 +572,6 @@ impl MulAssign for Matrix
 {
     fn mul_assign(&mut self, rhs: Self)
     {
-        initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
         let res = unsafe { frontend.create_matrix(self.row_count, rhs.col_count) }.unwrap();
         frontend.mul(&self, &rhs, &res).unwrap();
@@ -508,7 +583,6 @@ impl MulAssign<&Matrix> for Matrix
 {
     fn mul_assign(&mut self, rhs: &Self)
     {
-        initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
         let res = unsafe { frontend.create_matrix(self.row_count, rhs.col_count) }.unwrap();
         frontend.sub(&self, rhs, &res).unwrap();
@@ -520,7 +594,6 @@ impl MulAssign<f32> for Matrix
 {
     fn mul_assign(&mut self, rhs: f32)
     {
-        initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
         frontend.mul_for_scalar(&self, rhs, &self).unwrap();
     }
@@ -530,7 +603,6 @@ impl MulAssign<&f32> for Matrix
 {
     fn mul_assign(&mut self, rhs: &f32)
     {
-        initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
         frontend.mul_for_scalar(&self, *rhs, &self).unwrap();
     }
@@ -542,7 +614,6 @@ impl Div<f32> for Matrix
     
     fn div(self, rhs: f32) -> Self::Output
     {
-        initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
         let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
         frontend.div_for_scalar(&self, rhs, &res).unwrap();
@@ -556,7 +627,6 @@ impl Div<&f32> for Matrix
     
     fn div(self, rhs: &f32) -> Self::Output
     {
-        initialize_default_backend_for_uninitialized().unwrap();
         let frontend = Frontend::new().unwrap();
         let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
         frontend.div_for_scalar(&self, *rhs, &res).unwrap();
@@ -853,6 +923,51 @@ impl Frontend
             self.backend.rdiv_at_b_for_scalar(&*a.array, b, &*c.array, a.row_count, a.col_count)
         }
     }
+
+    pub fn sigmoid(&self, a: &Matrix, b: &Matrix) -> Result<()>
+    {
+        if a.row_count == b.row_count && a.col_count == b.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+        }
+        if b.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.sigmoid_a(&*a.array, &*b.array, a.row_count, a.col_count)
+        } else {
+            self.backend.sigmoid_at(&*a.array, &*b.array, a.row_count, a.col_count)
+        }
+    }
+
+    pub fn tanh(&self, a: &Matrix, b: &Matrix) -> Result<()>
+    {
+        if a.row_count == b.row_count && a.col_count == b.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+        }
+        if b.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.tanh_a(&*a.array, &*b.array, a.row_count, a.col_count)
+        } else {
+            self.backend.tanh_at(&*a.array, &*b.array, a.row_count, a.col_count)
+        }
+    }    
+
+    pub fn softmax(&self, a: &Matrix, b: &Matrix) -> Result<()>
+    {
+        if a.row_count == b.row_count && a.col_count == b.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+        }
+        if b.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.softmax_a(&*a.array, &*b.array, a.row_count, a.col_count)
+        } else {
+            self.backend.softmax_at(&*a.array, &*b.array, a.row_count, a.col_count)
+        }
+    }    
     
     pub fn force_transpose(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {

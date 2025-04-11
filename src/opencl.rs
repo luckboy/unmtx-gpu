@@ -443,7 +443,7 @@ impl Backend for ClBackend
                     return Ok(());
                 }
                 if a2.len != b2.len {
-                    return Err(Error::BackendArrayElemCount(a2.len, b2.len));
+                    return Err(Error::TwoBackendArrayElemCounts(a2.len, b2.len));
                 }
                 let inner_g = mutex_lock(&self.inner)?;
                 let a_buffer_g = mutex_lock(&a2.buffer)?;
@@ -560,6 +560,24 @@ impl Backend for ClBackend
 
     fn rdiv_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
     { self.check_and_enqueue_nd_range_for_scalar("rdiv_at_b_for_scalar", a, b, c, n, m) }
+
+    fn sigmoid_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_enqueue_nd_range_for_fun("sigmoid_a", a, b, n, m) }
+
+    fn sigmoid_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_enqueue_nd_range_for_fun("sigmoid_at", a, b, n, m) }
+
+    fn tanh_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_enqueue_nd_range_for_fun("tanh_a", a, b, n, m) }
+
+    fn tanh_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_enqueue_nd_range_for_fun("tanh_at", a, b, n, m) }
+
+    fn softmax_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_enqueue_nd_range_for_fun("softmax_a", a, b, n, m) }
+
+    fn softmax_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_enqueue_nd_range_for_fun("softmax_at", a, b, n, m) }
 }
 
 #[cfg(test)]
