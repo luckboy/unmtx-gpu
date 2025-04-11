@@ -17,7 +17,6 @@ use crate::mutex_lock;
 
 pub use opencl3::context::Context;
 pub use opencl3::device::Device;
-pub use opencl3::device::CL_DEVICE_TYPE;
 pub use opencl3::device::CL_DEVICE_TYPE_ACCELERATOR;
 pub use opencl3::device::CL_DEVICE_TYPE_ALL;
 pub use opencl3::device::CL_DEVICE_TYPE_CPU;
