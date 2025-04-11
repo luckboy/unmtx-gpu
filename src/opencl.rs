@@ -16,6 +16,7 @@ pub use opencl3::error_codes::ClError;
 pub use opencl3::platform::Platform;
 pub use opencl3::platform::get_platforms;
 
+#[derive(Debug)]
 pub struct ClBackendArray
 {
 }
@@ -37,16 +38,22 @@ impl ClBackend
 
 impl Backend for ClBackend
 {
-    unsafe fn alloc(&self, n: usize, m: usize) -> Result<BackendArray>
+    unsafe fn alloc(&self, n: usize) -> Result<BackendArray>
     { Ok(BackendArray::OpenCl(ClBackendArray {})) }
 
-    fn alloc_and_store(&self, elems: &[f32], n: usize, m: usize) -> Result<BackendArray>
+    fn alloc_and_store_zeros(&self, n: usize) -> Result<BackendArray>
     { Ok(BackendArray::OpenCl(ClBackendArray {})) }
     
-    fn load(&self, a: &BackendArray, elems: &mut [f32], n: usize, m: usize) -> Result<()>
+    fn alloc_and_store(&self, elems: &[f32]) -> Result<BackendArray>
+    { Ok(BackendArray::OpenCl(ClBackendArray {})) }
+    
+    fn load(&self, a: &BackendArray, elems: &mut [f32]) -> Result<()>
     { Ok(()) }
     
-    fn trans_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    fn copy(&self, a: &BackendArray, b: &BackendArray) -> Result<()>
+    { Ok(()) }
+
+    fn transpose_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
     { Ok(()) }
 
     fn add_a_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>

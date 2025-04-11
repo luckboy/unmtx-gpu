@@ -13,22 +13,29 @@ use std::ops::Mul;
 use std::ops::MulAssign;
 use std::ops::Div;
 use std::ops::DivAssign;
+use std::error;
+use std::fmt;
 use std::result;
 use std::sync::Arc;
 use std::sync::Mutex;
+use std::sync::MutexGuard;
 
 #[cfg(feature = "opencl")]
 pub mod opencl;
 
 pub trait Backend
 {
-    unsafe fn alloc(&self, n: usize, m: usize) -> Result<BackendArray>;
+    unsafe fn alloc(&self, n: usize) -> Result<BackendArray>;
 
-    fn alloc_and_store(&self, elems: &[f32], n: usize, m: usize) -> Result<BackendArray>;
+    fn alloc_and_store_zeros(&self, n: usize) -> Result<BackendArray>;
     
-    fn load(&self, a: &BackendArray, elems: &mut [f32], n: usize, m: usize) -> Result<()>;
+    fn alloc_and_store(&self, elems: &[f32]) -> Result<BackendArray>;
+    
+    fn load(&self, a: &BackendArray, elems: &mut [f32]) -> Result<()>;
 
-    fn trans_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
+    fn copy(&self, a: &BackendArray, b: &BackendArray) -> Result<()>;
+
+    fn transpose_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
     
     fn add_a_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
@@ -101,18 +108,42 @@ pub enum Error
     UninitializedDefaultBackend,
     OpSize(usize, usize, usize, usize),
     MulSize(usize, usize, usize, usize, usize, usize),
-    TransSize(usize, usize, usize, usize),
+    TransposeSize(usize, usize, usize, usize),
     ArgTransposition,
     ResTransposition,
-    ElemCount(usize, usize),
+    MatrixElemCount(usize, usize),
     Mutex,
     #[cfg(feature = "opencl")]
     OpenCl(opencl::ClError),
     Compilation(String),
 }
 
+impl error::Error for Error
+{}
+
+impl fmt::Display for Error
+{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result
+    {
+        match self {
+            Error::UninitializedDefaultBackend => write!(f, "uninitialized default backend"),
+            Error::OpSize(n1, m1, n2, m2) => write!(f, "mismatched sizes of matrices ({}x{}, {}x{})", n1, m1, n2, m2),
+            Error::MulSize(n1, m1, n2, m2, n3, m3) => write!(f, "mismatched sizes of matrices for multiplication ({}x{}, {}x{}, {}x{})", n1, m1, n2, m2, n3, m3),
+            Error::TransposeSize(n1, m1, n2, m2) => write!(f, "mismatched sizes of matrices for transposition ({}x{}, {}x{})", n1, m1, n2, m2),
+            Error::ArgTransposition => write!(f, "argument matrix is transposed"),
+            Error::ResTransposition => write!(f, "result matrix is transposed"),
+            Error::MatrixElemCount(n1, n2) => write!(f, "number of matrix elements isn't equal to number of elements ({}, {})", n1, n2),
+            Error::Mutex => write!(f, "can't lock mutex"),
+            #[cfg(feature = "opencl")]
+            Error::OpenCl(err) => write!(f, "OpenCL error: {}", err),
+            Error::Compilation(msg) => write!(f, "{}", msg),
+        }
+    }
+}
+
 pub type Result<T> = result::Result<T, Error>;
 
+#[derive(Debug)]
 pub enum BackendArray
 {
     #[cfg(feature = "opencl")]
@@ -121,13 +152,18 @@ pub enum BackendArray
 
 static mut DEFAULT_BACKEND: Mutex<Option<Arc<dyn Backend>>> = Mutex::new(None);
 
+fn mutex_lock<T>(mutex: &Mutex<T>) -> Result<MutexGuard<'_, T>>
+{
+    match mutex.lock() {
+        Ok(guard) => Ok(guard),
+        Err(_) => return Err(Error::Mutex),
+    }
+}
+
 pub fn get_default_backend() -> Result<Option<Arc<dyn Backend>>>
 {
     unsafe {
-        let default_backend_g = match DEFAULT_BACKEND.lock() {
-            Ok(guard) => guard,
-            Err(_) => return Err(Error::Mutex),
-        };
+        let default_backend_g = mutex_lock(&DEFAULT_BACKEND)?;
         Ok(default_backend_g.clone())
     }
 }
@@ -135,10 +171,7 @@ pub fn get_default_backend() -> Result<Option<Arc<dyn Backend>>>
 pub fn set_default_backend(backend: Arc<dyn Backend>) -> Result<()>
 {
     unsafe {
-        let mut default_backend_g = match DEFAULT_BACKEND.lock() {
-            Ok(guard) => guard,
-            Err(_) => return Err(Error::Mutex),
-        };
+        let mut default_backend_g = mutex_lock(&DEFAULT_BACKEND)?;
         *default_backend_g = Some(backend);
     }
     Ok(())
@@ -147,10 +180,7 @@ pub fn set_default_backend(backend: Arc<dyn Backend>) -> Result<()>
 pub fn set_default_backend_for_uninitialized(backend: Arc<dyn Backend>) -> Result<()>
 {
     unsafe {
-        let mut default_backend_g = match DEFAULT_BACKEND.lock() {
-            Ok(guard) => guard,
-            Err(_) => return Err(Error::Mutex),
-        };
+        let mut default_backend_g = mutex_lock(&DEFAULT_BACKEND)?;
         match *default_backend_g {
             Some(_) => (),
             None => *default_backend_g = Some(backend),
@@ -166,7 +196,7 @@ pub fn initialize_default_backend_for_uninitialized() -> Result<()>
     Ok(())
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Matrix
 {
     row_count: usize,
@@ -177,6 +207,20 @@ pub struct Matrix
 
 impl Matrix
 {
+    pub fn new(row_count: usize, col_count: usize) -> Self
+    {
+        initialize_default_backend_for_uninitialized().unwrap();
+        let frontend = Frontend::new().unwrap();
+        frontend.create_matrix_and_set_zeros(row_count, col_count).unwrap()
+    }
+
+    pub fn new_with_elems(row_count: usize, col_count: usize, elems: &[f32]) -> Self
+    {
+        initialize_default_backend_for_uninitialized().unwrap();
+        let frontend = Frontend::new().unwrap();
+        frontend.create_matrix_and_set_elems(row_count, col_count, elems).unwrap()
+    }
+    
     pub fn transpose(&self) -> Matrix
     {
         Matrix {
@@ -553,29 +597,50 @@ impl Frontend
                 row_count,
                 col_count,
                 is_transposed: false,
-                array: Arc::new(self.backend.alloc(row_count, col_count)?),
+                array: Arc::new(self.backend.alloc(row_count * col_count)?),
         })
     }
 
-    pub fn create_matrix_and_set_elems(&self, row_count: usize, col_count: usize, elems: &[f32]) -> Result<Matrix>
+    pub fn create_matrix_and_set_zeros(&self, row_count: usize, col_count: usize) -> Result<Matrix>
     {
         Ok(Matrix {
                 row_count,
                 col_count,
                 is_transposed: false,
-                array: Arc::new(self.backend.alloc_and_store(elems, row_count, col_count)?),
+                array: Arc::new(self.backend.alloc_and_store_zeros(row_count * col_count)?),
         })
     }
 
+    pub fn create_matrix_and_set_elems(&self, row_count: usize, col_count: usize, elems: &[f32]) -> Result<Matrix>
+    {
+        if row_count * col_count != elems.len() {
+            return Err(Error::MatrixElemCount(row_count * col_count, elems.len())); 
+        }
+        Ok(Matrix {
+                row_count,
+                col_count,
+                is_transposed: false,
+                array: Arc::new(self.backend.alloc_and_store(elems)?),
+        })
+    }
+
+    pub fn copy(&self, a: &Matrix, b: &Matrix) -> Result<()>
+    {
+        if a.row_count == b.row_count && a.col_count == b.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+        }
+        self.backend.copy(&*a.array, &*b.array)        
+    }    
+    
     pub fn get_elems_and_transpose_flag(&self, a: &Matrix, elems: &mut [f32], is_transposed: &mut bool) -> Result<()>
     {
-        if a.row_count * a.col_count == elems.len() {
-            return Err(Error::ElemCount(a.row_count * a.col_count, elems.len())); 
+        if a.row_count * a.col_count != elems.len() {
+            return Err(Error::MatrixElemCount(a.row_count * a.col_count, elems.len())); 
         }
         if !a.is_transposed {
-            self.backend.load(&*a.array, elems, a.row_count, a.col_count)?;
+            self.backend.load(&*a.array, elems)?;
         } else {
-            self.backend.load(&*a.array, elems, a.col_count, a.row_count)?;
+            self.backend.load(&*a.array, elems)?;
         }
         *is_transposed = true;
         Ok(())
@@ -780,7 +845,7 @@ impl Frontend
     pub fn force_transpose(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count == b.col_count && a.col_count == b.row_count {
-            return Err(Error::TransSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+            return Err(Error::TransposeSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
         }
         if a.is_transposed {
             return Err(Error::ArgTransposition);
@@ -788,6 +853,6 @@ impl Frontend
         if b.is_transposed {
             return Err(Error::ResTransposition);
         }
-        self.backend.trans_a(&*a.array, &*b.array, a.col_count, a.row_count)
+        self.backend.transpose_a(&*a.array, &*b.array, a.col_count, a.row_count)
     }
 }
