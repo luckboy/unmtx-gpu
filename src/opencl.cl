@@ -12,6 +12,6 @@ __kernel void add_a_b(__global const float *a, __global const float *b, __global
   size_t i = get_global_id(0);
   size_t j = get_global_id(1);
   if(i < n2 && j < m2) {
-    c[m * i + j] = a[m * i + j] + b[m * i + j];
+    c[m2 * i + j] = a[m2 * i + j] + b[m2 * i + j];
   }
 }
