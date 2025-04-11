@@ -33,6 +33,8 @@ pub trait Backend
     
     fn load(&self, a: &BackendArray, elems: &mut [f32]) -> Result<()>;
 
+    fn store(&self, a: &BackendArray, elems: &[f32]) -> Result<()>;
+
     fn copy(&self, a: &BackendArray, b: &BackendArray) -> Result<()>;
 
     fn transpose_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
@@ -116,6 +118,11 @@ pub enum Error
     #[cfg(feature = "opencl")]
     OpenCl(opencl::ClError),
     Compilation(String),
+    NoPlatform,
+    NoDevice,
+    InvalidDeviceInfoType,
+    BackendArrayElemCount(usize, usize),
+    InvalidBackendArray,
 }
 
 impl error::Error for Error
@@ -137,6 +144,11 @@ impl fmt::Display for Error
             #[cfg(feature = "opencl")]
             Error::OpenCl(err) => write!(f, "OpenCL error: {}", err),
             Error::Compilation(msg) => write!(f, "{}", msg),
+            Error::NoPlatform => write!(f, "no platform"),
+            Error::NoDevice => write!(f, "no device"),
+            Error::InvalidDeviceInfoType => write!(f, "no device info type"),
+            Error::BackendArrayElemCount(n1, n2) => write!(f, "number of backend array elements isn't equal to number of elements ({}, {})", n1, n2),
+            Error::InvalidBackendArray => write!(f, "invalid backend array"),
         }
     }
 }

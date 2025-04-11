@@ -7,8 +7,9 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-opencl3 = { version = "0.11", optional = true }
+cl3 = { version = "0.12.0", optional = true }
+opencl3 = { version = "0.11.0", optional = true }
 
 [features]
 default = ["opencl"]
-opencl = ["dep:opencl3"]
+opencl = ["dep:opencl3", "dep:cl3"]
