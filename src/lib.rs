@@ -299,6 +299,22 @@ impl Matrix
         res
     }
     
+    pub fn mul_elems(&self, b: &Self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.mul_elems(self, b, &res).unwrap();
+        res
+    }
+
+    pub fn div_elems(&self, b: &Self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.div_elems(self, b, &res).unwrap();
+        res
+    }
+
     pub fn rsub(&self, b: f32) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -392,12 +408,64 @@ impl Add<&f32> for Matrix
     }
 }
 
+impl Add<Matrix> for &Matrix
+{
+    type Output = Matrix;
+    
+    fn add(self, rhs: Matrix) -> Self::Output
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.add(self, &rhs, &res).unwrap();
+        res
+    }
+}
+
+impl Add<&Matrix> for &Matrix
+{
+    type Output = Matrix;
+    
+    fn add(self, rhs: &Matrix) -> Self::Output
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.add(self, rhs, &res).unwrap();
+        res
+    }
+}
+
+impl Add<f32> for &Matrix
+{
+    type Output = Matrix;
+    
+    fn add(self, rhs: f32) -> Self::Output
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.add_for_scalar(self, rhs, &res).unwrap();
+        res
+    }
+}
+
+impl Add<&f32> for &Matrix
+{
+    type Output = Matrix;
+    
+    fn add(self, rhs: &f32) -> Self::Output
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.add_for_scalar(self, *rhs, &res).unwrap();
+        res
+    }
+}
+
 impl AddAssign for Matrix
 {
     fn add_assign(&mut self, rhs: Self)
     {
         let frontend = Frontend::new().unwrap();
-        frontend.add(&self, &rhs, &self).unwrap();
+        frontend.add(self, &rhs, &self).unwrap();
     }
 }
 
@@ -476,6 +544,58 @@ impl Sub<&f32> for Matrix
         let frontend = Frontend::new().unwrap();
         let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
         frontend.sub_for_scalar(&self, *rhs, &res).unwrap();
+        res
+    }
+}
+
+impl Sub<Matrix> for &Matrix
+{
+    type Output = Matrix;
+    
+    fn sub(self, rhs: Matrix) -> Self::Output
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.sub(self, &rhs, &res).unwrap();
+        res
+    }
+}
+
+impl Sub<&Matrix> for &Matrix
+{
+    type Output = Matrix;
+    
+    fn sub(self, rhs: &Matrix) -> Self::Output
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.sub(self, rhs, &res).unwrap();
+        res
+    }
+}
+
+impl Sub<f32> for &Matrix
+{
+    type Output = Matrix;
+    
+    fn sub(self, rhs: f32) -> Self::Output
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.sub_for_scalar(self, rhs, &res).unwrap();
+        res
+    }
+}
+
+impl Sub<&f32> for &Matrix
+{
+    type Output = Matrix;
+    
+    fn sub(self, rhs: &f32) -> Self::Output
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.sub_for_scalar(self, *rhs, &res).unwrap();
         res
     }
 }
@@ -568,6 +688,58 @@ impl Mul<&f32> for Matrix
     }
 }
 
+impl Mul<Matrix> for &Matrix
+{
+    type Output = Matrix;
+    
+    fn mul(self, rhs: Matrix) -> Self::Output
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.mul(self, &rhs, &res).unwrap();
+        res
+    }
+}
+
+impl Mul<&Matrix> for &Matrix
+{
+    type Output = Matrix;
+    
+    fn mul(self, rhs: &Matrix) -> Self::Output
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.mul(self, rhs, &res).unwrap();
+        res
+    }
+}
+
+impl Mul<f32> for &Matrix
+{
+    type Output = Matrix;
+    
+    fn mul(self, rhs: f32) -> Self::Output
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.mul_for_scalar(self, rhs, &res).unwrap();
+        res
+    }
+}
+
+impl Mul<&f32> for &Matrix
+{
+    type Output = Matrix;
+    
+    fn mul(self, rhs: &f32) -> Self::Output
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.mul_for_scalar(self, *rhs, &res).unwrap();
+        res
+    }
+}
+
 impl MulAssign for Matrix
 {
     fn mul_assign(&mut self, rhs: Self)
@@ -630,6 +802,32 @@ impl Div<&f32> for Matrix
         let frontend = Frontend::new().unwrap();
         let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
         frontend.div_for_scalar(&self, *rhs, &res).unwrap();
+        res
+    }
+}
+
+impl Div<f32> for &Matrix
+{
+    type Output = Matrix;
+    
+    fn div(self, rhs: f32) -> Self::Output
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.div_for_scalar(self, rhs, &res).unwrap();
+        res
+    }
+}
+
+impl Div<&f32> for &Matrix
+{
+    type Output = Matrix;
+    
+    fn div(self, rhs: &f32) -> Self::Output
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.div_for_scalar(self, *rhs, &res).unwrap();
         res
     }
 }
