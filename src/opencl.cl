@@ -100,7 +100,7 @@ __kernel void sub_at_bt(__global const float *a, __global const float *b, __glob
   size_t i = get_global_id(0);
   size_t j = get_global_id(1);
   if(i < n2 && j < m2) {
-    c[m2 * i + j] = a[n2 * j + i] + b[n2 * j + i];
+    c[m2 * i + j] = a[n2 * j + i] - b[n2 * j + i];
   }
 }
 

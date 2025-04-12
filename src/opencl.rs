@@ -207,8 +207,8 @@ impl ClBackend
         }, |inner, kernel, a_mem, b_mem| {
                 let n2 = n as u64;
                 let m2 = m as u64;
-                let n3 = (n + inner.group_size - 1) % inner.group_size;
-                let m3 = (m + inner.group_size - 1) % inner.group_size;
+                let n3 = ((n + inner.group_size - 1) / inner.group_size) * inner.group_size;
+                let m3 = ((m + inner.group_size - 1) / inner.group_size) * inner.group_size;
                 unsafe {
                     let res = ExecuteKernel::new(kernel)
                     .set_arg(&a_mem)
@@ -242,8 +242,8 @@ impl ClBackend
         }, |inner, kernel, a_mem, b_mem, c_mem| {
                 let n2 = n as u64;
                 let m2 = m as u64;
-                let n3 = (n + inner.group_size - 1) % inner.group_size;
-                let m3 = (m + inner.group_size - 1) % inner.group_size;
+                let n3 = ((n + inner.group_size - 1) / inner.group_size) * inner.group_size;
+                let m3 = ((m + inner.group_size - 1) / inner.group_size) * inner.group_size;
                 unsafe {
                     let res = ExecuteKernel::new(kernel)
                     .set_arg(&a_mem)
@@ -279,8 +279,8 @@ impl ClBackend
                 let n2 = n as u64;
                 let m2 = m as u64;
                 let l2 = l as u64;
-                let n3 = (n + inner.group_size - 1) % inner.group_size;
-                let m3 = (m + inner.group_size - 1) % inner.group_size;
+                let n3 = ((n + inner.group_size - 1) / inner.group_size) * inner.group_size;
+                let m3 = ((m + inner.group_size - 1) / inner.group_size) * inner.group_size;
                 unsafe {
                     let res = ExecuteKernel::new(kernel)
                     .set_arg(&a_mem)
@@ -313,8 +313,8 @@ impl ClBackend
         }, |inner, kernel, a_mem, c_mem| {
                 let n2 = n as u64;
                 let m2 = m as u64;
-                let n3 = (n + inner.group_size - 1) % inner.group_size;
-                let m3 = (m + inner.group_size - 1) % inner.group_size;
+                let n3 = ((n + inner.group_size - 1) / inner.group_size) * inner.group_size;
+                let m3 = ((m + inner.group_size - 1) / inner.group_size) * inner.group_size;
                 unsafe {
                     let res = ExecuteKernel::new(kernel)
                     .set_arg(&a_mem)

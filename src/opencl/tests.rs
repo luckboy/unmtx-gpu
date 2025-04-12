@@ -5,6 +5,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
+use crate::test_helpers::*;
 use super::*;
 
 #[test]
@@ -17,5 +18,353 @@ fn test_cl_backend_new_creates_backend()
         //    println!("{}", err);
         //    assert!(false)
         //},
+    }
+}
+
+#[test]
+fn test_cl_backend_alloc_allocates_backend_array()
+{
+    match ClBackend::new() {
+        Ok(backend) => {
+            match unsafe { backend.alloc(2 * 3) } {
+                Ok(_) => assert!(true),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cl_backend_alloc_and_store_zeros_allocates_backend_array_with_zeros()
+{
+    match ClBackend::new() {
+        Ok(backend) => {
+            match backend_alloc_and_store_zeros(&backend, 2 * 3) {
+                Ok(elems) => assert_eq!(vec![0.0f32; 2 * 3], elems),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cl_backend_alloc_and_store_allocates_backend_array_with_elements()
+{
+    match ClBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a(2, 3);
+            match backend_alloc_and_store(&backend, a.as_slice()) {
+                Ok(elems) => assert_eq!(a, elems),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cl_backend_store_stores_to_backend_array()
+{
+    match ClBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a(2, 3);
+            match backend_store(&backend, a.as_slice()) {
+                Ok(elems) => assert_eq!(a, elems),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cl_backend_copy_copies_from_backend_array_to_backend_array()
+{
+    match ClBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a(2, 3);
+            match backend_copy(&backend, a.as_slice()) {
+                Ok(elems) => assert_eq!(a, elems),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cl_backend_transpose_a_transposes_backend_array()
+{
+    match ClBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a(3, 2);
+            match backend_transpose_a(&backend, a.as_slice(), 2, 3) {
+                Ok(c) => assert_eq!(expected_transpose_a(a.as_slice(), 2, 3), c),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cl_backend_add_a_b_adds_backend_arrays()
+{
+    match ClBackend::new() {
+        Ok(backend) => {
+            let (a, b) = fixture_a_b(2, 3, 2, 3);
+            match backend_add_a_b(&backend, a.as_slice(), b.as_slice(), 2, 3) {
+                Ok(c) => assert_eq!(expected_add_a_b(a.as_slice(), b.as_slice(), 2, 3), c),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cl_backend_add_at_b_adds_backend_arrays()
+{
+    match ClBackend::new() {
+        Ok(backend) => {
+            let (a, b) = fixture_a_b(3, 2, 2, 3);
+            match backend_add_at_b(&backend, a.as_slice(), b.as_slice(), 2, 3) {
+                Ok(c) => assert_eq!(expected_add_at_b(a.as_slice(), b.as_slice(), 2, 3), c),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cl_backend_add_a_bt_adds_backend_arrays()
+{
+    match ClBackend::new() {
+        Ok(backend) => {
+            let (a, b) = fixture_a_b(2, 3, 3, 2);
+            match backend_add_a_bt(&backend, a.as_slice(), b.as_slice(), 2, 3) {
+                Ok(c) => assert_eq!(expected_add_a_bt(a.as_slice(), b.as_slice(), 2, 3), c),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cl_backend_add_at_bt_adds_backend_arrays()
+{
+    match ClBackend::new() {
+        Ok(backend) => {
+            let (a, b) = fixture_a_b(3, 2, 3, 2);
+            match backend_add_at_bt(&backend, a.as_slice(), b.as_slice(), 2, 3) {
+                Ok(c) => assert_eq!(expected_add_at_bt(a.as_slice(), b.as_slice(), 2, 3), c),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cl_backend_sub_a_b_subtracts_backend_arrays()
+{
+    match ClBackend::new() {
+        Ok(backend) => {
+            let (a, b) = fixture_a_b(2, 3, 2, 3);
+            match backend_sub_a_b(&backend, a.as_slice(), b.as_slice(), 2, 3) {
+                Ok(c) => assert_eq!(expected_sub_a_b(a.as_slice(), b.as_slice(), 2, 3), c),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cl_backend_sub_at_b_subtracts_backend_arrays()
+{
+    match ClBackend::new() {
+        Ok(backend) => {
+            let (a, b) = fixture_a_b(3, 2, 2, 3);
+            match backend_sub_at_b(&backend, a.as_slice(), b.as_slice(), 2, 3) {
+                Ok(c) => assert_eq!(expected_sub_at_b(a.as_slice(), b.as_slice(), 2, 3), c),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cl_backend_sub_a_bt_subtracts_backend_arrays()
+{
+    match ClBackend::new() {
+        Ok(backend) => {
+            let (a, b) = fixture_a_b(2, 3, 3, 2);
+            match backend_sub_a_bt(&backend, a.as_slice(), b.as_slice(), 2, 3) {
+                Ok(c) => assert_eq!(expected_sub_a_bt(a.as_slice(), b.as_slice(), 2, 3), c),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cl_backend_sub_at_bt_subtracts_backend_arrays()
+{
+    match ClBackend::new() {
+        Ok(backend) => {
+            let (a, b) = fixture_a_b(3, 2, 3, 2);
+            match backend_sub_at_bt(&backend, a.as_slice(), b.as_slice(), 2, 3) {
+                Ok(c) => assert_eq!(expected_sub_at_bt(a.as_slice(), b.as_slice(), 2, 3), c),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cl_backend_mul_a_b_multiplies_backend_arrays()
+{
+    match ClBackend::new() {
+        Ok(backend) => {
+            let (a1, b1) = fixture_a_b(2, 4, 4, 3);
+            match backend_mul_a_b(&backend, a1.as_slice(), b1.as_slice(), 2, 3, 4) {
+                Ok(c1) => assert_eq!(expected_mul_a_b(a1.as_slice(), b1.as_slice(), 2, 3, 4), c1),
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b(2, 5, 5, 3);
+            match backend_mul_a_b(&backend, a2.as_slice(), b2.as_slice(), 2, 3, 5) {
+                Ok(c2) => assert_eq!(expected_mul_a_b(a2.as_slice(), b2.as_slice(), 2, 3, 5), c2),
+                Err(_) => assert!(false),
+            }
+            let (a3, b3) = fixture_a_b(2, 6, 6, 3);
+            match backend_mul_a_b(&backend, a3.as_slice(), b3.as_slice(), 2, 3, 6) {
+                Ok(c3) => assert_eq!(expected_mul_a_b(a3.as_slice(), b3.as_slice(), 2, 3, 6), c3),
+                Err(_) => assert!(false),
+            }
+            let (a4, b4) = fixture_a_b(2, 7, 7, 3);
+            match backend_mul_a_b(&backend, a4.as_slice(), b4.as_slice(), 2, 3, 7) {
+                Ok(c4) => assert_eq!(expected_mul_a_b(a4.as_slice(), b4.as_slice(), 2, 3, 7), c4),
+                Err(_) => assert!(false),
+            }
+            let (a5, b5) = fixture_a_b(2, 8, 8, 3);
+            match backend_mul_a_b(&backend, a5.as_slice(), b5.as_slice(), 2, 3, 8) {
+                Ok(c5) => assert_eq!(expected_mul_a_b(a5.as_slice(), b5.as_slice(), 2, 3, 8), c5),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cl_backend_mul_at_b_multiplies_backend_arrays()
+{
+    match ClBackend::new() {
+        Ok(backend) => {
+            let (a1, b1) = fixture_a_b(4, 2, 4, 3);
+            match backend_mul_at_b(&backend, a1.as_slice(), b1.as_slice(), 2, 3, 4) {
+                Ok(c1) => assert_eq!(expected_mul_at_b(a1.as_slice(), b1.as_slice(), 2, 3, 4), c1),
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b(5, 2, 5, 3);
+            match backend_mul_at_b(&backend, a2.as_slice(), b2.as_slice(), 2, 3, 5) {
+                Ok(c2) => assert_eq!(expected_mul_at_b(a2.as_slice(), b2.as_slice(), 2, 3, 5), c2),
+                Err(_) => assert!(false),
+            }
+            let (a3, b3) = fixture_a_b(6, 2, 6, 3);
+            match backend_mul_at_b(&backend, a3.as_slice(), b3.as_slice(), 2, 3, 6) {
+                Ok(c3) => assert_eq!(expected_mul_at_b(a3.as_slice(), b3.as_slice(), 2, 3, 6), c3),
+                Err(_) => assert!(false),
+            }
+            let (a4, b4) = fixture_a_b(7, 2, 7, 3);
+            match backend_mul_at_b(&backend, a4.as_slice(), b4.as_slice(), 2, 3, 7) {
+                Ok(c4) => assert_eq!(expected_mul_at_b(a4.as_slice(), b4.as_slice(), 2, 3, 7), c4),
+                Err(_) => assert!(false),
+            }
+            let (a5, b5) = fixture_a_b(8, 2, 8, 3);
+            match backend_mul_at_b(&backend, a5.as_slice(), b5.as_slice(), 2, 3, 8) {
+                Ok(c5) => assert_eq!(expected_mul_at_b(a5.as_slice(), b5.as_slice(), 2, 3, 8), c5),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cl_backend_mul_a_bt_multiplies_backend_arrays()
+{
+    match ClBackend::new() {
+        Ok(backend) => {
+            let (a1, b1) = fixture_a_b(2, 4, 3, 4);
+            match backend_mul_a_bt(&backend, a1.as_slice(), b1.as_slice(), 2, 3, 4) {
+                Ok(c1) => assert_eq!(expected_mul_a_bt(a1.as_slice(), b1.as_slice(), 2, 3, 4), c1),
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b(2, 5, 3, 5);
+            match backend_mul_a_bt(&backend, a2.as_slice(), b2.as_slice(), 2, 3, 5) {
+                Ok(c2) => assert_eq!(expected_mul_a_bt(a2.as_slice(), b2.as_slice(), 2, 3, 5), c2),
+                Err(_) => assert!(false),
+            }
+            let (a3, b3) = fixture_a_b(2, 6, 3, 6);
+            match backend_mul_a_bt(&backend, a3.as_slice(), b3.as_slice(), 2, 3, 6) {
+                Ok(c3) => assert_eq!(expected_mul_a_bt(a3.as_slice(), b3.as_slice(), 2, 3, 6), c3),
+                Err(_) => assert!(false),
+            }
+            let (a4, b4) = fixture_a_b(2, 7, 3, 7);
+            match backend_mul_a_bt(&backend, a4.as_slice(), b4.as_slice(), 2, 3, 7) {
+                Ok(c4) => assert_eq!(expected_mul_a_bt(a4.as_slice(), b4.as_slice(), 2, 3, 7), c4),
+                Err(_) => assert!(false),
+            }
+            let (a5, b5) = fixture_a_b(2, 8, 3, 8);
+            match backend_mul_a_bt(&backend, a5.as_slice(), b5.as_slice(), 2, 3, 8) {
+                Ok(c5) => assert_eq!(expected_mul_a_bt(a5.as_slice(), b5.as_slice(), 2, 3, 8), c5),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cl_backend_mul_at_bt_multiplies_backend_arrays()
+{
+    match ClBackend::new() {
+        Ok(backend) => {
+            let (a1, b1) = fixture_a_b(4, 2, 3, 4);
+            match backend_mul_at_bt(&backend, a1.as_slice(), b1.as_slice(), 2, 3, 4) {
+                Ok(c1) => assert_eq!(expected_mul_at_bt(a1.as_slice(), b1.as_slice(), 2, 3, 4), c1),
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b(5, 2, 3, 5);
+            match backend_mul_at_bt(&backend, a2.as_slice(), b2.as_slice(), 2, 3, 5) {
+                Ok(c2) => assert_eq!(expected_mul_at_bt(a2.as_slice(), b2.as_slice(), 2, 3, 5), c2),
+                Err(_) => assert!(false),
+            }
+            let (a3, b3) = fixture_a_b(6, 2, 3, 6);
+            match backend_mul_at_bt(&backend, a3.as_slice(), b3.as_slice(), 2, 3, 6) {
+                Ok(c3) => assert_eq!(expected_mul_at_bt(a3.as_slice(), b3.as_slice(), 2, 3, 6), c3),
+                Err(_) => assert!(false),
+            }
+            let (a4, b4) = fixture_a_b(7, 2, 3, 7);
+            match backend_mul_at_bt(&backend, a4.as_slice(), b4.as_slice(), 2, 3, 7) {
+                Ok(c4) => assert_eq!(expected_mul_at_bt(a4.as_slice(), b4.as_slice(), 2, 3, 7), c4),
+                Err(_) => assert!(false),
+            }
+            let (a5, b5) = fixture_a_b(8, 2, 3, 8);
+            match backend_mul_at_bt(&backend, a5.as_slice(), b5.as_slice(), 2, 3, 8) {
+                Ok(c5) => assert_eq!(expected_mul_at_bt(a5.as_slice(), b5.as_slice(), 2, 3, 8), c5),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
     }
 }

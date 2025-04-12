@@ -983,3 +983,6 @@ impl Frontend
         self.backend.transpose_a(&*a.array, &*b.array, a.col_count, a.row_count)
     }
 }
+
+#[cfg(test)]
+mod test_helpers;
