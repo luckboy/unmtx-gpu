@@ -722,7 +722,7 @@ fn test_cl_backend_sigmoid_a_calculates_sigmoid_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a(2, 3);
+            let a = fixture_a_for_activation_fun(2, 3);
             match backend_sigmoid_a(&backend, a.as_slice(), 2, 3) {
                 Ok(b) => {
                     let expected_b = expected_sigmoid_a(a.as_slice(), 2, 3);
@@ -743,7 +743,7 @@ fn test_cl_backend_sigmoid_at_calculates_sigmoid_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a(3, 2);
+            let a = fixture_a_for_activation_fun(3, 2);
             match backend_sigmoid_at(&backend, a.as_slice(), 2, 3) {
                 Ok(b) => {
                     let expected_b = expected_sigmoid_at(a.as_slice(), 2, 3);
@@ -764,7 +764,7 @@ fn test_cl_backend_tanh_a_calculates_tanh_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a(2, 3);
+            let a = fixture_a_for_activation_fun(2, 3);
             match backend_tanh_a(&backend, a.as_slice(), 2, 3) {
                 Ok(b) => {
                     let expected_b = expected_tanh_a(a.as_slice(), 2, 3);
@@ -785,7 +785,7 @@ fn test_cl_backend_tanh_at_calculates_tanh_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a(3, 2);
+            let a = fixture_a_for_activation_fun(3, 2);
             match backend_tanh_at(&backend, a.as_slice(), 2, 3) {
                 Ok(b) => {
                     let expected_b = expected_tanh_at(a.as_slice(), 2, 3);

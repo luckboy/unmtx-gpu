@@ -35,6 +35,18 @@ pub(crate) fn fixture_a_b(n1: usize, m1: usize, n2: usize, m2: usize) -> (Vec<f3
     (a, b)
 }
 
+pub(crate) fn fixture_a_for_activation_fun(n: usize, m: usize) -> Vec<f32>
+{
+    let mut a = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            a[m * i + j] = ((i as f32) - ((n as f32) - 1.0) / 2.0) * 2.0 / ((n as f32) - 1.0);
+            a[m * i + j] += ((j as f32) - ((m as f32) - 1.0) / 2.0) * 2.0 / ((m as f32) - 1.0);
+        }
+    }
+    a
+}
+
 pub(crate) fn backend_alloc_and_store_zeros(backend: &dyn Backend, n: usize) -> Result<Vec<f32>>
 {
     let a = backend.alloc_and_store_zeros(n)?;
