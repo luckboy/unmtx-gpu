@@ -30,6 +30,7 @@ pub use opencl3::platform::get_platforms;
 
 use cl3::info_type::InfoType;
 use opencl3::command_queue::CommandQueue;
+use opencl3::device::CL_DEVICE_MAX_WORK_GROUP_SIZE;
 use opencl3::device::CL_DEVICE_PREFERRED_WORK_GROUP_SIZE_MULTIPLE;
 use opencl3::device::get_device_info;
 use opencl3::event::Event;
@@ -56,12 +57,28 @@ struct ClInnerBackend
     context: Context,
     command_queue: CommandQueue,
     program: Program,
-    group_size: usize,
+    group_size_for_1d: usize,
+    group_size_for_2d: usize,
 }
 
 pub struct ClBackend
 {
     inner: Mutex<ClInnerBackend>,
+}
+
+fn preferred_work_sizes(n: usize, m: usize, group_size_for_1d: usize, group_size_for_2d: usize) -> (usize, usize, usize, usize)
+{
+    if m == 1 {
+        let n2 = ((n + group_size_for_1d - 1) / group_size_for_1d) * group_size_for_1d;
+        (group_size_for_1d, 1, n2, 1)
+    } else if n == 1 {
+        let m2 = ((m + group_size_for_1d - 1) / group_size_for_1d) * group_size_for_1d;
+        (1, group_size_for_1d, 1, m2)
+    } else {
+        let n2 = ((n + group_size_for_2d - 1) / group_size_for_2d) * group_size_for_2d;
+        let m2 = ((m + group_size_for_2d - 1) / group_size_for_2d) * group_size_for_2d;
+        (group_size_for_2d, group_size_for_2d, n2, m2)
+    }
 }
 
 impl ClBackend
@@ -100,15 +117,20 @@ impl ClBackend
             Ok(tmp_program) => tmp_program,
             Err(msg) => return Err(Error::Compilation(msg)),
         };
-        let group_size = match get_device_info(context.default_device(), CL_DEVICE_PREFERRED_WORK_GROUP_SIZE_MULTIPLE) {
-            Ok(InfoType::Size(tmp_group_size)) => tmp_group_size,
+        let group_size_for_1d = match get_device_info(context.default_device(), CL_DEVICE_MAX_WORK_GROUP_SIZE) {
+            Ok(InfoType::Size(tmp_group_size_for_1d)) => tmp_group_size_for_1d,
+            _ => return Err(Error::InvalidDeviceInfoType),
+        };
+        let group_size_for_2d = match get_device_info(context.default_device(), CL_DEVICE_PREFERRED_WORK_GROUP_SIZE_MULTIPLE) {
+            Ok(InfoType::Size(tmp_group_size_for_2d)) => tmp_group_size_for_2d,
             _ => return Err(Error::InvalidDeviceInfoType),
         };
         let inner = ClInnerBackend {
             context,
             command_queue,
             program,
-            group_size,
+            group_size_for_1d,
+            group_size_for_2d,
         };
         Ok(ClBackend { inner: Mutex::new(inner), })
     }
@@ -207,16 +229,15 @@ impl ClBackend
         }, |inner, kernel, a_mem, b_mem| {
                 let n2 = n as u64;
                 let m2 = m as u64;
-                let n3 = ((n + inner.group_size - 1) / inner.group_size) * inner.group_size;
-                let m3 = ((m + inner.group_size - 1) / inner.group_size) * inner.group_size;
+                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d);
                 unsafe {
                     let res = ExecuteKernel::new(kernel)
                     .set_arg(&a_mem)
                     .set_arg(&b_mem)
                     .set_arg(&n2)
                     .set_arg(&m2)
-                    .set_local_work_sizes(&[inner.group_size, inner.group_size])
-                    .set_global_work_sizes(&[n3, m3])
+                    .set_local_work_sizes(&[n3, m3])
+                    .set_global_work_sizes(&[n4, m4])
                     .enqueue_nd_range(&inner.command_queue);
                     match res {
                         Ok(event) => Ok(event),
@@ -242,8 +263,7 @@ impl ClBackend
         }, |inner, kernel, a_mem, b_mem, c_mem| {
                 let n2 = n as u64;
                 let m2 = m as u64;
-                let n3 = ((n + inner.group_size - 1) / inner.group_size) * inner.group_size;
-                let m3 = ((m + inner.group_size - 1) / inner.group_size) * inner.group_size;
+                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d);
                 unsafe {
                     let res = ExecuteKernel::new(kernel)
                     .set_arg(&a_mem)
@@ -251,8 +271,8 @@ impl ClBackend
                     .set_arg(&c_mem)
                     .set_arg(&n2)
                     .set_arg(&m2)
-                    .set_local_work_sizes(&[inner.group_size, inner.group_size])
-                    .set_global_work_sizes(&[n3, m3])
+                    .set_local_work_sizes(&[n3, m3])
+                    .set_global_work_sizes(&[n4, m4])
                     .enqueue_nd_range(&inner.command_queue);
                     match res {
                         Ok(event) => Ok(event),
@@ -279,8 +299,7 @@ impl ClBackend
                 let n2 = n as u64;
                 let m2 = m as u64;
                 let l2 = l as u64;
-                let n3 = ((n + inner.group_size - 1) / inner.group_size) * inner.group_size;
-                let m3 = ((m + inner.group_size - 1) / inner.group_size) * inner.group_size;
+                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d);
                 unsafe {
                     let res = ExecuteKernel::new(kernel)
                     .set_arg(&a_mem)
@@ -289,8 +308,8 @@ impl ClBackend
                     .set_arg(&n2)
                     .set_arg(&m2)
                     .set_arg(&l2)
-                    .set_local_work_sizes(&[inner.group_size, inner.group_size])
-                    .set_global_work_sizes(&[n3, m3])
+                    .set_local_work_sizes(&[n3, m3])
+                    .set_global_work_sizes(&[n4, m4])
                     .enqueue_nd_range(&inner.command_queue);
                     match res {
                         Ok(event) => Ok(event),
@@ -313,8 +332,7 @@ impl ClBackend
         }, |inner, kernel, a_mem, c_mem| {
                 let n2 = n as u64;
                 let m2 = m as u64;
-                let n3 = ((n + inner.group_size - 1) / inner.group_size) * inner.group_size;
-                let m3 = ((m + inner.group_size - 1) / inner.group_size) * inner.group_size;
+                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d);
                 unsafe {
                     let res = ExecuteKernel::new(kernel)
                     .set_arg(&a_mem)
@@ -322,8 +340,8 @@ impl ClBackend
                     .set_arg(&c_mem)
                     .set_arg(&n2)
                     .set_arg(&m2)
-                    .set_local_work_sizes(&[inner.group_size, inner.group_size])
-                    .set_global_work_sizes(&[n3, m3])
+                    .set_local_work_sizes(&[n3, m3])
+                    .set_global_work_sizes(&[n4, m4])
                     .enqueue_nd_range(&inner.command_queue);
                     match res {
                         Ok(event) => Ok(event),
