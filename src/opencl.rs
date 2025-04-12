@@ -522,7 +522,7 @@ impl Backend for ClBackend
     { self.check_and_enqueue_nd_range_for_op("div_a_bt_for_elems", a, b, c, n, m) }
     
     fn div_at_bt_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("mul_at_b_for_elems", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("div_at_bt_for_elems", a, b, c, n, m) }
 
     fn add_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
     { self.check_and_enqueue_nd_range_for_scalar("add_a_b_for_scalar", a, b, c, n, m) }
@@ -546,7 +546,7 @@ impl Backend for ClBackend
     { self.check_and_enqueue_nd_range_for_scalar("mul_a_b_for_scalar", a, b, c, n, m) }
 
     fn mul_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_scalar("mul_a_b_for_scalar", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_scalar("mul_at_b_for_scalar", a, b, c, n, m) }
 
     fn div_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
     { self.check_and_enqueue_nd_range_for_scalar("div_a_b_for_scalar", a, b, c, n, m) }
