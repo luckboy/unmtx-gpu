@@ -13,5 +13,9 @@ fn test_cl_backend_new_creates_backend()
     match ClBackend::new() {
         Ok(_) => assert!(true),
         Err(_) => assert!(false),
+        //Err(err) => {
+        //    println!("{}", err);
+        //    assert!(false)
+        //},
     }
 }
