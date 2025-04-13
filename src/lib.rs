@@ -22,6 +22,8 @@ use std::sync::MutexGuard;
 
 #[cfg(feature = "opencl")]
 pub mod opencl;
+#[cfg(feature = "cuda")]
+pub mod cuda;
 
 pub trait Backend
 {
@@ -129,6 +131,8 @@ pub enum Error
     Mutex,
     #[cfg(feature = "opencl")]
     OpenCl(opencl::ClError),
+    #[cfg(feature = "cuda")]
+    Cuda(cuda::DriverError),
     Compilation(String),
     NoPlatform,
     NoDevice,
@@ -156,6 +160,8 @@ impl fmt::Display for Error
             Error::Mutex => write!(f, "can't lock mutex"),
             #[cfg(feature = "opencl")]
             Error::OpenCl(err) => write!(f, "OpenCL error: {}", err),
+            #[cfg(feature = "cuda")]
+            Error::Cuda(err) => write!(f, "CUDA error: {}", err),
             Error::Compilation(msg) => write!(f, "{}", msg),
             Error::NoPlatform => write!(f, "no platform"),
             Error::NoDevice => write!(f, "no device"),
@@ -174,6 +180,8 @@ pub enum BackendArray
 {
     #[cfg(feature = "opencl")]
     OpenCl(opencl::ClBackendArray),
+    #[cfg(feature = "cuda")]
+    Cuda(cuda::CudaBackendArray),
 }
 
 static mut DEFAULT_BACKEND: Mutex<Option<Arc<dyn Backend>>> = Mutex::new(None);
@@ -228,12 +236,13 @@ pub fn initialize_default_backend_for_uninitialized() -> Result<()>
 {
     #[cfg(feature = "opencl")]
     set_default_backend_for_uninitialized(Arc::new(opencl::ClBackend::new()?))?;
+    #[cfg(all(not(feature = "opencl"), feature = "cuda"))]
+    set_default_backend_for_uninitialized(Arc::new(cuda::CudaBackend::new()?))?;
     Ok(())
 }
 
 pub fn finalize_default_backend() -> Result<()>
 { unset_default_backend() }
-
 
 #[derive(Clone, Debug)]
 pub struct Matrix
