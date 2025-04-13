@@ -66,7 +66,7 @@ const KERNELS: &'static [&'static str] = &[
     "tanh_a",
     "tanh_at",
     "softmax_a",
-    "softmax_a"
+    "softmax_at"
 ];
 
 #[derive(Debug)]

@@ -235,7 +235,7 @@ extern "C" {
     size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
     size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
     if(i < n && j < m) {
-      c[m * i + j] = a[n * j + i] / b[n * j + i];
+      c[m * i + j] = a[n * j + i] * b[n * j + i];
     }
   }
 
@@ -262,7 +262,7 @@ extern "C" {
     size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
     size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
     if(i < n && j < m) {
-      c[m * i + j] = a[m * i + j] * b[n * j + i];
+      c[m * i + j] = a[m * i + j] / b[n * j + i];
     }
   }
 
