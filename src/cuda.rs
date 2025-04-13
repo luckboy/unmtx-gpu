@@ -28,7 +28,45 @@ use cudarc::nvrtc::compile_ptx;
 const SOURCE: &'static str = include_str!("cuda.cu");
 
 const KERNELS: &'static [&'static str] = &[
-    "add_a_b"
+    "transpose_a",
+    "add_a_b",
+    "add_at_b",
+    "add_a_bt",
+    "add_at_bt",
+    "sub_a_b",
+    "sub_at_b",
+    "sub_a_bt",
+    "sub_at_bt",
+    "mul_a_b",
+    "mul_at_b",
+    "mul_a_bt",
+    "mul_at_bt",
+    "mul_a_b_for_elems",
+    "mul_at_b_for_elems",
+    "mul_a_bt_for_elems",
+    "mul_at_bt_for_elems",
+    "div_a_b_for_elems",
+    "div_at_b_for_elems",
+    "div_a_bt_for_elems",
+    "div_at_bt_for_elems",
+    "add_a_b_for_scalar",
+    "add_at_b_for_scalar",
+    "sub_a_b_for_scalar",
+    "sub_at_b_for_scalar",
+    "rsub_a_b_for_scalar",
+    "rsub_at_b_for_scalar",
+    "mul_a_b_for_scalar",
+    "mul_at_b_for_scalar",
+    "div_a_b_for_scalar",
+    "div_at_b_for_scalar",
+    "rdiv_a_b_for_scalar",
+    "rdiv_at_b_for_scalar",
+    "sigmoid_a",
+    "sigmoid_at",
+    "tanh_a",
+    "tanh_at",
+    "softmax_a",
+    "softmax_a"
 ];
 
 #[derive(Debug)]

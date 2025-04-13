@@ -13,10 +13,10 @@ fn test_cuda_backend_new_creates_backend()
 {
     match CudaBackend::new() {
         Ok(_) => assert!(true),
-        //Err(_) => assert!(false),
-        Err(err) => {
-            println!("{}", err);
-            assert!(false)
-        },
+        Err(_) => assert!(false),
+        //Err(err) => {
+        //    println!("{}", err);
+        //    assert!(false)
+        //},
     }
 }
