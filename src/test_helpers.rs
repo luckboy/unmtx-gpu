@@ -540,6 +540,410 @@ pub(crate) fn backend_add_a_a_a(backend: &dyn Backend, a_elems: &[f32], n: usize
     Ok(a_elems2)
 }
 
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_create_matrix_and_set_zeros(frontend: &Frontend, n: usize, m: usize) -> Result<(Matrix, Vec<f32>)>
+{
+    let a = frontend.create_matrix_and_set_zeros(n, m)?;
+    let elems = frontend.elems_and_transpose_flag(&a)?.0;
+    Ok((a, elems))
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_create_matrix_and_set_elems(frontend: &Frontend, n: usize, m: usize, elems: &[f32]) -> Result<(Matrix, Vec<f32>)>
+{
+    let a = frontend.create_matrix_and_set_elems(n, m, elems)?;
+    let elems = frontend.elems_and_transpose_flag(&a)?.0;
+    Ok((a, elems))
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_set_elems(frontend: &Frontend, elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.set_elems(&a, elems)?;
+    Ok(frontend.elems_and_transpose_flag(&a)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_copy(frontend: &Frontend, elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(n, m, elems)?;
+    let b = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.copy(&a, &b)?;
+    Ok(frontend.elems_and_transpose_flag(&b)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_force_transpose(frontend: &Frontend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(m, n, a_elems)?;
+    let b = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.force_transpose(&a, &b)?;
+    Ok(frontend.elems_and_transpose_flag(&b)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_add_for_a_b(frontend: &Frontend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(n, m, a_elems)?;
+    let b = frontend.create_matrix_and_set_elems(n, m, b_elems)?;
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.add(&a, &b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_add_for_at_b(frontend: &Frontend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(m, n, a_elems)?.transpose();
+    let b = frontend.create_matrix_and_set_elems(n, m, b_elems)?;
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.add(&a, &b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_add_for_a_bt(frontend: &Frontend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(n, m, a_elems)?;
+    let b = frontend.create_matrix_and_set_elems(m, n, b_elems)?.transpose();
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.add(&a, &b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_add_for_at_bt(frontend: &Frontend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(m, n, a_elems)?.transpose();
+    let b = frontend.create_matrix_and_set_elems(m, n, b_elems)?.transpose();
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.add(&a, &b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_sub_for_a_b(frontend: &Frontend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(n, m, a_elems)?;
+    let b = frontend.create_matrix_and_set_elems(n, m, b_elems)?;
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.sub(&a, &b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_sub_for_at_b(frontend: &Frontend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(m, n, a_elems)?.transpose();
+    let b = frontend.create_matrix_and_set_elems(n, m, b_elems)?;
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.sub(&a, &b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_sub_for_a_bt(frontend: &Frontend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(n, m, a_elems)?;
+    let b = frontend.create_matrix_and_set_elems(m, n, b_elems)?.transpose();
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.sub(&a, &b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_sub_for_at_bt(frontend: &Frontend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(m, n, a_elems)?.transpose();
+    let b = frontend.create_matrix_and_set_elems(m, n, b_elems)?.transpose();
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.sub(&a, &b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_mul_for_a_b(frontend: &Frontend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize, l: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(n, l, a_elems)?;
+    let b = frontend.create_matrix_and_set_elems(l, m, b_elems)?;
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.mul(&a, &b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_mul_for_at_b(frontend: &Frontend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize, l: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(l, n, a_elems)?.transpose();
+    let b = frontend.create_matrix_and_set_elems(l, m, b_elems)?;
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.mul(&a, &b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_mul_for_a_bt(frontend: &Frontend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize, l: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(n, l, a_elems)?;
+    let b = frontend.create_matrix_and_set_elems(m, l, b_elems)?.transpose();
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.mul(&a, &b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_mul_for_at_bt(frontend: &Frontend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize, l: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(l, n, a_elems)?.transpose();
+    let b = frontend.create_matrix_and_set_elems(m, l, b_elems)?.transpose();
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.mul(&a, &b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_mul_elems_for_a_b(frontend: &Frontend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(n, m, a_elems)?;
+    let b = frontend.create_matrix_and_set_elems(n, m, b_elems)?;
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.mul_elems(&a, &b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_mul_elems_for_at_b(frontend: &Frontend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(m, n, a_elems)?.transpose();
+    let b = frontend.create_matrix_and_set_elems(n, m, b_elems)?;
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.mul_elems(&a, &b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_mul_elems_for_a_bt(frontend: &Frontend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(n, m, a_elems)?;
+    let b = frontend.create_matrix_and_set_elems(m, n, b_elems)?.transpose();
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.mul_elems(&a, &b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_mul_elems_for_at_bt(frontend: &Frontend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(m, n, a_elems)?.transpose();
+    let b = frontend.create_matrix_and_set_elems(m, n, b_elems)?.transpose();
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.mul_elems(&a, &b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_div_elems_for_a_b(frontend: &Frontend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(n, m, a_elems)?;
+    let b = frontend.create_matrix_and_set_elems(n, m, b_elems)?;
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.div_elems(&a, &b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_div_elems_for_at_b(frontend: &Frontend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(m, n, a_elems)?.transpose();
+    let b = frontend.create_matrix_and_set_elems(n, m, b_elems)?;
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.div_elems(&a, &b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_div_elems_for_a_bt(frontend: &Frontend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(n, m, a_elems)?;
+    let b = frontend.create_matrix_and_set_elems(m, n, b_elems)?.transpose();
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.div_elems(&a, &b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_div_elems_for_at_bt(frontend: &Frontend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(m, n, a_elems)?.transpose();
+    let b = frontend.create_matrix_and_set_elems(m, n, b_elems)?.transpose();
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.div_elems(&a, &b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_add_for_scalar_and_a_b(frontend: &Frontend, a_elems: &[f32], b: f32, n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(n, m, a_elems)?;
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.add_for_scalar(&a, b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_add_for_scalar_and_at_b(frontend: &Frontend, a_elems: &[f32], b: f32, n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(m, n, a_elems)?.transpose();
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.add_for_scalar(&a, b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_sub_for_scalar_and_a_b(frontend: &Frontend, a_elems: &[f32], b: f32, n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(n, m, a_elems)?;
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.sub_for_scalar(&a, b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_sub_for_scalar_and_at_b(frontend: &Frontend, a_elems: &[f32], b: f32, n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(m, n, a_elems)?.transpose();
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.sub_for_scalar(&a, b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_rsub_for_scalar_and_a_b(frontend: &Frontend, a_elems: &[f32], b: f32, n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(n, m, a_elems)?;
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.rsub_for_scalar(&a, b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_rsub_for_scalar_and_at_b(frontend: &Frontend, a_elems: &[f32], b: f32, n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(m, n, a_elems)?.transpose();
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.rsub_for_scalar(&a, b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_mul_for_scalar_and_a_b(frontend: &Frontend, a_elems: &[f32], b: f32, n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(n, m, a_elems)?;
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.mul_for_scalar(&a, b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_mul_for_scalar_and_at_b(frontend: &Frontend, a_elems: &[f32], b: f32, n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(m, n, a_elems)?.transpose();
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.mul_for_scalar(&a, b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_div_for_scalar_and_a_b(frontend: &Frontend, a_elems: &[f32], b: f32, n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(n, m, a_elems)?;
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.div_for_scalar(&a, b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_div_for_scalar_and_at_b(frontend: &Frontend, a_elems: &[f32], b: f32, n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(m, n, a_elems)?.transpose();
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.div_for_scalar(&a, b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_rdiv_for_scalar_and_a_b(frontend: &Frontend, a_elems: &[f32], b: f32, n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(n, m, a_elems)?;
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.rdiv_for_scalar(&a, b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_rdiv_for_scalar_and_at_b(frontend: &Frontend, a_elems: &[f32], b: f32, n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(m, n, a_elems)?.transpose();
+    let c = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.rdiv_for_scalar(&a, b, &c)?;
+    Ok(frontend.elems_and_transpose_flag(&c)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_sigmoid_for_a(frontend: &Frontend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(n, m, a_elems)?;
+    let b = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.sigmoid(&a, &b)?;
+    Ok(frontend.elems_and_transpose_flag(&b)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_sigmoid_for_at(frontend: &Frontend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(m, n, a_elems)?.transpose();
+    let b = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.sigmoid(&a, &b)?;
+    Ok(frontend.elems_and_transpose_flag(&b)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_tanh_for_a(frontend: &Frontend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(n, m, a_elems)?;
+    let b = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.tanh(&a, &b)?;
+    Ok(frontend.elems_and_transpose_flag(&b)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_tanh_for_at(frontend: &Frontend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(m, n, a_elems)?.transpose();
+    let b = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.tanh(&a, &b)?;
+    Ok(frontend.elems_and_transpose_flag(&b)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_softmax_for_a(frontend: &Frontend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(n, m, a_elems)?;
+    let b = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.softmax(&a, &b)?;
+    Ok(frontend.elems_and_transpose_flag(&b)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_softmax_for_at(frontend: &Frontend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(m, n, a_elems)?.transpose();
+    let b = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.softmax(&a, &b)?;
+    Ok(frontend.elems_and_transpose_flag(&b)?.0)
+}
+
 pub(crate) fn expected_transpose_a(a: &[f32], n: usize, m: usize) -> Vec<f32>
 {
     let mut b = vec![0.0f32; n * m];

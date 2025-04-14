@@ -13,6 +13,7 @@ opencl3 = { version = "0.11.0", optional = true }
 
 [features]
 default = ["opencl"]
+test_only_backend = []
 opencl = ["dep:opencl3", "dep:cl3"]
 cuda = ["dep:cudarc"]
 cuda-version-from-build-system = ["cuda", "cudarc/cuda-version-from-build-system"]

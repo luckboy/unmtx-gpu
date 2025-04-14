@@ -915,9 +915,17 @@ impl Frontend
         })
     }
 
+    pub fn set_elems(&self, a: &Matrix, elems: &[f32]) -> Result<()>
+    {
+        if a.row_count() * a.col_count() != elems.len() {
+            return Err(Error::MatrixElemCount(a.row_count() * a.col_count(), elems.len())); 
+        }
+        self.backend.store(&*a.array, elems)
+    }    
+    
     pub fn copy(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
-        if a.row_count == b.row_count && a.col_count == b.col_count {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
             return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
         }
         self.backend.copy(&*a.array, &*b.array)        
@@ -1195,3 +1203,5 @@ impl Frontend
 
 #[cfg(test)]
 mod test_helpers;
+#[cfg(all(test, not(feature = "test_only_backend")))]
+mod tests;
