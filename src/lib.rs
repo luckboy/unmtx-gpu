@@ -246,6 +246,13 @@ pub fn initialize_default_backend_for_uninitialized() -> Result<()>
 pub fn finalize_default_backend() -> Result<()>
 { unset_default_backend() }
 
+#[macro_export]
+macro_rules! matrix {
+    ($([$($elem:expr),* $(,)*]),* $(,)*) => {
+        Matrix::new_with_elem_vecs(vec![$(vec![$($elem),*]),*].as_slice())
+    };
+}
+
 #[derive(Clone, Debug)]
 pub struct Matrix
 {
@@ -269,6 +276,21 @@ impl Matrix
         frontend.create_matrix_and_set_elems(row_count, col_count, elems).unwrap()
     }
 
+    pub fn new_with_elem_vecs(elem_vecs: &[Vec<f32>]) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let col_count = match elem_vecs.first() {
+            Some(elems) => elems.len(),
+            None => 0,
+        };
+        for row in elem_vecs {
+            assert_eq!(col_count, row.len());
+        }
+        let row_count = elem_vecs.len();
+        let elems: Vec<f32> = elem_vecs.iter().flatten().map(|e| *e).collect();
+        frontend.create_matrix_and_set_elems(row_count, col_count, elems.as_slice()).unwrap()
+    }
+
     pub fn row_count(&self) -> usize
     { self.row_count }
     
@@ -287,7 +309,7 @@ impl Matrix
     pub fn copy(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
-        let res = unsafe { frontend.create_matrix(self.col_count, self.row_count) }.unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
         frontend.copy(self, &res).unwrap();
         res
     }
@@ -706,7 +728,7 @@ impl Mul<Matrix> for &Matrix
     fn mul(self, rhs: Matrix) -> Self::Output
     {
         let frontend = Frontend::new().unwrap();
-        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, rhs.col_count) }.unwrap();
         frontend.mul(self, &rhs, &res).unwrap();
         res
     }
@@ -719,7 +741,7 @@ impl Mul<&Matrix> for &Matrix
     fn mul(self, rhs: &Matrix) -> Self::Output
     {
         let frontend = Frontend::new().unwrap();
-        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, rhs.col_count) }.unwrap();
         frontend.mul(self, rhs, &res).unwrap();
         res
     }
@@ -768,7 +790,7 @@ impl MulAssign<&Matrix> for Matrix
     {
         let frontend = Frontend::new().unwrap();
         let res = unsafe { frontend.create_matrix(self.row_count, rhs.col_count) }.unwrap();
-        frontend.sub(&self, rhs, &res).unwrap();
+        frontend.mul(&self, rhs, &res).unwrap();
         *self = res;
     }
 }
