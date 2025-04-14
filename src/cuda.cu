@@ -388,7 +388,7 @@ extern "C" {
     size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
     size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
     if(i < n && j < m) {
-      b[m * i + j] = 1.0f / (1.0f + exp(-a[m * i + j]));
+      b[m * i + j] = 1.0f / (1.0f + expf(-a[m * i + j]));
     }
   }
 
@@ -397,7 +397,7 @@ extern "C" {
     size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
     size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
     if(i < n && j < m) {
-      b[m * i + j] = 1.0f / (1.0f + exp(-a[n * j + i]));
+      b[m * i + j] = 1.0f / (1.0f + expf(-a[n * j + i]));
     }
   }
 
@@ -406,7 +406,7 @@ extern "C" {
     size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
     size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
     if(i < n && j < m) {
-      b[m * i + j] = tanh(a[m * i + j]);
+      b[m * i + j] = tanhf(a[m * i + j]);
     }
   }
 
@@ -415,7 +415,7 @@ extern "C" {
     size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
     size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
     if(i < n && j < m) {
-      b[m * i + j] = tanh(a[n * j + i]);
+      b[m * i + j] = tanhf(a[n * j + i]);
     }
   }
 
@@ -433,10 +433,10 @@ extern "C" {
         av.y = a[m * (k + 1) + j];
         av.z = a[m * (k + 2) + j];
         av.w = a[m * (k + 3) + j];
-        sum += exp(av.x) + exp(av.y) + exp(av.z) + exp(av.w);
+        sum += expf(av.x) + expf(av.y) + expf(av.z) + expf(av.w);
       }
       for(; k < n; k++) {
-        sum += exp(a[m * k + j]);
+        sum += expf(a[m * k + j]);
       }
       b[m * i + j] = exp(a[m * i + j]) / sum;
     }
@@ -457,10 +457,10 @@ extern "C" {
         av.y = a[n_j + k + 1];
         av.z = a[n_j + k + 2];
         av.w = a[n_j + k + 3];
-        sum += exp(av.x) + exp(av.y) + exp(av.z) + exp(av.w);
+        sum += expf(av.x) + expf(av.y) + expf(av.z) + expf(av.w);
       }
       for(; k < n; k++) {
-        sum += exp(a[n_j + k]);
+        sum += expf(a[n_j + k]);
       }
       b[m * i + j] = exp(a[n * j + i]) / sum;
     }
