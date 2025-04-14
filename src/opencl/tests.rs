@@ -998,7 +998,7 @@ fn test_cl_backend_add_a_b_uses_two_backend_arrays_for_a_b_b()
 }
 
 #[test]
-fn test_cl_backend_add_a_b_uses_three_backend_arrays_for_a_a_a()
+fn test_cl_backend_add_a_b_uses_one_backend_array_for_a_a_a()
 {
     match ClBackend::new() {
         Ok(backend) => {
