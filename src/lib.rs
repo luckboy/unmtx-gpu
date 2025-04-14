@@ -222,13 +222,14 @@ pub fn unset_default_backend() -> Result<()>
     Ok(())
 }
 
-pub fn set_default_backend_for_uninitialized(backend: Arc<dyn Backend>) -> Result<()>
+pub fn set_default_backend_for_uninitialized<F>(f: F) -> Result<()>
+    where F: FnOnce() -> Result<Arc<dyn Backend>>
 {
     unsafe {
         let mut default_backend_g = mutex_lock(&DEFAULT_BACKEND)?;
         match *default_backend_g {
             Some(_) => (),
-            None => *default_backend_g = Some(backend),
+            None => *default_backend_g = Some(f()?),
         }
     }
     Ok(())
@@ -237,9 +238,9 @@ pub fn set_default_backend_for_uninitialized(backend: Arc<dyn Backend>) -> Resul
 pub fn initialize_default_backend_for_uninitialized() -> Result<()>
 {
     #[cfg(feature = "opencl")]
-    set_default_backend_for_uninitialized(Arc::new(opencl::ClBackend::new()?))?;
+    set_default_backend_for_uninitialized(|| Ok(Arc::new(opencl::ClBackend::new()?)))?;
     #[cfg(all(not(feature = "opencl"), feature = "cuda"))]
-    set_default_backend_for_uninitialized(Arc::new(cuda::CudaBackend::new()?))?;
+    set_default_backend_for_uninitialized(|| Ok(Arc::new(cuda::CudaBackend::new()?)))?;
     Ok(())
 }
 
