@@ -157,6 +157,10 @@ impl CudaBackend
                     let mut a_slice_g = mutex_lock(&a2.slice)?;
                     g(&*inner_g, kernel, (&mut (*a_slice_g)).as_kernel_param(), (&mut (*a_slice_g)).as_kernel_param())?;
                 }
+                match inner_g.device.synchronize() {
+                    Ok(()) => (),
+                    Err(err) => return Err(Error::Cuda(err)),
+                }
                 Ok(())
             },
             _ => Err(Error::InvalidBackendArray),
@@ -202,6 +206,10 @@ impl CudaBackend
                         let mut a_slice_g = mutex_lock(&a2.slice)?;
                         g(&*inner_g, kernel, (&mut (*a_slice_g)).as_kernel_param(), (&mut (*a_slice_g)).as_kernel_param(), (&mut (*a_slice_g)).as_kernel_param())?
                     },
+                }
+                match inner_g.device.synchronize() {
+                    Ok(()) => (),
+                    Err(err) => return Err(Error::Cuda(err)),
                 }
                 Ok(())
             },
