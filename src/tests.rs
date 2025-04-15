@@ -105,12 +105,12 @@ fn test_frontend_copy_copies_matrix()
 }
 
 #[test]
-fn test_frontend_force_transpose_transposes_matrix()
+fn test_frontend_really_transpose_transposes_matrix()
 {
     match Frontend::new() {
         Ok(frontend) => {
             let a = fixture_a(2, 3);
-            match frontend_force_transpose(&frontend, a.as_slice(), 2, 3) {
+            match frontend_really_transpose(&frontend, a.as_slice(), 2, 3) {
                 Ok(b) => assert_eq!(expected_transpose_a(a.as_slice(), 2, 3), b),
                 Err(_) => assert!(false),
             }
@@ -588,11 +588,11 @@ fn test_matrix_transpose_transposes_matrix()
 }
 
 #[test]
-fn test_matrix_force_transpose_transposes_matrix()
+fn test_matrix_really_transpose_transposes_matrix()
 {
     let a_elems = fixture_a(3, 2);
     let a = Matrix::new_with_elems(3, 2, a_elems.as_slice());
-    assert_eq!(expected_transpose_a(a_elems.as_slice(), 2, 3), a.force_transpose().elems());
+    assert_eq!(expected_transpose_a(a_elems.as_slice(), 2, 3), a.really_transpose().elems());
 }
 
 #[test]

@@ -325,11 +325,11 @@ impl Matrix
         }
     }
     
-    pub fn force_transpose(&self) -> Self
+    pub fn really_transpose(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
         let res = unsafe { frontend.create_matrix(self.col_count, self.row_count) }.unwrap();
-        frontend.force_transpose(self, &res).unwrap();
+        frontend.really_transpose(self, &res).unwrap();
         res
     }
     
@@ -1209,7 +1209,7 @@ impl Frontend
         }
     }    
     
-    pub fn force_transpose(&self, a: &Matrix, b: &Matrix) -> Result<()>
+    pub fn really_transpose(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.col_count || a.col_count != b.row_count {
             return Err(Error::TransposeSize(a.row_count, a.col_count, b.row_count, b.col_count)); 

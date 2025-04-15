@@ -574,11 +574,11 @@ pub(crate) fn frontend_copy(frontend: &Frontend, elems: &[f32], n: usize, m: usi
 }
 
 #[cfg(not(feature = "test_only_backend"))]
-pub(crate) fn frontend_force_transpose(frontend: &Frontend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+pub(crate) fn frontend_really_transpose(frontend: &Frontend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
 {
     let a = frontend.create_matrix_and_set_elems(m, n, a_elems)?;
     let b = frontend.create_matrix_and_set_zeros(n, m)?;
-    frontend.force_transpose(&a, &b)?;
+    frontend.really_transpose(&a, &b)?;
     Ok(frontend.elems_and_transpose_flag(&b)?.0)
 }
 
