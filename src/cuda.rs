@@ -429,6 +429,10 @@ impl Backend for CudaBackend
                     Ok(()) => (),
                     Err(err) => return Err(Error::Cuda(err)),
                 }
+                match inner_g.device.synchronize() {
+                    Ok(()) => (),
+                    Err(err) => return Err(Error::Cuda(err)),
+                }
             },
             _ => return Err(Error::InvalidBackendArray),
         }

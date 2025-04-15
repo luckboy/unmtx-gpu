@@ -69,4 +69,11 @@ fn main()
     let sum = elems.iter().fold(0.0f32, |x, y| x + y);
     println!("sum: {}", sum);
     println!("time: {}.{:06}", duration.as_secs(), duration.as_micros() % 1000000);
+    match finalize_default_backend() {
+        Ok(()) => (),
+        Err(err) => {
+            eprintln!("{}", err);
+            exit(1);
+        },
+    }
 }
