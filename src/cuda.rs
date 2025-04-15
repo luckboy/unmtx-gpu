@@ -16,9 +16,9 @@ use crate::mutex_lock;
 
 pub use cudarc::driver::DriverError;
 
-use cudarc::driver::CudaSlice;
 use cudarc::driver::CudaDevice;
 use cudarc::driver::CudaFunction;
+use cudarc::driver::CudaSlice;
 use cudarc::driver::DeviceRepr;
 use cudarc::driver::LaunchAsync;
 use cudarc::driver::LaunchConfig;
