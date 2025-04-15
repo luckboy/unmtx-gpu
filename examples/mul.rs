@@ -15,7 +15,7 @@ fn create_matrix(n: usize, m: usize) -> Matrix
     let mut elems: Vec<f32> = vec![0.0f32; n * m];
     for i in 0..n {
         for j in 0..m {
-            elems[m * i + j] = ((m + 1) * (i + 1) + j + 1) as f32;
+            elems[m * i + j] = (m * i + j) as f32;
         }
     }
     Matrix::new_with_elems(n, m, elems.as_slice())

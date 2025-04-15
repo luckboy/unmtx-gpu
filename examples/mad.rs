@@ -14,13 +14,13 @@ fn create_matrix(n: usize, m: usize, is_scalar: bool) -> Matrix
 {
     let mut elems: Vec<f32> = vec![0.0f32; n * m];
     let scalar = if is_scalar {
-        ((n + 1) * (m + 1)) as f32
+        (n * m) as f32
     } else {
         1.0f32
     };
     for i in 0..n {
         for j in 0..m {
-            elems[m * i + j] = (((m + 1) * (i + 1) + j + 1) as f32) * scalar;
+            elems[m * i + j] = ((m * i + j) as f32) * scalar;
         }
     }
     Matrix::new_with_elems(n, m, elems.as_slice())
