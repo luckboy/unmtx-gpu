@@ -53,7 +53,7 @@ fn main()
         },
         None => 100,
     };
-    let l: usize = match args.get(2) {
+    let l: usize = match args.get(3) {
         Some(s) => {
             match s.parse::<usize>() {
                 Ok(tmp_l) => tmp_l,
