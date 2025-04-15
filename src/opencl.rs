@@ -354,6 +354,9 @@ impl ClBackend
 
 impl Backend for ClBackend
 {
+    fn name(&self) -> &'static str
+    { "OpenCL" }
+    
     unsafe fn alloc(&self, n: usize) -> Result<BackendArray>
     {
         let inner_g = mutex_lock(&self.inner)?;

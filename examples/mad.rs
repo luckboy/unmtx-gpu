@@ -65,6 +65,14 @@ fn main()
         },
         None => 100,
     };
+    let frontend = match Frontend::new() {
+        Ok(tmp_frontend) => tmp_frontend,
+        Err(err) => {
+            eprintln!("{}", err);
+            exit(1);
+        },
+    };
+    println!("backend: {}", frontend.backend().name());
     let a = create_matrix(n, l, false);
     let b = create_matrix(l, m, false);
     let c = create_matrix(n, m, true);

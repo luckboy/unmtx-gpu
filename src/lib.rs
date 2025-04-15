@@ -27,6 +27,8 @@ pub mod cuda;
 
 pub trait Backend
 {
+    fn name(&self) -> &'static str;
+    
     unsafe fn alloc(&self, n: usize) -> Result<BackendArray>;
 
     fn alloc_and_store_zeros(&self, n: usize) -> Result<BackendArray>;
@@ -904,6 +906,9 @@ impl Frontend
 
     pub fn new_with_backend(backend: Arc<dyn Backend>) -> Frontend
     { Frontend { backend, } }
+    
+    pub fn backend(&self) -> Arc<dyn Backend>
+    { self.backend.clone() }
     
     pub unsafe fn create_matrix(&self, row_count: usize, col_count: usize) -> Result<Matrix>
     {

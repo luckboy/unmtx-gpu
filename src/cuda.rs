@@ -338,6 +338,9 @@ impl CudaBackend
 
 impl Backend for CudaBackend
 {
+    fn name(&self) -> &'static str
+    { "CUDA" }
+
     unsafe fn alloc(&self, n: usize) -> Result<BackendArray>
     {
         let inner_g = mutex_lock(&self.inner)?;
