@@ -256,6 +256,7 @@ macro_rules! matrix {
     };
 }
 
+/// A matrix structure.
 #[derive(Clone, Debug)]
 pub struct Matrix
 {
@@ -267,18 +268,21 @@ pub struct Matrix
 
 impl Matrix
 {
+    /// Creates a matrix with the number of rows and the number of columns.
     pub fn new(row_count: usize, col_count: usize) -> Self
     {
         let frontend = Frontend::new().unwrap();
         frontend.create_matrix_and_set_zeros(row_count, col_count).unwrap()
     }
 
+    /// Creates a matrix with the number of rows, the number of columns, and the elements.
     pub fn new_with_elems(row_count: usize, col_count: usize, elems: &[f32]) -> Self
     {
         let frontend = Frontend::new().unwrap();
         frontend.create_matrix_and_set_elems(row_count, col_count, elems).unwrap()
     }
 
+    /// Creates a matrix with the vector of rows.
     pub fn new_with_elem_vecs(elem_vecs: &[Vec<f32>]) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -294,21 +298,31 @@ impl Matrix
         frontend.create_matrix_and_set_elems(row_count, col_count, elems.as_slice()).unwrap()
     }
 
+    /// Returns the number of matrix rows.
     pub fn row_count(&self) -> usize
     { self.row_count }
     
+    /// Returns the number of matrix columns.
     pub fn col_count(&self) -> usize
     { self.col_count }
 
+    /// Returns `true` if the matrix is transposed, otherwise `false`.
+    ///
+    /// This method indeed returns the transposition flag of matix that is changed by
+    /// [`tranpose`](Self::transpose).
     pub fn is_transposed(&self) -> bool
     { self.is_transposed }
     
+    /// Return the matrix elements.
     pub fn elems(&self) -> Vec<f32>
     {
         let frontend = Frontend::new().unwrap();
         frontend.elems_and_transpose_flag(self).unwrap().0
     }
     
+    /// Creates a copy of matrix. 
+    ///
+    /// This method indeed copies the matrix memory to a new matrix memory.
     pub fn copy(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -317,6 +331,25 @@ impl Matrix
         res
     }
     
+    /// Transposes the matrix.
+    ///
+    /// This method doesn't indeed transpose the matrix but changes the transposition flag and
+    /// exchanges the number of matrix rows with the number of matrix columns.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0, 3.0],
+    ///     [4.0, 5.0, 6.0]
+    /// ];
+    /// let b = a.transpose();
+    /// assert_eq!(3, b.row_count());
+    /// assert_eq!(2, b.col_count());
+    /// assert_eq!(true, b.is_transposed());
+    /// assert_eq!(a.elems(), b.elems());
+    /// ```
     pub fn transpose(&self) -> Self
     {
         Matrix {
@@ -327,6 +360,24 @@ impl Matrix
         }
     }
     
+    /// Indeed transposes the matrix.
+    ///
+    /// This method indeed transposes the matrix without changing the transposition flag.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0, 3.0],
+    ///     [4.0, 5.0, 6.0]
+    /// ];
+    /// let b = a.really_transpose();
+    /// assert_eq!(3, b.row_count());
+    /// assert_eq!(2, b.col_count());
+    /// assert_eq!(false, b.is_transposed());
+    /// assert_eq!(vec![1.0, 4.0, 2.0, 5.0, 3.0, 6.0], b.elems());
+    /// ```
     pub fn really_transpose(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -335,6 +386,23 @@ impl Matrix
         res
     }
     
+    /// Multiplies the matrix elements by the `b` matrix elements.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = matrix![
+    ///     [5.0, 6.0],
+    ///     [7.0, 8.0]
+    /// ];
+    /// let c = a.mul_elems(&b);
+    /// assert_eq!(vec![1.0 * 5.0, 2.0 * 6.0, 3.0 * 7.0, 4.0 * 8.0], c.elems());
+    /// ```
     pub fn mul_elems(&self, b: &Self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -343,6 +411,27 @@ impl Matrix
         res
     }
 
+    /// Divides the matrix elements by the `b` matrix elements.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = matrix![
+    ///     [5.0, 6.0],
+    ///     [7.0, 8.0]
+    /// ];
+    /// let c = a.div_elems(&b);
+    /// let elems = c.elems();
+    /// assert!((1.0 / 5.0 - elems[0]).abs() < 0.001);
+    /// assert!((2.0 / 6.0 - elems[1]).abs() < 0.001);
+    /// assert!((3.0 / 7.0 - elems[2]).abs() < 0.001);
+    /// assert!((4.0 / 8.0 - elems[3]).abs() < 0.001);
+    /// ```
     pub fn div_elems(&self, b: &Self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -351,6 +440,19 @@ impl Matrix
         res
     }
 
+    /// Subtracts the scalar from the matrix (b - A).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = a.rsub(10.5);
+    /// assert_eq!(vec![10.5 - 1.0, 10.5 - 2.0, 10.5 - 3.0, 10.5 - 4.0], b.elems());
+    /// ```
     pub fn rsub(&self, b: f32) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -359,6 +461,23 @@ impl Matrix
         res
     }
 
+    /// Divides the scalar by the matrix (b / A).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = a.rdiv(10.5);
+    /// let elems = b.elems();
+    /// assert!((10.5 / 1.0 - elems[0]).abs() < 0.001);
+    /// assert!((10.5 / 2.0 - elems[1]).abs() < 0.001);
+    /// assert!((10.5 / 3.0 - elems[2]).abs() < 0.001);
+    /// assert!((10.5 / 4.0 - elems[3]).abs() < 0.001);
+    /// ```
     pub fn rdiv(&self, b: f32) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -367,6 +486,23 @@ impl Matrix
         res
     }
 
+    /// Calculates the sigmoid function for the matrix.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = a.sigmoid();
+    /// let elems = b.elems();
+    /// assert!((1.0 / (1.0 + (-1.0f32).exp()) - elems[0]).abs() < 0.001);
+    /// assert!((1.0 / (1.0 + (-2.0f32).exp()) - elems[1]).abs() < 0.001);
+    /// assert!((1.0 / (1.0 + (-3.0f32).exp()) - elems[2]).abs() < 0.001);
+    /// assert!((1.0 / (1.0 + (-4.0f32).exp()) - elems[3]).abs() < 0.001);
+    /// ```
     pub fn sigmoid(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -375,6 +511,23 @@ impl Matrix
         res
     }
 
+    /// Calculates the hiperbolic tan function for the matrix.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = a.tanh();
+    /// let elems = b.elems();
+    /// assert!((1.0f32.tanh() - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.tanh() - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.tanh() - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.tanh() - elems[3]).abs() < 0.001);
+    /// ```
     pub fn tanh(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -383,6 +536,25 @@ impl Matrix
         res
     }
 
+    /// Calculates the softmax function for the matrix.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = a.softmax();
+    /// let elems = b.elems();
+    /// let sum1 = 1.0f32.exp() + 3.0f32.exp();
+    /// let sum2 = 2.0f32.exp() + 4.0f32.exp();
+    /// assert!((1.0f32.exp() / sum1 - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.exp() / sum2 - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.exp() / sum1 - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.exp() / sum2 - elems[3]).abs() < 0.001);
+    /// ```
     pub fn softmax(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
