@@ -585,6 +585,11 @@ fn test_matrix_transpose_transposes_matrix()
     assert_eq!(2, a.col_count());
     assert_eq!(true, a.is_transposed());
     assert_eq!(elems, a.elems());
+    let b = a.transpose();
+    assert_eq!(2, b.row_count());
+    assert_eq!(3, b.col_count());
+    assert_eq!(false, b.is_transposed());
+    assert_eq!(elems, b.elems());
 }
 
 #[test]
