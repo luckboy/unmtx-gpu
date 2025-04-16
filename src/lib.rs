@@ -25,101 +25,186 @@ pub mod opencl;
 #[cfg(feature = "cuda")]
 pub mod cuda;
 
+/// A backend trait.
 pub trait Backend
 {
+    /// Returns the backend name.
     fn name(&self) -> &'static str;
     
+    /// Allocates a backend array.
     unsafe fn alloc(&self, n: usize) -> Result<BackendArray>;
 
+    /// Allocates a backend array and stores zeros to the backend array.
     fn alloc_and_store_zeros(&self, n: usize) -> Result<BackendArray>;
-    
+
+    /// Allocates a backend array and stores elements to the backend array.
     fn alloc_and_store(&self, elems: &[f32]) -> Result<BackendArray>;
     
+    /// Loads elements from the backenc array.
     fn load(&self, a: &BackendArray, elems: &mut [f32]) -> Result<()>;
 
+    /// Stores elements in the backend array.
     fn store(&self, a: &BackendArray, elems: &[f32]) -> Result<()>;
 
+    /// Copies the `a` backend array to the `b` backend array.
     fn copy(&self, a: &BackendArray, b: &BackendArray) -> Result<()>;
 
+    /// Transposes the `a` matrix and then the result is in the `b` matrix (B = A^T).
     fn transpose_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
-    
+
+    /// Adds the `a` matrix onto the `b` matrix and then the result is in the `c` matrix
+    /// (C = A + B).
     fn add_a_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
+    /// Adds the transposed `a` matrix onto the `b` matrix and then the result is in the `c` matrix
+    /// (C = A^T + B).
     fn add_at_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
     
+    /// Adds the `a` matrix onto the transposed `b` matrix and then the result is in the `c` matrix
+    /// (C = A + B^T).
     fn add_a_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
+    /// Adds the transposed `a` matrix onto the transposed `b` matrix and then the result is in the
+    /// `c` matrix (C = A^T + B^T).
     fn add_at_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
+    /// Subtracts the `b` matrix from the `a` matrix and then the result is in the `c` matrix
+    /// (C = A - B).
     fn sub_a_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
+    /// Subtracts the `b` matrix from the transposed `a` matrix and then the result is in the `c`
+    /// matrix (C = A^T - B).
     fn sub_at_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
     
+    /// Subtracts the transposed `b` matrix from the `a` matrix and then the result is in the `c`
+    /// matrix (C = A - B^T).
     fn sub_a_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
+    /// Subtracts the transposed `b` matrix from the transposed `a` matrix and then the result is
+    /// in the `c` matrix (C = A^T - B^T).
     fn sub_at_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;    
     
+    /// Multiplies the `a` matrix by the `b` matrix and then the result is in the `c` matrix
+    /// (C = A * B).
     fn mul_a_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize) -> Result<()>;
 
+    /// Multiplies the transposed `a` matrix by the `b` matrix and then the result is in the `c`
+    /// matrix (C = A^T * B).
     fn mul_at_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize) -> Result<()>;
 
+    /// Multiplies the `a` matrix by the transposed `b` matrix and then the result is in the `c`
+    /// matrix (C = A * B^T).
     fn mul_a_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize) -> Result<()>;
 
+    /// Multiplies the transposed `a` matrix by the transposed `b` matrix and then the result is in
+    /// the `c` matrix (C = A^T * B^T).
     fn mul_at_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize) -> Result<()>;
 
+    /// Multiplies the `a` matrix elements by the `b` matrix elements and then the result is in the
+    /// `c` matrix (Cij = Aij * Bij).
     fn mul_a_b_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
+    /// Multiplies the transposed `a` matrix elements by the `b` matrix elements and saves the
+    /// result to the `c` matrix (Cij = (A^T)ij * Bij).
     fn mul_at_b_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
-    
+
+    /// Multiplies the `a` matrix elements by the transposed `b` matrix elements and then the
+    /// result is in the `c` matrix (Cij = Aij * (B^T)ij).
     fn mul_a_bt_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
     
+    /// Multiplies the transposed `a` matrix elements by the transposed `b` matrix elements and
+    /// then the result is in the `c` matrix (Cij = (A^T)ij * (B^T)ij).
     fn mul_at_bt_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
+    /// Divides the `a` matrix elements by the `b` matrix elements and then the result is in the
+    /// `c` matrix (Cij = Aij / Bij).
     fn div_a_b_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
+    /// Divides the transposed `a` matrix elements by the `b` matrix elements and then the result
+    /// is in the `c` matrix (Cij = (A^T)ij / Bij).
     fn div_at_b_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
     
+    /// Divides the transposed `a` matrix elements by the `b` matrix elements and then the result
+    /// is in the `c` matrix (Cij = Aij / (B^T)ij).
     fn div_a_bt_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
     
+    /// Divides the transposed `a` matrix elements by the transposed `b` matrix elements and then
+    /// the result is in the `c` matrix (Cij = (A^T)ij / (B^T)ij).
     fn div_at_bt_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
+    /// Adds the `a` matrix onto the `b` scalar and then the result is in the `c` matrix (C = A + b).
     fn add_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
+    /// Adds the transposed `a` matrix onto the `b` scalar and then the result is in the `c` matrix
+    /// (C = A^T + b).
     fn add_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
+    /// Subtracts the `b` scalar from the `a` matrix and then the result is in the `c` matrix.
+    /// (C = A - b).
     fn sub_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
+    /// Subtracts the `b` scalar from the transposed `a` matrix and then the result is in the `c`
+    /// matrix (C = A^T - b).
     fn sub_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
+    /// Subtracts the `a` matrix from the `b` scalar  and then the result is in the `c` matrix
+    /// (C = b - A).
     fn rsub_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
+    /// Subtracts the transposed `a` matrix from the `b` scalar  and then the result is in the `c`
+    /// matrix (C = b - A^T).
     fn rsub_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
     
+    /// Multiplies the `a` matrix by the `b` scalar and then the result is in the `c` matrix
+    /// (C = A * b).
     fn mul_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
+    /// Multiplies the transposed `a` matrix by the `b` scalar and then the result is in the `c`
+    /// matrix (C = A^T * b).
     fn mul_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
+    /// Divides the `a` matrix by the `b` scalar and then the result is in the `c` matrix
+    /// (C = A / b).
     fn div_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
+    /// Divides the transposed `a` matrix by the `b` scalar and then the result is in the `c`
+    /// matrix (C = A^T / b).
     fn div_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
+    /// Divides the `b` scalar by the `a` matrix and then the result is in the `c` matrix
+    /// (C = b / A).
     fn rdiv_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
+    /// Divides the `b` scalar by the transposed `a` matrix and then the result is in the `c`
+    /// matrix (C = b / A^T).
     fn rdiv_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
+    /// Calculates sigmoid function for the `a` matrix adn the result is the `b` matrix
+    /// (B = sigmoid(A)).
     fn sigmoid_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
+    /// Calculates sigmoid function for the transposed `a` matrix and then the result is in the `b`
+    /// matrix (B = sigmoid(A^T)).
     fn sigmoid_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
+    /// Calculates hyperbolic tangent function for the `a` matrix and then the result is in `b`
+    /// matrix (B = tanh(A)).
     fn tanh_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
+    /// Calculates hyperbolic tangent function for the transposed `a` matrix and then the result is
+    /// in the `b` matrix (B = tanh(A^T)).
     fn tanh_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
+    /// Calculates softmax function for the `a` matrix and then the result is in the `b` matrix
+    /// (B = softmax(A)).
     fn softmax_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
+    /// Calculates softmax function for the transposed `a` matrix and then the result is in the `b`
+    /// matrix (B = softmax(A^T)).
     fn softmax_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 }
 
+/// An error enumeration.
 #[derive(Debug)]
 pub enum Error
 {
@@ -179,11 +264,16 @@ impl fmt::Display for Error
 
 pub type Result<T> = result::Result<T, Error>;
 
+/// An enumeration of backend array.
+///
+/// This enumeration contains a reference to a matrix array on device.
 #[derive(Debug)]
 pub enum BackendArray
 {
+    /// A backend array for OpenCL.
     #[cfg(feature = "opencl")]
     OpenCl(opencl::ClBackendArray),
+    /// A backend array for CUDA.
     #[cfg(feature = "cuda")]
     Cuda(cuda::CudaBackendArray),
 }
@@ -249,6 +339,21 @@ pub fn initialize_default_backend_for_uninitialized() -> Result<()>
 pub fn finalize_default_backend() -> Result<()>
 { unset_default_backend() }
 
+/// Creates a matrix from the arguments.
+///
+/// # Examples
+///
+/// ```
+/// # use unmtx_gpu::*;
+/// let a = matrix![
+///     [1.0, 2.0, 3.0],
+///     [4.0, 5.0, 6.0]
+/// ];
+/// assert_eq!(2, a.row_count());
+/// assert_eq!(3, a.col_count());
+/// assert_eq!(false, a.is_transposed());
+/// assert_eq!(vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0], a.elems());
+/// ```
 #[macro_export]
 macro_rules! matrix {
     ($([$($elem:expr),* $(,)*]),* $(,)*) => {
@@ -308,21 +413,21 @@ impl Matrix
 
     /// Returns `true` if the matrix is transposed, otherwise `false`.
     ///
-    /// This method indeed returns the transposition flag of matix that is changed by
-    /// [`tranpose`](Self::transpose).
+    /// This method indeed returns the transpose flag of matrix that is changed by
+    /// [`transpose`](Self::transpose).
     pub fn is_transposed(&self) -> bool
     { self.is_transposed }
     
-    /// Return the matrix elements.
+    /// Returns the matrix elements.
     pub fn elems(&self) -> Vec<f32>
     {
         let frontend = Frontend::new().unwrap();
         frontend.elems_and_transpose_flag(self).unwrap().0
     }
     
-    /// Creates a copy of matrix. 
+    /// Creates a matrix copy. 
     ///
-    /// This method indeed copies the matrix memory to a new matrix memory.
+    /// This method indeed copies the matrix array to a new matrix array.
     pub fn copy(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -331,9 +436,9 @@ impl Matrix
         res
     }
     
-    /// Transposes the matrix.
+    /// Transposes the matrix (A^T).
     ///
-    /// This method doesn't indeed transpose the matrix but changes the transposition flag and
+    /// This method doesn't indeed transpose the matrix but changes the transpose flag and
     /// exchanges the number of matrix rows with the number of matrix columns.
     ///
     /// # Examples
@@ -365,9 +470,9 @@ impl Matrix
         }
     }
     
-    /// Indeed transposes the matrix.
+    /// Indeed transposes the matrix (A^T).
     ///
-    /// This method indeed transposes the matrix without changing the transposition flag.
+    /// This method indeed transposes the matrix without changing the transpose flag.
     ///
     /// # Examples
     ///
@@ -391,7 +496,7 @@ impl Matrix
         res
     }
     
-    /// Multiplies the matrix elements by the `b` matrix elements.
+    /// Multiplies the matrix elements by the `b` matrix elements (Aij * Bij).
     ///
     /// # Examples
     ///
@@ -416,7 +521,7 @@ impl Matrix
         res
     }
 
-    /// Divides the matrix elements by the `b` matrix elements.
+    /// Divides the matrix elements by the `b` matrix elements (Aij / Bij).
     ///
     /// # Examples
     ///
@@ -445,7 +550,7 @@ impl Matrix
         res
     }
 
-    /// Subtracts the scalar from the matrix (b - A).
+    /// Subtracts the matrix from the scalar (b - A).
     ///
     /// # Examples
     ///
@@ -491,7 +596,7 @@ impl Matrix
         res
     }
 
-    /// Calculates the sigmoid function for the matrix.
+    /// Calculates sigmoid function for the matrix (sigmoid(A)).
     ///
     /// # Examples
     ///
@@ -516,7 +621,7 @@ impl Matrix
         res
     }
 
-    /// Calculates the hiperbolic tan function for the matrix.
+    /// Calculates hiperbolic tangent function for the matrix (tanh(A)).
     ///
     /// # Examples
     ///
@@ -541,7 +646,7 @@ impl Matrix
         res
     }
 
-    /// Calculates the softmax function for the matrix.
+    /// Calculates softmax function for the matrix (softmax(A)).
     ///
     /// # Examples
     ///
@@ -1065,6 +1170,7 @@ impl DivAssign<&f32> for Matrix
     }
 }
 
+/// A frontend structure.
 pub struct Frontend
 {
     backend: Arc<dyn Backend>,
@@ -1072,6 +1178,10 @@ pub struct Frontend
 
 impl Frontend
 {
+    /// Creates a frontend with a default backend.
+    ///
+    /// This method also automatically initializes a default backend if the default backend is
+    /// uninitialized.
     pub fn new() -> Result<Frontend>
     {
         initialize_default_backend_for_uninitialized()?;
@@ -1081,12 +1191,15 @@ impl Frontend
         }
     }
 
+    /// Creates a frotend with the backend.
     pub fn new_with_backend(backend: Arc<dyn Backend>) -> Frontend
     { Frontend { backend, } }
     
+    /// Returns the backend.
     pub fn backend(&self) -> Arc<dyn Backend>
     { self.backend.clone() }
     
+    /// Creates a matrix with unset elements.
     pub unsafe fn create_matrix(&self, row_count: usize, col_count: usize) -> Result<Matrix>
     {
         Ok(Matrix {
@@ -1097,6 +1210,7 @@ impl Frontend
         })
     }
 
+    /// Creates a matrix and sets the matrix elements on zeros.
     pub fn create_matrix_and_set_zeros(&self, row_count: usize, col_count: usize) -> Result<Matrix>
     {
         Ok(Matrix {
@@ -1107,6 +1221,7 @@ impl Frontend
         })
     }
 
+    /// Creates a matrix and sets the matrix elements.
     pub fn create_matrix_and_set_elems(&self, row_count: usize, col_count: usize, elems: &[f32]) -> Result<Matrix>
     {
         if row_count * col_count != elems.len() {
@@ -1120,6 +1235,7 @@ impl Frontend
         })
     }
 
+    /// Sets the matrix elements.
     pub fn set_elems(&self, a: &Matrix, elems: &[f32]) -> Result<()>
     {
         if a.row_count() * a.col_count() != elems.len() {
@@ -1127,7 +1243,10 @@ impl Frontend
         }
         self.backend.store(&*a.array, elems)
     }    
-    
+
+    /// Copies the `a` matrix to the `b` matrix.
+    ///
+    /// This method indeed copies the `a` matrix array to the `b` matrix array.
     pub fn copy(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -1136,6 +1255,8 @@ impl Frontend
         self.backend.copy(&*a.array, &*b.array)        
     }    
     
+    /// Copies matrix elements to the mutable slice and the transpose flag to the object that
+    /// is referred by the reference.
     pub fn get_elems_and_transpose_flag(&self, a: &Matrix, elems: &mut [f32], is_transposed: &mut bool) -> Result<()>
     {
         if a.row_count * a.col_count != elems.len() {
@@ -1150,6 +1271,7 @@ impl Frontend
         Ok(())
     }
     
+    /// Returns the elements and the transpose flag of matrix.
     pub fn elems_and_transpose_flag(&self, a: &Matrix) -> Result<(Vec<f32>, bool)>
     {
         let mut elems: Vec<f32> = vec![0.0; a.row_count * a.col_count];
@@ -1158,6 +1280,7 @@ impl Frontend
         Ok((elems, is_transposed))
     }
     
+    /// Adds the `a` matrix onto the `b` matrix and then the result is in the `c` matrix (C = A + B).
     pub fn add(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -1177,6 +1300,8 @@ impl Frontend
         }
     }
 
+    /// Subtracts the `b` matrix from the `a` matrix and then the result is in the `c` matrix
+    /// (C = A - B).
     pub fn sub(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -1196,6 +1321,8 @@ impl Frontend
         }
     }
 
+    /// Multiplies the `a` matrix by the `b` matrix and then the result is in the `c` matrix
+    /// (C = A * B).
     pub fn mul(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
     {
         if a.row_count != c.row_count {
@@ -1218,6 +1345,8 @@ impl Frontend
         }
     }
 
+    /// Multiplies the `a` matrix elements by the `b` matrix elements and then the result is in the
+    /// `c` matrix (Cij = Aij * Bij). 
     pub fn mul_elems(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -1237,6 +1366,8 @@ impl Frontend
         }
     }
 
+    /// Divides the `a` matrix elements by the `b` matrix elements and then the result is in the `c`
+    /// matrix (Cij = Aij / Bij).
     pub fn div_elems(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -1256,6 +1387,7 @@ impl Frontend
         }
     }
 
+    /// Adds the `a` matrix onto the `b` scalar and then the result is in the `c` matrix (C = A + b).
     pub fn add_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
         if a.row_count != c.row_count || a.col_count != c.col_count {
@@ -1271,6 +1403,8 @@ impl Frontend
         }
     }
 
+    /// Subtracts the `b` scalar from the `a` matrix and then the result is in the `c` matrix
+    /// (C = A - b).
     pub fn sub_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
         if a.row_count != c.row_count || a.col_count != c.col_count {
@@ -1286,6 +1420,8 @@ impl Frontend
         }
     }
 
+    /// Subtracts the `a` matrix from the `b` scalar and then the result is in the `c` matrix
+    /// (C = b - A).
     pub fn rsub_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
         if a.row_count != c.row_count || a.col_count != c.col_count {
@@ -1301,6 +1437,8 @@ impl Frontend
         }
     }
     
+    /// Multiplies the `a` matrix by the `b` scalar and then the result is in the `c` matrix
+    /// (C = A * b).
     pub fn mul_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
         if a.row_count != c.row_count || a.col_count != c.col_count {
@@ -1316,6 +1454,8 @@ impl Frontend
         }
     }
     
+    /// Divides the `a` matrix by the `b` scalar and then the result is in the `c` matrix
+    /// (C = A / b). 
     pub fn div_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
         if a.row_count != c.row_count || a.col_count != c.col_count {
@@ -1331,6 +1471,8 @@ impl Frontend
         }
     }
 
+    /// Divides the `b` scalar by the `a` matrix and then the result is in the `c` matrix
+    /// (C = b / A). 
     pub fn rdiv_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
         if a.row_count != c.row_count || a.col_count != c.col_count {
@@ -1346,6 +1488,8 @@ impl Frontend
         }
     }
 
+    /// Calculates sigmoid function for the `a` matrix and then the result is in the `b` matrix
+    /// (B = sigmoid(A)).
     pub fn sigmoid(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -1361,6 +1505,8 @@ impl Frontend
         }
     }
 
+    /// Calculates hyperbolic tangent function for the `a` matrix and then the result is in the `b`
+    /// matrix (B = tanh(A)).
     pub fn tanh(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -1376,6 +1522,8 @@ impl Frontend
         }
     }    
 
+    /// Calculates softmax function for the `a` matrix and then the result is in the `b` matrix
+    /// (B = softmax(A)).
     pub fn softmax(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -1391,6 +1539,9 @@ impl Frontend
         }
     }    
     
+    /// Indeed transposes the `a` matrix and then the result is in the `b` matrix (B = A^T).
+    ///
+    /// This method indeed transposes the `a` matrix without changing the transpose flag.
     pub fn really_transpose(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.col_count || a.col_count != b.row_count {
