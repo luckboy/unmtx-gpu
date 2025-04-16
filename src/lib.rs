@@ -349,6 +349,11 @@ impl Matrix
     /// assert_eq!(2, b.col_count());
     /// assert_eq!(true, b.is_transposed());
     /// assert_eq!(a.elems(), b.elems());
+    /// let c = b.transpose();
+    /// assert_eq!(2, c.row_count());
+    /// assert_eq!(3, c.col_count());
+    /// assert_eq!(false, c.is_transposed());
+    /// assert_eq!(a.elems(), c.elems());
     /// ```
     pub fn transpose(&self) -> Self
     {
