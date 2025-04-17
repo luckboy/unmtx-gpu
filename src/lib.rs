@@ -192,12 +192,12 @@ pub trait Backend
     /// (<math><mrow><mi>C</mi><mo>=</mo><mfrac><msup><mi>A</mi><mi>T</mi></msup><mi>b</mi></mfrac></mrow></math>).
     fn div_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Divides the `b` scalar by the `a` matrix and then the result is in the `c` matrix
+    /// Divides the `b` scalar by the `a` matrix elements and then the result is in the `c` matrix
     /// (<math><mrow><msub><mi>C</mi><mi>ij</mi></msub><mo>=</mo><mfrac><mi>b</mi><msub><mi>A</mi><mi>ij</mi></msub></mfrac></mrow></math>).
     fn rdiv_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Divides the `b` scalar by the transposed `a` matrix and then the result is in the `c`
-    /// matrix
+    /// Divides the `b` scalar by the transposed `a` matrix elements and then the result is in the
+    /// `c` matrix
     /// (<math><mrow><msub><mi>C</mi><mi>ij</mi></msub><mo>=</mo><mfrac><mi>b</mi><msub><msup><mi>A</mi><mi>T</mi></msup><mi>ij</mi></msub></mfrac></mrow></math>).
     fn rdiv_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
@@ -602,7 +602,7 @@ impl Matrix
         res
     }
 
-    /// Divides the scalar by the matrix
+    /// Divides the scalar by the matrix elements
     /// (<math><mrow><mfrac><mi>b</mi><msub><mi>A</mi><mi>ij</mi></msub></mfrac></mrow></math>).
     ///
     /// # Examples
@@ -1510,7 +1510,7 @@ impl Frontend
         }
     }
 
-    /// Divides the `b` scalar by the `a` matrix and then the result is in the `c` matrix
+    /// Divides the `b` scalar by the `a` matrix elements and then the result is in the `c` matrix
     /// (<math><mrow><msub><mi>C</mi><mi>ij</mi></msub><mo>=</mo><mfrac><mi>b</mi><msub><mi>A</mi><mi>ij</mi></msub></mfrac></mrow></math>).
     pub fn rdiv_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
