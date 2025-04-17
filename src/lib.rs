@@ -34,10 +34,10 @@ pub trait Backend
     /// Allocates a backend array.
     unsafe fn alloc(&self, n: usize) -> Result<BackendArray>;
 
-    /// Allocates a backend array and stores zeros to the backend array.
+    /// Allocates a backend array and stores zeros in the backend array.
     fn alloc_and_store_zeros(&self, n: usize) -> Result<BackendArray>;
 
-    /// Allocates a backend array and stores elements to the backend array.
+    /// Allocates a backend array and stores the elements in the backend array.
     fn alloc_and_store(&self, elems: &[f32]) -> Result<BackendArray>;
     
     /// Loads elements from the backenc array.
@@ -1255,7 +1255,7 @@ impl Frontend
         self.backend.copy(&*a.array, &*b.array)        
     }    
     
-    /// Copies matrix elements to the mutable slice and the transpose flag to the object that
+    /// Copies the matrix elements to the mutable slice and the transpose flag to the object that
     /// is referred by the reference.
     pub fn get_elems_and_transpose_flag(&self, a: &Matrix, elems: &mut [f32], is_transposed: &mut bool) -> Result<()>
     {
