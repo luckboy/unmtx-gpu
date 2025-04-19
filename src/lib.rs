@@ -50,183 +50,183 @@ pub trait Backend
     fn copy(&self, a: &BackendArray, b: &BackendArray) -> Result<()>;
 
     /// Transposes the `a` matrix and then the result is in the `b` matrix
-    /// (<math><mrow><mi>C</mi><mo>=</mo><msup><mi>A</mi><mi>T</mi></msup></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><msup><mi>A</mi><mi>T</mi></msup></mrow></math>).
     fn transpose_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Adds the `a` matrix onto the `b` matrix and then the result is in the `c` matrix
-    /// (<math><mrow><mi>C</mi><mo>=</mo><mi>A</mi><mo>+</mo><mi>B</mi></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><mi>A</mi><mo>+</mo><mi>B</mi></mrow></math>).
     fn add_a_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Adds the transposed `a` matrix onto the `b` matrix and then the result is in the `c` matrix
-    /// (<math><mrow><mi>C</mi><mo>=</mo><msup><mi>A</mi><mi>T</mi></msup><mo>+</mo><mi>B</mi></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><msup><mi>A</mi><mi>T</mi></msup><mo>+</mo><mi>B</mi></mrow></math>).
     fn add_at_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
     
     /// Adds the `a` matrix onto the transposed `b` matrix and then the result is in the `c` matrix
-    /// (<math><mrow><mi>C</mi><mo>=</mo><mi>A</mi><mo>+</mo><msup><mi>B</mi><mi>T</mi></msup></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><mi>A</mi><mo>+</mo><msup><mi>B</mi><mi>T</mi></msup></mrow></math>).
     fn add_a_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Adds the transposed `a` matrix onto the transposed `b` matrix and then the result is in the
     /// `c` matrix
-    /// (<math><mrow><mi>C</mi><mo>=</mo><msup><mi>A</mi><mi>T</mi></msup><mo>+</mo><msup><mi>B</mi><mi>T</mi></msup></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><msup><mi>A</mi><mi>T</mi></msup><mo>+</mo><msup><mi>B</mi><mi>T</mi></msup></mrow></math>).
     fn add_at_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Subtracts the `b` matrix from the `a` matrix and then the result is in the `c` matrix
-    /// (<math><mrow><mi>C</mi><mo>=</mo><mi>A</mi><mo>-</mo><mi>B</mi></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><mi>A</mi><mo>-</mo><mi>B</mi></mrow></math>).
     fn sub_a_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Subtracts the `b` matrix from the transposed `a` matrix and then the result is in the `c`
     /// matrix
-    /// (<math><mrow><mi>C</mi><mo>=</mo><msup><mi>A</mi><mi>T</mi></msup><mo>-</mo><mi>B</mi></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><msup><mi>A</mi><mi>T</mi></msup><mo>-</mo><mi>B</mi></mrow></math>).
     fn sub_at_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
     
     /// Subtracts the transposed `b` matrix from the `a` matrix and then the result is in the `c`
     /// matrix
-    /// (<math><mrow><mi>C</mi><mo>=</mo><mi>A</mi><mo>-</mo><msup><mi>B</mi><mi>T</mi></msup></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><mi>A</mi><mo>-</mo><msup><mi>B</mi><mi>T</mi></msup></mrow></math>).
     fn sub_a_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Subtracts the transposed `b` matrix from the transposed `a` matrix and then the result is
     /// in the `c` matrix
-    /// (<math><mrow><mi>C</mi><mo>=</mo><msup><mi>A</mi><mi>T</mi></msup><mo>-</mo><msup><mi>B</mi><mi>T</mi></msup></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><msup><mi>A</mi><mi>T</mi></msup><mo>-</mo><msup><mi>B</mi><mi>T</mi></msup></mrow></math>).
     fn sub_at_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;    
     
     /// Multiplies the `a` matrix by the `b` matrix and then the result is in the `c` matrix
-    /// (<math><mrow><mi>C</mi><mo>=</mo><mi>A</mi><mo>·</mo><mi>B</mi></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><mi>A</mi><mo>·</mo><mi>B</mi></mrow></math>).
     fn mul_a_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize) -> Result<()>;
 
     /// Multiplies the transposed `a` matrix by the `b` matrix and then the result is in the `c`
     /// matrix
-    /// (<math><mrow><mi>C</mi><mo>=</mo><msup><mi>A</mi><mi>T</mi></msup><mo>·</mo><mi>B</mi></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><msup><mi>A</mi><mi>T</mi></msup><mo>·</mo><mi>B</mi></mrow></math>).
     fn mul_at_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize) -> Result<()>;
 
     /// Multiplies the `a` matrix by the transposed `b` matrix and then the result is in the `c`
     /// matrix
-    /// (<math><mrow><mi>C</mi><mo>=</mo><mi>A</mi><mo>·</mo><msup><mi>B</mi><mi>T</mi></msup></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><mi>A</mi><mo>·</mo><msup><mi>B</mi><mi>T</mi></msup></mrow></math>).
     fn mul_a_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize) -> Result<()>;
 
     /// Multiplies the transposed `a` matrix by the transposed `b` matrix and then the result is in
     /// the `c` matrix
-    /// (<math><mrow><mi>C</mi><mo>=</mo><msup><mi>A</mi><mi>T</mi></msup><mo>·</mo><msup><mi>B</mi><mi>T</mi></msup></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><msup><mi>A</mi><mi>T</mi></msup><mo>·</mo><msup><mi>B</mi><mi>T</mi></msup></mrow></math>).
     fn mul_at_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize) -> Result<()>;
 
     /// Multiplies the `a` matrix elements by the `b` matrix elements and then the result is in the
     /// `c` matrix
-    /// (<math><mrow><msub><mi>C</mi><mi>ij</mi></msub><mo>=</mo><msub><mi>A</mi><mi>ij</mi></msub><mo>·</mo><msub><mi>B</mi><mi>ij</mi></msub></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>C</mi><mi>ij</mi></msub><mo>=</mo><msub><mi>A</mi><mi>ij</mi></msub><mo>·</mo><msub><mi>B</mi><mi>ij</mi></msub></mrow></math>).
     fn mul_a_b_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Multiplies the transposed `a` matrix elements by the `b` matrix elements and saves the
     /// result to the `c` matrix
-    /// (<math><mrow><msub><mi>C</mi><mi>ij</mi></msub><mo>=</mo><msub><msup><mi>A</mi><mi>T</mi></msup><mi>ij</mi></msub><mo>·</mo><msub><mi>B</mi><mi>ij</mi></msub></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>C</mi><mi>ij</mi></msub><mo>=</mo><msub><msup><mi>A</mi><mi>T</mi></msup><mi>ij</mi></msub><mo>·</mo><msub><mi>B</mi><mi>ij</mi></msub></mrow></math>).
     fn mul_at_b_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Multiplies the `a` matrix elements by the transposed `b` matrix elements and then the
     /// result is in the `c` matrix
-    /// (<math><mrow><msub><mi>C</mi><mi>ij</mi></msub><mo>=</mo><msub><mi>A</mi><mi>ij</mi></msub><mo>·</mo><msub><msup><mi>B</mi><mi>T</mi></msup><mi>ij</mi></msub></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>C</mi><mi>ij</mi></msub><mo>=</mo><msub><mi>A</mi><mi>ij</mi></msub><mo>·</mo><msub><msup><mi>B</mi><mi>T</mi></msup><mi>ij</mi></msub></mrow></math>).
     fn mul_a_bt_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
     
     /// Multiplies the transposed `a` matrix elements by the transposed `b` matrix elements and
     /// then the result is in the `c` matrix.
-    /// (<math><mrow><msub><mi>C</mi><mi>ij</mi></msub><mo>=</mo><msub><msup><mi>A</mi><mi>T</mi></msup><mi>ij</mi></msub><mo>·</mo><msub><msup><mi>B</mi><mi>T</mi></msup><mi>ij</mi></msub></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>C</mi><mi>ij</mi></msub><mo>=</mo><msub><msup><mi>A</mi><mi>T</mi></msup><mi>ij</mi></msub><mo>·</mo><msub><msup><mi>B</mi><mi>T</mi></msup><mi>ij</mi></msub></mrow></math>).
     fn mul_at_bt_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Divides the `a` matrix elements by the `b` matrix elements and then the result is in the
     /// `c` matrix
-    /// (<math><mrow><msub><mi>C</mi><mi>ij</mi></msub><mo>=</mo><mfrac><msub><mi>A</mi><mi>ij</mi></msub><msub><mi>B</mi><mi>ij</mi></msub></mfrac></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>C</mi><mi>ij</mi></msub><mo>=</mo><mfrac><msub><mi>A</mi><mi>ij</mi></msub><msub><mi>B</mi><mi>ij</mi></msub></mfrac></mrow></math>).
     fn div_a_b_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Divides the transposed `a` matrix elements by the `b` matrix elements and then the result
     /// is in the `c` matrix
-    /// (<math><mrow><msub><mi>C</mi><mi>ij</mi></msub><mo>=</mo><mfrac><msub><msup><mi>A</mi><mi>T</mi></msup><mi>ij</mi></msub><msub><mi>B</mi><mi>ij</mi></msub></mfrac></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>C</mi><mi>ij</mi></msub><mo>=</mo><mfrac><msub><msup><mi>A</mi><mi>T</mi></msup><mi>ij</mi></msub><msub><mi>B</mi><mi>ij</mi></msub></mfrac></mrow></math>).
     fn div_at_b_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
     
     /// Divides the transposed `a` matrix elements by the `b` matrix elements and then the result
     /// is in the `c` matrix
-    /// (<math><mrow><msub><mi>C</mi><mi>ij</mi></msub><mo>=</mo><mfrac><msub><mi>A</mi><mi>ij</mi></msub><msub><msup><mi>B</mi><mi>T</mi></msup><mi>ij</mi></msub></mfrac></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>C</mi><mi>ij</mi></msub><mo>=</mo><mfrac><msub><mi>A</mi><mi>ij</mi></msub><msub><msup><mi>B</mi><mi>T</mi></msup><mi>ij</mi></msub></mfrac></mrow></math>).
     fn div_a_bt_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
     
     /// Divides the transposed `a` matrix elements by the transposed `b` matrix elements and then
     /// the result is in the `c` matrix
-    /// (<math><mrow><msub><mi>C</mi><mi>ij</mi></msub><mo>=</mo><mfrac><msub><msup><mi>A</mi><mi>T</mi></msup><mi>ij</mi></msub><msub><msup><mi>B</mi><mi>T</mi></msup><mi>ij</mi></msub></mfrac></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>C</mi><mi>ij</mi></msub><mo>=</mo><mfrac><msub><msup><mi>A</mi><mi>T</mi></msup><mi>ij</mi></msub><msub><msup><mi>B</mi><mi>T</mi></msup><mi>ij</mi></msub></mfrac></mrow></math>).
     fn div_at_bt_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Adds the `a` matrix onto the `b` scalar and then the result is in the `c` matrix
-    /// (<math><mrow><mi>C</mi><mo>=</mo><mi>A</mi><mo>+</mo><mi>b</mi></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><mi>A</mi><mo>+</mo><mi>b</mi></mrow></math>).
     fn add_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Adds the transposed `a` matrix onto the `b` scalar and then the result is in the `c` matrix
-    /// (<math><mrow><mi>C</mi><mo>=</mo><msup><mi>A</mi><mi>T</mi></msup><mo>+</mo><mi>b</mi></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><msup><mi>A</mi><mi>T</mi></msup><mo>+</mo><mi>b</mi></mrow></math>).
     fn add_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Subtracts the `b` scalar from the `a` matrix and then the result is in the `c` matrix.
-    /// (<math><mrow><mi>C</mi><mo>=</mo><mi>A</mi><mo>-</mo><mi>b</mi></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><mi>A</mi><mo>-</mo><mi>b</mi></mrow></math>).
     fn sub_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Subtracts the `b` scalar from the transposed `a` matrix and then the result is in the `c`
     /// matrix
-    /// (<math><mrow><mi>C</mi><mo>=</mo><msup><mi>A</mi><mi>T</mi></msup><mo>-</mo><mi>b</mi></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><msup><mi>A</mi><mi>T</mi></msup><mo>-</mo><mi>b</mi></mrow></math>).
     fn sub_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Subtracts the `a` matrix from the `b` scalar  and then the result is in the `c` matrix
-    /// (<math><mrow><mi>C</mi><mo>=</mo><mi>b</mi><mo>-</mo><mi>A</mi></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><mi>b</mi><mo>-</mo><mi>A</mi></mrow></math>).
     fn rsub_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Subtracts the transposed `a` matrix from the `b` scalar  and then the result is in the `c`
     /// matrix
-    /// (<math><mrow><mi>C</mi><mo>=</mo><mi>b</mi><mo>-</mo><msup><mi>A</mi><mi>T</mi></msup></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><mi>b</mi><mo>-</mo><msup><mi>A</mi><mi>T</mi></msup></mrow></math>).
     fn rsub_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
     
     /// Multiplies the `a` matrix by the `b` scalar and then the result is in the `c` matrix
-    /// (<math><mrow><mi>C</mi><mo>=</mo><mi>A</mi><mo>·</mo><mi>b</mi></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><mi>A</mi><mo>·</mo><mi>b</mi></mrow></math>).
     fn mul_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Multiplies the transposed `a` matrix by the `b` scalar and then the result is in the `c`
     /// matrix
-    /// (<math><mrow><mi>C</mi><mo>=</mo><msup><mi>A</mi><mi>T</mi></msup><mo>·</mo><mi>b</mi></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><msup><mi>A</mi><mi>T</mi></msup><mo>·</mo><mi>b</mi></mrow></math>).
     fn mul_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Divides the `a` matrix by the `b` scalar and then the result is in the `c` matrix
-    /// (<math><mrow><mi>C</mi><mo>=</mo><mfrac><mi>A</mi><mi>b</mi></mfrac></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><mfrac><mi>A</mi><mi>b</mi></mfrac></mrow></math>).
     fn div_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Divides the transposed `a` matrix by the `b` scalar and then the result is in the `c`
     /// matrix
-    /// (<math><mrow><mi>C</mi><mo>=</mo><mfrac><msup><mi>A</mi><mi>T</mi></msup><mi>b</mi></mfrac></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><mfrac><msup><mi>A</mi><mi>T</mi></msup><mi>b</mi></mfrac></mrow></math>).
     fn div_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Divides the `b` scalar by the `a` matrix elements and then the result is in the `c` matrix
-    /// (<math><mrow><msub><mi>C</mi><mi>ij</mi></msub><mo>=</mo><mfrac><mi>b</mi><msub><mi>A</mi><mi>ij</mi></msub></mfrac></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>C</mi><mi>ij</mi></msub><mo>=</mo><mfrac><mi>b</mi><msub><mi>A</mi><mi>ij</mi></msub></mfrac></mrow></math>).
     fn rdiv_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Divides the `b` scalar by the transposed `a` matrix elements and then the result is in the
     /// `c` matrix
-    /// (<math><mrow><msub><mi>C</mi><mi>ij</mi></msub><mo>=</mo><mfrac><mi>b</mi><msub><msup><mi>A</mi><mi>T</mi></msup><mi>ij</mi></msub></mfrac></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>C</mi><mi>ij</mi></msub><mo>=</mo><mfrac><mi>b</mi><msub><msup><mi>A</mi><mi>T</mi></msup><mi>ij</mi></msub></mfrac></mrow></math>).
     fn rdiv_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Calculates sigmoid function for the `a` matrix adn the result is the `b` matrix
-    /// (<math><mrow><mi>B</mi><mo>=</mo><mi>sigmoid</mi><mo fence="true">(</mo><mi>A</mi><mo fence="true">)</mo></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>B</mi><mo>=</mo><mi>sigmoid</mi><mo fence="true">(</mo><mi>A</mi><mo fence="true">)</mo></mrow></math>).
     fn sigmoid_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Calculates sigmoid function for the transposed `a` matrix and then the result is in the `b`
     /// matrix
-    /// (<math><mrow><mi>B</mi><mo>=</mo><mi>sigmoid</mi><mo fence="true">(</mo><msup><mi>A</mi><mi>T</mi></msup><mo fence="true">)</mo></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>B</mi><mo>=</mo><mi>sigmoid</mi><mo fence="true">(</mo><msup><mi>A</mi><mi>T</mi></msup><mo fence="true">)</mo></mrow></math>).
     fn sigmoid_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Calculates hyperbolic tangent function for the `a` matrix and then the result is in `b`
     /// matrix
-    /// (<math><mrow><mi>B</mi><mo>=</mo><mi>tanh</mi><mo fence="true">(</mo><mi>A</mi><mo fence="true">)</mo></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>B</mi><mo>=</mo><mi>tanh</mi><mo fence="true">(</mo><mi>A</mi><mo fence="true">)</mo></mrow></math>).
     fn tanh_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Calculates hyperbolic tangent function for the transposed `a` matrix and then the result is
     /// in the `b` matrix
-    /// (<math><mrow><mi>B</mi><mo>=</mo><mi>tanh</mi><mo fence="true">(</mo><msup><mi>A</mi><mi>T</mi></msup><mo fence="true">)</mo></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>B</mi><mo>=</mo><mi>tanh</mi><mo fence="true">(</mo><msup><mi>A</mi><mi>T</mi></msup><mo fence="true">)</mo></mrow></math>).
     fn tanh_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Calculates softmax function for the `a` matrix and then the result is in the `b` matrix
-    /// (<math><mrow><mi>B</mi><mo>=</mo><mi>softmax</mi><mo fence="true">(</mo><mi>A</mi><mo fence="true">)</mo></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>B</mi><mo>=</mo><mi>softmax</mi><mo fence="true">(</mo><mi>A</mi><mo fence="true">)</mo></mrow></math>).
     fn softmax_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Calculates softmax function for the transposed `a` matrix and then the result is in the `b`
     /// matrix
-    /// (<math><mrow><mi>B</mi><mo>=</mo><mi>softmax</mi><mo fence="true">(</mo><msup><mi>A</mi><mi>T</mi></msup><mo fence="true">)</mo></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>B</mi><mo>=</mo><mi>softmax</mi><mo fence="true">(</mo><msup><mi>A</mi><mi>T</mi></msup><mo fence="true">)</mo></mrow></math>).
     fn softmax_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 }
 
@@ -463,7 +463,7 @@ impl Matrix
     }
     
     /// Transposes the matrix
-    /// (<math><mrow><msup><mi>A</mi><mi>T</mi></msup></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msup><mi>A</mi><mi>T</mi></msup></mrow></math>).
     ///
     /// This method doesn't indeed transpose the matrix but changes the transpose flag and
     /// exchanges the number of matrix rows with the number of matrix columns.
@@ -498,7 +498,7 @@ impl Matrix
     }
     
     /// Indeed transposes the matrix
-    /// (<math><mrow><msup><mi>A</mi><mi>T</mi></msup></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msup><mi>A</mi><mi>T</mi></msup></mrow></math>).
     ///
     /// This method indeed transposes the matrix without changing the transpose flag.
     ///
@@ -525,7 +525,7 @@ impl Matrix
     }
     
     /// Multiplies the matrix elements by the `b` matrix elements
-    /// (<math><mrow><msub><mi>A</mi><mi>ij</mi></msub><mo>·</mo><msub><mi>B</mi><mi>ij</mi></msub></mrow></math>).    
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>A</mi><mi>ij</mi></msub><mo>·</mo><msub><mi>B</mi><mi>ij</mi></msub></mrow></math>).    
     ///
     /// # Examples
     ///
@@ -551,7 +551,7 @@ impl Matrix
     }
 
     /// Divides the matrix elements by the `b` matrix elements
-    /// (<math><mrow><mfrac><msub><mi>A</mi><mi>ij</mi></msub><msub><mi>B</mi><mi>ij</mi></msub></mfrac></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mfrac><msub><mi>A</mi><mi>ij</mi></msub><msub><mi>B</mi><mi>ij</mi></msub></mfrac></mrow></math>).
     ///
     /// # Examples
     ///
@@ -581,7 +581,7 @@ impl Matrix
     }
 
     /// Subtracts the matrix from the scalar
-    /// (<math><mrow><mi>b</mi><mo>-</mo><mi>A</mi></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>b</mi><mo>-</mo><mi>A</mi></mrow></math>).
     ///
     /// # Examples
     ///
@@ -603,7 +603,7 @@ impl Matrix
     }
 
     /// Divides the scalar by the matrix elements
-    /// (<math><mrow><mfrac><mi>b</mi><msub><mi>A</mi><mi>ij</mi></msub></mfrac></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mfrac><mi>b</mi><msub><mi>A</mi><mi>ij</mi></msub></mfrac></mrow></math>).
     ///
     /// # Examples
     ///
@@ -629,7 +629,7 @@ impl Matrix
     }
 
     /// Calculates sigmoid function for the matrix
-    /// (<math><mrow><mi>sigmoid</mi><mo fence="true">(</mo><mi>A</mi><mo fence="true">)</mo></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>sigmoid</mi><mo fence="true">(</mo><mi>A</mi><mo fence="true">)</mo></mrow></math>).
     ///
     /// # Examples
     ///
@@ -655,7 +655,7 @@ impl Matrix
     }
 
     /// Calculates hiperbolic tangent function for the matrix
-    /// (<math><mrow><mi>tanh</mi><mo fence="true">(</mo><mi>A</mi><mo fence="true">)</mo></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>tanh</mi><mo fence="true">(</mo><mi>A</mi><mo fence="true">)</mo></mrow></math>).
     ///
     /// # Examples
     ///
@@ -681,7 +681,7 @@ impl Matrix
     }
 
     /// Calculates softmax function for the matrix
-    /// (<math><mrow><mi>softmax</mi><mo fence="true">(</mo><mi>A</mi><mo fence="true">)</mo></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>softmax</mi><mo fence="true">(</mo><mi>A</mi><mo fence="true">)</mo></mrow></math>).
     ///
     /// # Examples
     ///
@@ -1316,7 +1316,7 @@ impl Frontend
     }
     
     /// Adds the `a` matrix onto the `b` matrix and then the result is in the `c` matrix
-    /// (<math><mrow><mi>C</mi><mo>=</mo><mi>A</mi><mo>+</mo><mi>B</mi></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><mi>A</mi><mo>+</mo><mi>B</mi></mrow></math>).
     pub fn add(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -1337,7 +1337,7 @@ impl Frontend
     }
 
     /// Subtracts the `b` matrix from the `a` matrix and then the result is in the `c` matrix
-    /// (<math><mrow><mi>C</mi><mo>=</mo><mi>A</mi><mo>-</mo><mi>B</mi></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><mi>A</mi><mo>-</mo><mi>B</mi></mrow></math>).
     pub fn sub(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -1358,7 +1358,7 @@ impl Frontend
     }
 
     /// Multiplies the `a` matrix by the `b` matrix and then the result is in the `c` matrix
-    /// (<math><mrow><mi>C</mi><mo>=</mo><mi>A</mi><mo>·</mo><mi>B</mi></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><mi>A</mi><mo>·</mo><mi>B</mi></mrow></math>).
     pub fn mul(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
     {
         if a.row_count != c.row_count {
@@ -1383,7 +1383,7 @@ impl Frontend
 
     /// Multiplies the `a` matrix elements by the `b` matrix elements and then the result is in the
     /// `c` matrix
-    /// (<math><mrow><msub><mi>C</mi><mi>ij</mi></msub><mo>=</mo><msub><mi>A</mi><mi>ij</mi></msub><mo>·</mo><msub><mi>B</mi><mi>ij</mi></msub></mrow></math>).    
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>C</mi><mi>ij</mi></msub><mo>=</mo><msub><mi>A</mi><mi>ij</mi></msub><mo>·</mo><msub><mi>B</mi><mi>ij</mi></msub></mrow></math>).    
     pub fn mul_elems(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -1405,7 +1405,7 @@ impl Frontend
 
     /// Divides the `a` matrix elements by the `b` matrix elements and then the result is in the `c`
     /// matrix
-    /// (<math><mrow><msub><mi>C</mi><mi>ij</mi></msub><mo>=</mo><mfrac><msub><mi>A</mi><mi>ij</mi></msub><msub><mi>B</mi><mi>ij</mi></msub></mfrac></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>C</mi><mi>ij</mi></msub><mo>=</mo><mfrac><msub><mi>A</mi><mi>ij</mi></msub><msub><mi>B</mi><mi>ij</mi></msub></mfrac></mrow></math>).
     pub fn div_elems(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -1426,7 +1426,7 @@ impl Frontend
     }
 
     /// Adds the `a` matrix onto the `b` scalar and then the result is in the `c` matrix
-    /// (<math><mrow><mi>C</mi><mo>=</mo><mi>A</mi><mo>+</mo><mi>b</mi></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><mi>A</mi><mo>+</mo><mi>b</mi></mrow></math>).
     pub fn add_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
         if a.row_count != c.row_count || a.col_count != c.col_count {
@@ -1443,7 +1443,7 @@ impl Frontend
     }
 
     /// Subtracts the `b` scalar from the `a` matrix and then the result is in the `c` matrix
-    /// (<math><mrow><mi>C</mi><mo>=</mo><mi>A</mi><mo>-</mo><mi>b</mi></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><mi>A</mi><mo>-</mo><mi>b</mi></mrow></math>).
     pub fn sub_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
         if a.row_count != c.row_count || a.col_count != c.col_count {
@@ -1460,7 +1460,7 @@ impl Frontend
     }
 
     /// Subtracts the `a` matrix from the `b` scalar and then the result is in the `c` matrix
-    /// (<math><mrow><mi>C</mi><mo>=</mo><mi>b</mi><mo>-</mo><mi>A</mi></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><mi>b</mi><mo>-</mo><mi>A</mi></mrow></math>).
     pub fn rsub_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
         if a.row_count != c.row_count || a.col_count != c.col_count {
@@ -1477,7 +1477,7 @@ impl Frontend
     }
     
     /// Multiplies the `a` matrix by the `b` scalar and then the result is in the `c` matrix
-    /// (<math><mrow><mi>C</mi><mo>=</mo><mi>A</mi><mo>·</mo><mi>b</mi></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><mi>A</mi><mo>·</mo><mi>b</mi></mrow></math>).
     pub fn mul_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
         if a.row_count != c.row_count || a.col_count != c.col_count {
@@ -1494,7 +1494,7 @@ impl Frontend
     }
     
     /// Divides the `a` matrix by the `b` scalar and then the result is in the `c` matrix
-    /// (<math><mrow><mi>C</mi><mo>=</mo><mfrac><mi>A</mi><mi>b</mi></mfrac></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><mfrac><mi>A</mi><mi>b</mi></mfrac></mrow></math>).
     pub fn div_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
         if a.row_count != c.row_count || a.col_count != c.col_count {
@@ -1511,7 +1511,7 @@ impl Frontend
     }
 
     /// Divides the `b` scalar by the `a` matrix elements and then the result is in the `c` matrix
-    /// (<math><mrow><msub><mi>C</mi><mi>ij</mi></msub><mo>=</mo><mfrac><mi>b</mi><msub><mi>A</mi><mi>ij</mi></msub></mfrac></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>C</mi><mi>ij</mi></msub><mo>=</mo><mfrac><mi>b</mi><msub><mi>A</mi><mi>ij</mi></msub></mfrac></mrow></math>).
     pub fn rdiv_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
         if a.row_count != c.row_count || a.col_count != c.col_count {
@@ -1528,7 +1528,7 @@ impl Frontend
     }
 
     /// Calculates sigmoid function for the `a` matrix and then the result is in the `b` matrix
-    /// (<math><mrow><mi>B</mi><mo>=</mo><mi>sigmoid</mi><mo fence="true">(</mo><mi>A</mi><mo fence="true">)</mo></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>B</mi><mo>=</mo><mi>sigmoid</mi><mo fence="true">(</mo><mi>A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn sigmoid(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -1545,7 +1545,7 @@ impl Frontend
     }
 
     /// Calculates hyperbolic tangent function for the `a` matrix and then the result is in the `b`
-    /// (<math><mrow><mi>B</mi><mo>=</mo><mi>tanh</mi><mo fence="true">(</mo><mi>A</mi><mo fence="true">)</mo></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>B</mi><mo>=</mo><mi>tanh</mi><mo fence="true">(</mo><mi>A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn tanh(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -1562,7 +1562,7 @@ impl Frontend
     }    
 
     /// Calculates softmax function for the `a` matrix and then the result is in the `b` matrix
-    /// (<math><mrow><mi>B</mi><mo>=</mo><mi>softmax</mi><mo fence="true">(</mo><mi>A</mi><mo fence="true">)</mo></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>B</mi><mo>=</mo><mi>softmax</mi><mo fence="true">(</mo><mi>A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn softmax(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -1579,7 +1579,7 @@ impl Frontend
     }    
     
     /// Indeed transposes the `a` matrix and then the result is in the `b` matrix
-    /// (<math><mrow><mi>C</mi><mo>=</mo><msup><mi>A</mi><mi>T</mi></msup></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>C</mi><mo>=</mo><msup><mi>A</mi><mi>T</mi></msup></mrow></math>).
     ///
     /// This method indeed transposes the `a` matrix without changing the transpose flag.
     pub fn really_transpose(&self, a: &Matrix, b: &Matrix) -> Result<()>
