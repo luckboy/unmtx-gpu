@@ -1317,6 +1317,24 @@ impl Frontend
     
     /// Adds the `a` matrix onto the `b` matrix and then the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">C</mi><mo>=</mo><mi mathvariant="bold">A</mi><mo>+</mo><mi mathvariant="bold">B</mi></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = matrix![
+    ///     [5.0, 6.0],
+    ///     [7.0, 8.0]
+    /// ];
+    /// let c = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.add(&a, &b, &c).unwrap();
+    /// assert_eq!(vec![1.0 + 5.0, 2.0 + 6.0, 3.0 + 7.0, 4.0 + 8.0], c.elems());
+    /// ```
     pub fn add(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -1338,6 +1356,24 @@ impl Frontend
 
     /// Subtracts the `b` matrix from the `a` matrix and then the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">C</mi><mo>=</mo><mi mathvariant="bold">A</mi><mo>-</mo><mi mathvariant="bold">B</mi></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = matrix![
+    ///     [5.0, 6.0],
+    ///     [7.0, 8.0]
+    /// ];
+    /// let c = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.sub(&a, &b, &c).unwrap();
+    /// assert_eq!(vec![1.0 - 5.0, 2.0 - 6.0, 3.0 - 7.0, 4.0 - 8.0], c.elems());
+    /// ```
     pub fn sub(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -1359,6 +1395,29 @@ impl Frontend
 
     /// Multiplies the `a` matrix by the `b` matrix and then the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">C</mi><mo>=</mo><mi mathvariant="bold">A</mi><mo>·</mo><mi mathvariant="bold">B</mi></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0, 3.0],
+    ///     [4.0, 5.0, 6.0]
+    /// ];
+    /// let b = matrix![
+    ///     [7.0,  8.0],
+    ///     [9.0,  10.0],
+    ///     [11.0, 12.0]
+    /// ];
+    /// let c = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.mul(&a, &b, &c).unwrap();
+    /// let c11: f32 = 1.0 * 7.0 + 2.0 * 9.0 + 3.0 * 11.0;
+    /// let c12: f32 = 1.0 * 8.0 + 2.0 * 10.0 + 3.0 * 12.0;
+    /// let c21: f32 = 4.0 * 7.0 + 5.0 * 9.0 + 6.0 * 11.0;
+    /// let c22: f32 = 4.0 * 8.0 + 5.0 * 10.0 + 6.0 * 12.0;
+    /// assert_eq!(vec![c11, c12, c21, c22], c.elems());
+    /// ```
     pub fn mul(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
     {
         if a.row_count != c.row_count {
@@ -1383,7 +1442,25 @@ impl Frontend
 
     /// Multiplies the `a` matrix elements by the `b` matrix elements and then the result is in the
     /// `c` matrix
-    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mi mathvariant="italic">ij</mi></msub><mo>=</mo><msub><mi>a</mi><mi mathvariant="italic">ij</mi></msub><mo>·</mo><msub><mi>b</mi><mi mathvariant="italic">ij</mi></msub></mrow></math>).    
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mi mathvariant="italic">ij</mi></msub><mo>=</mo><msub><mi>a</mi><mi mathvariant="italic">ij</mi></msub><mo>·</mo><msub><mi>b</mi><mi mathvariant="italic">ij</mi></msub></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = matrix![
+    ///     [5.0, 6.0],
+    ///     [7.0, 8.0]
+    /// ];
+    /// let c = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.mul_elems(&a, &b, &c).unwrap();
+    /// assert_eq!(vec![1.0 * 5.0, 2.0 * 6.0, 3.0 * 7.0, 4.0 * 8.0], c.elems());
+    /// ```
     pub fn mul_elems(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -1406,6 +1483,28 @@ impl Frontend
     /// Divides the `a` matrix elements by the `b` matrix elements and then the result is in the `c`
     /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mi mathvariant="italic">ij</mi></msub><mo>=</mo><mfrac><msub><mi>a</mi><mi mathvariant="italic">ij</mi></msub><msub><mi>b</mi><mi mathvariant="italic">ij</mi></msub></mfrac></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = matrix![
+    ///     [5.0, 6.0],
+    ///     [7.0, 8.0]
+    /// ];
+    /// let c = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.div_elems(&a, &b, &c).unwrap();
+    /// let elems = c.elems();
+    /// assert!((1.0 / 5.0 - elems[0]).abs() < 0.001);
+    /// assert!((2.0 / 6.0 - elems[1]).abs() < 0.001);
+    /// assert!((3.0 / 7.0 - elems[2]).abs() < 0.001);
+    /// assert!((4.0 / 8.0 - elems[3]).abs() < 0.001);
+    /// ```
     pub fn div_elems(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -1427,6 +1526,20 @@ impl Frontend
 
     /// Adds the `a` matrix onto the `b` scalar and then the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">C</mi><mo>=</mo><mi mathvariant="bold">A</mi><mo>+</mo><mi>b</mi></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let c = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.add_for_scalar(&a, 10.5, &c).unwrap();
+    /// assert_eq!(vec![1.0 + 10.5, 2.0 + 10.5, 3.0 + 10.5, 4.0 + 10.5], c.elems());
+    /// ```
     pub fn add_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
         if a.row_count != c.row_count || a.col_count != c.col_count {
@@ -1444,6 +1557,20 @@ impl Frontend
 
     /// Subtracts the `b` scalar from the `a` matrix and then the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">C</mi><mo>=</mo><mi mathvariant="bold">A</mi><mo>-</mo><mi>b</mi></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let c = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.sub_for_scalar(&a, 10.5, &c).unwrap();
+    /// assert_eq!(vec![1.0 - 10.5, 2.0 - 10.5, 3.0 - 10.5, 4.0 - 10.5], c.elems());
+    /// ```
     pub fn sub_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
         if a.row_count != c.row_count || a.col_count != c.col_count {
@@ -1461,6 +1588,20 @@ impl Frontend
 
     /// Subtracts the `a` matrix from the `b` scalar and then the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">C</mi><mo>=</mo><mi>b</mi><mo>-</mo><mi mathvariant="bold">A</mi></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let c = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.rsub_for_scalar(&a, 10.5, &c).unwrap();
+    /// assert_eq!(vec![10.5 - 1.0, 10.5 - 2.0, 10.5 - 3.0, 10.5 - 4.0], c.elems());
+    /// ```
     pub fn rsub_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
         if a.row_count != c.row_count || a.col_count != c.col_count {
@@ -1478,6 +1619,20 @@ impl Frontend
     
     /// Multiplies the `a` matrix by the `b` scalar and then the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">C</mi><mo>=</mo><mi mathvariant="bold">A</mi><mo>·</mo><mi>b</mi></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let c = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.mul_for_scalar(&a, 10.5, &c).unwrap();
+    /// assert_eq!(vec![1.0 * 10.5, 2.0 * 10.5, 3.0 * 10.5, 4.0 * 10.5], c.elems());
+    /// ```
     pub fn mul_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
         if a.row_count != c.row_count || a.col_count != c.col_count {
@@ -1495,6 +1650,24 @@ impl Frontend
     
     /// Divides the `a` matrix by the `b` scalar and then the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">C</mi><mo>=</mo><mfrac><mi mathvariant="bold">A</mi><mi>b</mi></mfrac></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let c = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.div_for_scalar(&a, 10.5, &c).unwrap();
+    /// let elems = c.elems();
+    /// assert!((1.0 / 10.5 - elems[0]).abs() < 0.001);
+    /// assert!((2.0 / 10.5 - elems[1]).abs() < 0.001);
+    /// assert!((3.0 / 10.5 - elems[2]).abs() < 0.001);
+    /// assert!((4.0 / 10.5 - elems[3]).abs() < 0.001);
+    /// ```
     pub fn div_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
         if a.row_count != c.row_count || a.col_count != c.col_count {
@@ -1512,6 +1685,24 @@ impl Frontend
 
     /// Divides the `b` scalar by the `a` matrix elements and then the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mi mathvariant="italic">ij</mi></msub><mo>=</mo><mfrac><mi>b</mi><msub><mi>a</mi><mi mathvariant="italic">ij</mi></msub></mfrac></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let c = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.rdiv_for_scalar(&a, 10.5, &c).unwrap();
+    /// let elems = c.elems();
+    /// assert!((10.5 / 1.0- elems[0]).abs() < 0.001);
+    /// assert!((10.5 / 2.0 - elems[1]).abs() < 0.001);
+    /// assert!((10.5 / 3.0 - elems[2]).abs() < 0.001);
+    /// assert!((10.5 / 4.0 - elems[3]).abs() < 0.001);
+    /// ```
     pub fn rdiv_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
         if a.row_count != c.row_count || a.col_count != c.col_count {
@@ -1529,6 +1720,24 @@ impl Frontend
 
     /// Calculates sigmoid function for the `a` matrix and then the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>sigmoid</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.sigmoid(&a, &b).unwrap();
+    /// let elems = b.elems();
+    /// assert!((1.0 / (1.0 + (-1.0f32).exp()) - elems[0]).abs() < 0.001);
+    /// assert!((1.0 / (1.0 + (-2.0f32).exp()) - elems[1]).abs() < 0.001);
+    /// assert!((1.0 / (1.0 + (-3.0f32).exp()) - elems[2]).abs() < 0.001);
+    /// assert!((1.0 / (1.0 + (-4.0f32).exp()) - elems[3]).abs() < 0.001);
+    /// ```
     pub fn sigmoid(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -1546,6 +1755,24 @@ impl Frontend
 
     /// Calculates hyperbolic tangent function for the `a` matrix and then the result is in the `b`
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>tanh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.tanh(&a, &b).unwrap();
+    /// let elems = b.elems();
+    /// assert!((1.0f32.tanh() - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.tanh() - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.tanh() - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.tanh() - elems[3]).abs() < 0.001);
+    /// ```
     pub fn tanh(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -1563,6 +1790,26 @@ impl Frontend
 
     /// Calculates softmax function for the `a` matrix and then the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>softmax</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.softmax(&a, &b).unwrap();
+    /// let elems = b.elems();
+    /// let sum1 = 1.0f32.exp() + 3.0f32.exp();
+    /// let sum2 = 2.0f32.exp() + 4.0f32.exp();
+    /// assert!((1.0f32.exp() / sum1 - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.exp() / sum2 - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.exp() / sum1 - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.exp() / sum2 - elems[3]).abs() < 0.001);
+    /// ```
     pub fn softmax(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -1582,6 +1829,20 @@ impl Frontend
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">C</mi><mo>=</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup></mrow></math>).
     ///
     /// This method indeed transposes the `a` matrix without changing the transpose flag.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0, 3.0],
+    ///     [4.0, 5.0, 6.0]
+    /// ];
+    /// let b = Matrix::new(3, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.really_transpose(&a, &b).unwrap();
+    /// assert_eq!(vec![1.0, 4.0, 2.0, 5.0, 3.0, 6.0], b.elems());
+    /// ```
     pub fn really_transpose(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.col_count || a.col_count != b.row_count {
