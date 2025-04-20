@@ -1826,7 +1826,7 @@ impl Frontend
     }    
     
     /// Indeed transposes the `a` matrix and then the result is in the `b` matrix
-    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">C</mi><mo>=</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup></mrow></math>).
     ///
     /// This method indeed transposes the `a` matrix without changing the transpose flag.
     ///
