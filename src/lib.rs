@@ -26,6 +26,11 @@ pub mod opencl;
 pub mod cuda;
 
 /// A backend trait.
+///
+/// The backend provides a low-level interface to computing platform (OpenCL or CUDA) for basic
+/// operations and functions on matrices. The backend methods operate on backend arrays which
+/// refers to areas of the device memory. The backend is low-level layer between a frontend and
+/// computing platform.
 pub trait Backend
 {
     /// Returns the backend name.
@@ -234,25 +239,43 @@ pub trait Backend
 #[derive(Debug)]
 pub enum Error
 {
+    /// A default backend is uninitialized.
     UninitializedDefaultBackend,
+    /// Mismatched sizes of matrices for a matrix operation.
     OpSize(usize, usize, usize, usize),
+    /// Mismatched sizes of matrices for a matrix multiplication.
     MulSize(usize, usize, usize, usize, usize, usize),
+    /// Mismatched sizes of matrices for a matrix transposition.
     TransposeSize(usize, usize, usize, usize),
+    /// An argument matrix is transposed.
     ArgTransposition,
+    /// A result matrix is transposed.
     ResTransposition,
+    /// A number of matrix elements isn't equal to a number of elements.
     MatrixElemCount(usize, usize),
+    /// A mutex can't be locked.
     Mutex,
+    /// An OpenCL error.
     #[cfg(feature = "opencl")]
     OpenCl(opencl::ClError),
+    /// A CUDA error.
     #[cfg(feature = "cuda")]
     Cuda(cuda::DriverError),
+    /// A compilation error.
     Compilation(String),
+    /// No a platform.
     NoPlatform,
+    /// No a device.
     NoDevice,
+    /// No a kernel.
     NoKernel(String),
+    /// A type of device information is invalid.
     InvalidDeviceInfoType,
+    /// A number of backend array elements isn't equal to a number of elements.
     BackendArrayElemCount(usize, usize),
+    /// Two numbers of elements of backend arrays aren't equal.
     TwoBackendArrayElemCounts(usize, usize),
+    /// A backend array is invalid.
     InvalidBackendArray,
 }
 
@@ -280,7 +303,7 @@ impl fmt::Display for Error
             Error::NoPlatform => write!(f, "no platform"),
             Error::NoDevice => write!(f, "no device"),
             Error::NoKernel(name) => write!(f, "no kernel {}", name),
-            Error::InvalidDeviceInfoType => write!(f, "no device info type"),
+            Error::InvalidDeviceInfoType => write!(f, "invalid device info type"),
             Error::BackendArrayElemCount(n1, n2) => write!(f, "number of backend array elements isn't equal to number of elements ({}, {})", n1, n2),
             Error::TwoBackendArrayElemCounts(n1, n2) => write!(f, "two numbers of elements of backend arrays aren't equal ({}, {})", n1, n2),
             Error::InvalidBackendArray => write!(f, "invalid backend array"),
@@ -292,7 +315,8 @@ pub type Result<T> = result::Result<T, Error>;
 
 /// An enumeration of backend array.
 ///
-/// This enumeration contains a reference to a matrix array on device.
+/// This enumerations contains the reference to the area of the device memory for computing
+/// platform (OpenCL or CUDA).
 #[derive(Debug)]
 pub enum BackendArray
 {
@@ -1206,6 +1230,10 @@ impl DivAssign<&f32> for Matrix
 }
 
 /// A frontend structure.
+///
+/// The frontend contains methods which operate on matrices or calculate functions for the
+/// matrices. Backend methods are called by the frontend to operate the matrices. The frontend is
+/// high-level layer that can be directly used by programmer or a [Matrix] structure.
 pub struct Frontend
 {
     backend: Arc<dyn Backend>,
