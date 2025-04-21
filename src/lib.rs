@@ -261,6 +261,12 @@ pub enum Error
     /// A CUDA error.
     #[cfg(feature = "cuda")]
     Cuda(cuda::DriverError),
+    /// A cuBlas error.
+    #[cfg(feature = "cuda")]
+    Cublas(cuda::CublasError),
+    /// A cuBlas error.
+    #[cfg(feature = "cuda")]
+    NoCublas,
     /// A compilation error.
     Compilation(String),
     /// No a platform.
@@ -299,6 +305,10 @@ impl fmt::Display for Error
             Error::OpenCl(err) => write!(f, "OpenCL error: {}", err),
             #[cfg(feature = "cuda")]
             Error::Cuda(err) => write!(f, "CUDA error: {}", err),
+            #[cfg(feature = "cuda")]
+            Error::Cublas(err) => write!(f, "cuBLAS error: {}", err),
+            #[cfg(feature = "cuda")]
+            Error::NoCublas => write!(f, "no cuBLAS"),
             Error::Compilation(msg) => write!(f, "{}", msg),
             Error::NoPlatform => write!(f, "no platform"),
             Error::NoDevice => write!(f, "no device"),

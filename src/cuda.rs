@@ -5,6 +5,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
+use std::ffi::c_int;
 use std::ffi::c_void;
 use std::sync::Arc;
 use std::sync::Mutex;
@@ -14,12 +15,19 @@ use crate::Error;
 use crate::Result;
 use crate::mutex_lock;
 
+pub use cudarc::cublas::result::CublasError;
 pub use cudarc::driver::DriverError;
 
+use cudarc::cublas::result::sgemm;
+use cudarc::cublas::sys::cublasOperation_t;
+use cudarc::cublas::CudaBlas;
+use cudarc::driver::sys::CUdeviceptr;
 use cudarc::driver::CudaDevice;
 use cudarc::driver::CudaFunction;
 use cudarc::driver::CudaSlice;
 use cudarc::driver::DeviceRepr;
+use cudarc::driver::DevicePtr;
+use cudarc::driver::DevicePtrMut;
 use cudarc::driver::LaunchAsync;
 use cudarc::driver::LaunchConfig;
 use cudarc::nvrtc::CompileError;
@@ -79,11 +87,13 @@ pub struct CudaBackendArray
 struct CudaInnerBackend
 {
     device: Arc<CudaDevice>,
+    cublas: Option<CudaBlas>,
 }
 
 pub struct CudaBackend
 {
     inner: Mutex<CudaInnerBackend>,
+    is_cublas: bool,
 }
 
 fn preferred_launch_config(n: usize, m: usize) -> LaunchConfig
@@ -116,9 +126,15 @@ fn preferred_launch_config(n: usize, m: usize) -> LaunchConfig
 impl CudaBackend
 {
     pub fn new() -> Result<CudaBackend>
-    { Self::new_with_ordinal(0) }
+    {
+        if cfg!(feature = "default_cublas") {
+            Self::new_with_ordinal(0, true)
+        } else {
+            Self::new_with_ordinal(0, false)
+        }
+    }
 
-    pub fn new_with_ordinal(ordinal: usize) -> Result<CudaBackend>
+    pub fn new_with_ordinal(ordinal: usize, is_cublas: bool) -> Result<CudaBackend>
     {
         let device = match CudaDevice::new(ordinal) {
             Ok(tmp_device) => tmp_device,
@@ -133,8 +149,20 @@ impl CudaBackend
             Ok(()) => (),
             Err(err) => return Err(Error::Cuda(err)),
         }
-        Ok(CudaBackend { inner: Mutex::new(CudaInnerBackend { device, }), })
+        
+        let cublas = if is_cublas {
+            match CudaBlas::new(device.clone()) {
+                Ok(tmp_cublas) => Some(tmp_cublas),
+                Err(err) => return Err(Error::Cublas(err)),
+            }
+        } else {
+            None
+        };
+        Ok(CudaBackend { inner: Mutex::new(CudaInnerBackend { device, cublas, }), is_cublas, })
     }
+    
+    pub fn is_cublas(&self) -> bool
+    { self.is_cublas }
     
     fn check_and_launch2<F, G>(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, f: F, g: G) -> Result<()>
         where F: FnOnce(&CudaBackendArray, &CudaBackendArray) -> Result<()>,
@@ -205,6 +233,62 @@ impl CudaBackend
                     _ => {
                         let mut a_slice_g = mutex_lock(&a2.slice)?;
                         g(&*inner_g, kernel, (&mut (*a_slice_g)).as_kernel_param(), (&mut (*a_slice_g)).as_kernel_param(), (&mut (*a_slice_g)).as_kernel_param())?
+                    },
+                }
+                match inner_g.device.synchronize() {
+                    Ok(()) => (),
+                    Err(err) => return Err(Error::Cuda(err)),
+                }
+                Ok(())
+            },
+            _ => Err(Error::InvalidBackendArray),
+        }
+    }    
+
+    fn check_and_launch_cublas3<F, G>(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, f: F, g: G) -> Result<()>
+        where F: FnOnce(&CudaBackendArray, &CudaBackendArray, &CudaBackendArray) -> Result<()>,
+            G: FnOnce(&CudaInnerBackend, CUdeviceptr, CUdeviceptr, CUdeviceptr) -> Result<()>
+    {
+        #[allow(unreachable_patterns)]
+        match (a, b, c) {
+            (BackendArray::Cuda(a2), BackendArray::Cuda(b2), BackendArray::Cuda(c2)) => {
+                f(a2, b2, c2)?;
+                let inner_g = mutex_lock(&self.inner)?;
+                match (Arc::ptr_eq(&a2.slice, &b2.slice), Arc::ptr_eq(&a2.slice, &c2.slice), Arc::ptr_eq(&b2.slice, &c2.slice)) {
+                    (false, false, false) => {
+                        let a_slice_g = mutex_lock(&a2.slice)?;
+                        let b_slice_g = mutex_lock(&b2.slice)?;
+                        let mut c_slice_g = mutex_lock(&c2.slice)?;
+                        let a_device_ptr = *(&(*a_slice_g)).device_ptr();
+                        let b_device_ptr = *(&(*b_slice_g)).device_ptr();
+                        let c_device_ptr = *(&mut (*c_slice_g)).device_ptr_mut();
+                        g(&*inner_g, a_device_ptr, b_device_ptr, c_device_ptr)?
+                    },
+                    (true, false, false) => {
+                        let a_slice_g = mutex_lock(&a2.slice)?;
+                        let mut c_slice_g = mutex_lock(&c2.slice)?;
+                        let a_device_ptr = *(&(*a_slice_g)).device_ptr();
+                        let c_device_ptr = *(&mut (*c_slice_g)).device_ptr_mut();
+                        g(&*inner_g, a_device_ptr, a_device_ptr, c_device_ptr)?
+                    },
+                    (false, true, false) => {
+                        let mut a_slice_g = mutex_lock(&a2.slice)?;
+                        let b_slice_g = mutex_lock(&b2.slice)?;
+                        let a_device_ptr = *(&mut (*a_slice_g)).device_ptr_mut();
+                        let b_device_ptr = *(&(*b_slice_g)).device_ptr();
+                        g(&*inner_g, a_device_ptr, b_device_ptr, a_device_ptr)?
+                    },
+                    (false, false, true) => {
+                        let a_slice_g = mutex_lock(&a2.slice)?;
+                        let mut b_slice_g = mutex_lock(&b2.slice)?;
+                        let a_device_ptr = *(&(*a_slice_g)).device_ptr();
+                        let b_device_ptr = *(&mut (*b_slice_g)).device_ptr_mut();
+                        g(&*inner_g, a_device_ptr, b_device_ptr, b_device_ptr)?
+                    },
+                    _ => {
+                        let mut a_slice_g = mutex_lock(&a2.slice)?;
+                        let a_device_ptr = *(&mut (*a_slice_g)).device_ptr_mut();
+                        g(&*inner_g, a_device_ptr, a_device_ptr, a_device_ptr)?
                     },
                 }
                 match inner_g.device.synchronize() {
@@ -334,12 +418,67 @@ impl CudaBackend
                 }
         })
     }
+
+    fn check_and_launch_cublas_for_mul(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize, is_trans_a: bool, is_trans_b: bool) -> Result<()>
+    {
+        self.check_and_launch_cublas3(a, b, c, |a2, b2, c2| {
+                if a2.len != n * l {
+                    return Err(Error::BackendArrayElemCount(a2.len, n * l));
+                }
+                if b2.len != l * m {
+                    return Err(Error::BackendArrayElemCount(b2.len, l * m));
+                }
+                if c2.len != n * m {
+                    return Err(Error::BackendArrayElemCount(c2.len, n * m));
+                }
+                Ok(())
+        }, |inner, a_device_ptr, b_device_ptr, c_device_ptr| {
+                unsafe {
+                    match &inner.cublas {
+                        Some(cublas) => {
+                            let (transa, lda) = if is_trans_a {
+                                (cublasOperation_t::CUBLAS_OP_T, n as c_int)
+                            } else {
+                                (cublasOperation_t::CUBLAS_OP_N, l as c_int)
+                            };
+                            let (transb, ldb) = if is_trans_b {
+                                (cublasOperation_t::CUBLAS_OP_T, l as c_int)
+                            } else {
+                                (cublasOperation_t::CUBLAS_OP_N, m as c_int)
+                            };
+                            let alpha = 1.0f32;
+                            let beta = 0.0f32;
+                            let res = sgemm(*cublas.handle(),
+                                transb, transa,
+                                m as c_int, n as c_int, l as c_int,
+                                (&alpha) as *const _,
+                                b_device_ptr as *const _, ldb,
+                                a_device_ptr as *const _, lda,
+                                (&beta) as *const _,
+                                c_device_ptr as *mut _, m as c_int);
+                            match res {
+                                Ok(()) => Ok(()),
+                                Err(err) => Err(Error::Cublas(err)),
+                            }
+                        },
+                        None => Err(Error::NoCublas),
+                    }
+                }
+        })
+    }
+
 }
 
 impl Backend for CudaBackend
 {
     fn name(&self) -> &'static str
-    { "CUDA" }
+    {
+        if self.is_cublas {
+            "CUDA(cuBLAS)"
+        } else {
+            "CUDA"
+        }
+    }
 
     unsafe fn alloc(&self, n: usize) -> Result<BackendArray>
     {
@@ -470,16 +609,40 @@ impl Backend for CudaBackend
     { self.check_and_launch_for_op("sub_at_bt", a, b, c, n, m) }
     
     fn mul_a_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize) -> Result<()>
-    { self.check_and_launch_for_mul("mul_a_b", a, b, c, n, m, l) }
+    {
+        if self.is_cublas {
+            self.check_and_launch_cublas_for_mul(a, b, c, n, m, l, false, false)
+        } else {
+            self.check_and_launch_for_mul("mul_a_b", a, b, c, n, m, l)
+        }
+    }
 
     fn mul_at_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize) -> Result<()>
-    { self.check_and_launch_for_mul("mul_at_b", a, b, c, n, m, l) }
+    {
+        if self.is_cublas {
+            self.check_and_launch_cublas_for_mul(a, b, c, n, m, l, true, false)
+        } else {
+            self.check_and_launch_for_mul("mul_at_b", a, b, c, n, m, l)
+        }
+    }
 
     fn mul_a_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize) -> Result<()>
-    { self.check_and_launch_for_mul("mul_a_bt", a, b, c, n, m, l) }
+    {
+        if self.is_cublas {
+            self.check_and_launch_cublas_for_mul(a, b, c, n, m, l, false, true)
+        } else {
+            self.check_and_launch_for_mul("mul_a_bt", a, b, c, n, m, l) 
+        }
+    }
 
     fn mul_at_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize) -> Result<()>
-    { self.check_and_launch_for_mul("mul_at_bt", a, b, c, n, m, l) }
+    {
+        if self.is_cublas {
+            self.check_and_launch_cublas_for_mul(a, b, c, n, m, l, true, true)
+        } else {
+            self.check_and_launch_for_mul("mul_at_bt", a, b, c, n, m, l)
+        }
+    }
 
     fn mul_a_b_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
     { self.check_and_launch_for_op("mul_a_b_for_elems", a, b, c, n, m) }
