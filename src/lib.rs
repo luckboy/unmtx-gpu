@@ -311,11 +311,12 @@ impl fmt::Display for Error
     }
 }
 
+/// A result type.
 pub type Result<T> = result::Result<T, Error>;
 
 /// An enumeration of backend array.
 ///
-/// This enumerations contains the reference to the area of the device memory for computing
+/// This enumeration contains the reference to the area of the device memory for computing
 /// platform (OpenCL or CUDA).
 #[derive(Debug)]
 pub enum BackendArray
@@ -338,6 +339,7 @@ fn mutex_lock<T>(mutex: &Mutex<T>) -> Result<MutexGuard<'_, T>>
     }
 }
 
+/// Returns a default backend.
 pub fn get_default_backend() -> Result<Option<Arc<dyn Backend>>>
 {
     unsafe {
@@ -346,6 +348,7 @@ pub fn get_default_backend() -> Result<Option<Arc<dyn Backend>>>
     }
 }
 
+/// Sets a default backend.
 pub fn set_default_backend(backend: Arc<dyn Backend>) -> Result<()>
 {
     unsafe {
@@ -355,6 +358,7 @@ pub fn set_default_backend(backend: Arc<dyn Backend>) -> Result<()>
     Ok(())
 }
 
+/// Unsets a default backend.
 pub fn unset_default_backend() -> Result<()>
 {
     unsafe {
@@ -364,6 +368,11 @@ pub fn unset_default_backend() -> Result<()>
     Ok(())
 }
 
+/// Sets a default backend if the default backend is uninitialized.
+///
+/// This method takes a closure that returns the backend and then the backend is set as the default
+/// backend if the default backend is uninitialized. The closure is only called if the backend is
+/// to be set.
 pub fn set_default_backend_for_uninitialized<F>(f: F) -> Result<()>
     where F: FnOnce() -> Result<Arc<dyn Backend>>
 {
@@ -377,6 +386,7 @@ pub fn set_default_backend_for_uninitialized<F>(f: F) -> Result<()>
     Ok(())
 }
 
+/// Initializes a default backend if the backend is uninitialized.
 pub fn initialize_default_backend_for_uninitialized() -> Result<()>
 {
     #[cfg(feature = "opencl")]
@@ -386,6 +396,7 @@ pub fn initialize_default_backend_for_uninitialized() -> Result<()>
     Ok(())
 }
 
+/// Finalize a default backend.
 pub fn finalize_default_backend() -> Result<()>
 { unset_default_backend() }
 
