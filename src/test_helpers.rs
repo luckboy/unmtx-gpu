@@ -540,6 +540,16 @@ pub(crate) fn backend_add_a_a_a(backend: &dyn Backend, a_elems: &[f32], n: usize
     Ok(a_elems2)
 }
 
+pub(crate) fn backend_mul_a_a_c(backend: &dyn Backend, a_elems: &[f32], n: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let c = backend.alloc_and_store_zeros(n * n)?;
+    backend.mul_a_b(&a, &a, &c, n, n, n)?;
+    let mut c_elems = vec![0.0f32; n * n];
+    backend.load(&c, &mut c_elems)?;
+    Ok(c_elems)
+}
+
 #[cfg(not(feature = "test_only_backend"))]
 pub(crate) fn frontend_create_matrix_and_set_zeros(frontend: &Frontend, n: usize, m: usize) -> Result<(Matrix, Vec<f32>)>
 {

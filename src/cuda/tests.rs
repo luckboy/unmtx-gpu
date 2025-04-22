@@ -1011,3 +1011,18 @@ fn test_cuda_backend_add_a_b_uses_one_backend_array_for_a_a_a()
         Err(_) => assert!(false),
     }
 }
+
+#[test]
+fn test_cuda_backend_mul_a_b_uses_two_backend_arrays_for_a_a_c()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a(3, 3);
+            match backend_mul_a_a_c(&backend, a.as_slice(), 3) {
+                Ok(c) => assert_eq!(expected_mul_a_b(a.as_slice(), a.as_slice(), 3, 3, 3), c),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
