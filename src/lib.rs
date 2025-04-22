@@ -261,10 +261,10 @@ pub enum Error
     /// A CUDA error.
     #[cfg(feature = "cuda")]
     Cuda(cuda::DriverError),
-    /// A cuBlas error.
+    /// A cuBLAS error.
     #[cfg(feature = "cuda")]
     Cublas(cuda::CublasError),
-    /// A cuBlas error.
+    /// No a cuBLAS.
     #[cfg(feature = "cuda")]
     NoCublas,
     /// A compilation error.
