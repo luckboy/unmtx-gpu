@@ -7,6 +7,7 @@
 //
 use std::ffi::c_int;
 use std::ffi::c_void;
+use std::mem::size_of;
 use std::sync::Arc;
 use std::sync::Mutex;
 use crate::Backend;
@@ -96,16 +97,16 @@ pub struct CudaBackend
     has_cublas: bool,
 }
 
-fn preferred_launch_config(n: usize, m: usize) -> LaunchConfig
+fn preferred_launch_config(n: usize, m: usize, is_mul: bool) -> LaunchConfig
 {
-    if m == 1 {
+    if m == 1 && !is_mul {
         let n2 = ((n + 1023) / 1024) as u32;
         LaunchConfig {
             grid_dim: (n2, 1, 1),
             block_dim: (1024, 1, 1),
             shared_mem_bytes: 0,
         }
-    } else if n == 1 {
+    } else if n == 1 && !is_mul {
         let m2 = ((m + 1023) / 1024) as u32;
         LaunchConfig {
             grid_dim: (1, m2, 1),
@@ -115,10 +116,15 @@ fn preferred_launch_config(n: usize, m: usize) -> LaunchConfig
     } else {
         let n2 = ((n + 31) / 32) as u32;
         let m2 = ((m + 31) / 32) as u32;
+        let shared_mem_bytes = if is_mul {
+            (1024 * 2 * size_of::<f32>()) as u32
+        } else {
+            0
+        };
         LaunchConfig {
             grid_dim: (n2, m2, 1),
             block_dim: (32, 32, 1),
-            shared_mem_bytes: 0,
+            shared_mem_bytes,
         }
     }
 }
@@ -312,7 +318,7 @@ impl CudaBackend
                 }
                 Ok(())
         }, |_, kernel, a_param, b_param| {
-                let config = preferred_launch_config(n, m);
+                let config = preferred_launch_config(n, m, false);
                 let mut params = vec![
                     a_param,
                     b_param,
@@ -342,7 +348,7 @@ impl CudaBackend
                 }
                 Ok(())
         }, |_, kernel, a_param, b_param, c_param| {
-                let config = preferred_launch_config(n, m);
+                let config = preferred_launch_config(n, m, false);
                 let mut params = vec![
                     a_param,
                     b_param,
@@ -373,7 +379,7 @@ impl CudaBackend
                 }
                 Ok(())
         }, |_, kernel, a_param, b_param, c_param| {
-                let config = preferred_launch_config(n, m);
+                let config = preferred_launch_config(n, m, true);
                 let mut params = vec![
                     a_param,
                     b_param,
@@ -402,7 +408,7 @@ impl CudaBackend
                 }
                 Ok(())
         }, |_, kernel, a_param, c_param| {
-                let config = preferred_launch_config(n, m);
+                let config = preferred_launch_config(n, m, false);
                 let mut params = vec![
                     a_param,
                     b.as_kernel_param(),
