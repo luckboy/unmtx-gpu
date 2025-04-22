@@ -479,6 +479,9 @@ impl Backend for CudaBackend
             "CUDA"
         }
     }
+    
+    fn has_cublas(&self) -> bool
+    { self.has_cublas }
 
     unsafe fn alloc(&self, n: usize) -> Result<BackendArray>
     {

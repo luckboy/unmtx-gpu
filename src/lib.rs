@@ -36,6 +36,9 @@ pub trait Backend
     /// Returns the backend name.
     fn name(&self) -> &'static str;
     
+    /// Returns `true` if the backend uses cuBLAS, otherwise `false`.
+    fn has_cublas(&self) -> bool;
+    
     /// Allocates a backend array.
     unsafe fn alloc(&self, n: usize) -> Result<BackendArray>;
 
@@ -1041,7 +1044,11 @@ impl Mul for Matrix
     fn mul(self, rhs: Self) -> Self::Output
     {
         let frontend = Frontend::new().unwrap();
-        let res = unsafe { frontend.create_matrix(self.row_count, rhs.col_count) }.unwrap();
+        let res = if frontend.backend().has_cublas() {
+            frontend.create_matrix_and_set_zeros(self.row_count, rhs.col_count).unwrap()
+        } else {
+            unsafe { frontend.create_matrix(self.row_count, rhs.col_count) }.unwrap()
+        };
         frontend.mul(&self, &rhs, &res).unwrap();
         res
     }
@@ -1054,7 +1061,11 @@ impl Mul<&Matrix> for Matrix
     fn mul(self, rhs: &Matrix) -> Self::Output
     {
         let frontend = Frontend::new().unwrap();
-        let res = unsafe { frontend.create_matrix(self.row_count, rhs.col_count) }.unwrap();
+        let res = if frontend.backend().has_cublas() {
+            frontend.create_matrix_and_set_zeros(self.row_count, rhs.col_count).unwrap()
+        } else {
+            unsafe { frontend.create_matrix(self.row_count, rhs.col_count) }.unwrap()
+        };
         frontend.mul(&self, rhs, &res).unwrap();
         res
     }
@@ -1093,7 +1104,11 @@ impl Mul<Matrix> for &Matrix
     fn mul(self, rhs: Matrix) -> Self::Output
     {
         let frontend = Frontend::new().unwrap();
-        let res = unsafe { frontend.create_matrix(self.row_count, rhs.col_count) }.unwrap();
+        let res = if frontend.backend().has_cublas() {
+            frontend.create_matrix_and_set_zeros(self.row_count, rhs.col_count).unwrap()
+        } else {
+            unsafe { frontend.create_matrix(self.row_count, rhs.col_count) }.unwrap()
+        };
         frontend.mul(self, &rhs, &res).unwrap();
         res
     }
@@ -1106,7 +1121,11 @@ impl Mul<&Matrix> for &Matrix
     fn mul(self, rhs: &Matrix) -> Self::Output
     {
         let frontend = Frontend::new().unwrap();
-        let res = unsafe { frontend.create_matrix(self.row_count, rhs.col_count) }.unwrap();
+        let res = if frontend.backend().has_cublas() {
+            frontend.create_matrix_and_set_zeros(self.row_count, rhs.col_count).unwrap()
+        } else {
+            unsafe { frontend.create_matrix(self.row_count, rhs.col_count) }.unwrap()
+        };
         frontend.mul(self, rhs, &res).unwrap();
         res
     }
@@ -1143,7 +1162,11 @@ impl MulAssign for Matrix
     fn mul_assign(&mut self, rhs: Self)
     {
         let frontend = Frontend::new().unwrap();
-        let res = unsafe { frontend.create_matrix(self.row_count, rhs.col_count) }.unwrap();
+        let res = if frontend.backend().has_cublas() {
+            frontend.create_matrix_and_set_zeros(self.row_count, rhs.col_count).unwrap()
+        } else {
+            unsafe { frontend.create_matrix(self.row_count, rhs.col_count) }.unwrap()
+        };
         frontend.mul(&self, &rhs, &res).unwrap();
         *self = res;
     }
@@ -1154,7 +1177,11 @@ impl MulAssign<&Matrix> for Matrix
     fn mul_assign(&mut self, rhs: &Self)
     {
         let frontend = Frontend::new().unwrap();
-        let res = unsafe { frontend.create_matrix(self.row_count, rhs.col_count) }.unwrap();
+        let res = if frontend.backend().has_cublas() {
+            frontend.create_matrix_and_set_zeros(self.row_count, rhs.col_count).unwrap()
+        } else {
+            unsafe { frontend.create_matrix(self.row_count, rhs.col_count) }.unwrap()
+        };
         frontend.mul(&self, rhs, &res).unwrap();
         *self = res;
     }
