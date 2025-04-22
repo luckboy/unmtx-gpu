@@ -483,47 +483,65 @@ extern "C" {
 
   __global__ void softmax_a(const float *a, float *b, size_t n, size_t m)
   {
+    __shared__ float es[TILE_WIDTH][TILE_WIDTH];
     size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
     size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
+    size_t k;
+    size_t ti = threadIdx.x;
+    size_t tj = threadIdx.y;
+    float sum = 0.0f;
+    for(k = 0; k < n; k += TILE_WIDTH) {
+      size_t k_ti = k + ti;
+      size_t tk;
+      es[ti][tj] = 0.0f;
+      if(j < m && k_ti < n) {
+        es[ti][tj] = exp(a[m * k_ti + j]);
+      }
+      __syncthreads();
+      for(tk = 0; tk < TILE_WIDTH; tk += 4) {
+        float4 ev;
+        ev.x = es[tk + 0][tj];
+        ev.y = es[tk + 1][tj];
+        ev.z = es[tk + 2][tj];
+        ev.w = es[tk + 3][tj];
+        sum += ev.x + ev.y + ev.z + ev.w;
+      }
+      __syncthreads();
+    }
     if(i < n && j < m) {
-      size_t n_3 = n & ~((size_t) 3);
-      size_t k;
-      float sum = 0.0f;
-      for(k = 0; k < n_3; k += 4) {
-        float4 av;
-        av.x = a[m * (k + 0) + j];
-        av.y = a[m * (k + 1) + j];
-        av.z = a[m * (k + 2) + j];
-        av.w = a[m * (k + 3) + j];
-        sum += expf(av.x) + expf(av.y) + expf(av.z) + expf(av.w);
-      }
-      for(; k < n; k++) {
-        sum += expf(a[m * k + j]);
-      }
       b[m * i + j] = exp(a[m * i + j]) / sum;
     }
   }
 
   __global__ void softmax_at(const float *a, float *b, size_t n, size_t m)
   {
+    __shared__ float es[TILE_WIDTH][TILE_WIDTH];
     size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
     size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
+    size_t k;
+    size_t ti = threadIdx.x;
+    size_t tj = threadIdx.y;
+    size_t n_j = n * j;
+    float sum = 0.0f;
+    for(k = 0; k < n; k += TILE_WIDTH) {
+      size_t k_ti = k + ti;
+      size_t tk;
+      es[ti][tj] = 0.0f;
+      if(j < m && k_ti < n) {
+        es[ti][tj] = exp(a[n_j + k_ti]);
+      }
+      __syncthreads();
+      for(tk = 0; tk < TILE_WIDTH; tk += 4) {
+        float4 ev;
+        ev.x = es[tk + 0][tj];
+        ev.y = es[tk + 1][tj];
+        ev.z = es[tk + 2][tj];
+        ev.w = es[tk + 3][tj];
+        sum += ev.x + ev.y + ev.z + ev.w;
+      }
+      __syncthreads();
+    }
     if(i < n && j < m) {
-      size_t n_j = n * j;
-      size_t n_3 = n & ~((size_t) 3);
-      size_t k;
-      float sum = 0.0f;
-      for(k = 0; k < n_3; k += 4) {
-        float4 av;
-        av.x = a[n_j + k + 0];
-        av.y = a[n_j + k + 1];
-        av.z = a[n_j + k + 2];
-        av.w = a[n_j + k + 3];
-        sum += expf(av.x) + expf(av.y) + expf(av.z) + expf(av.w);
-      }
-      for(; k < n; k++) {
-        sum += expf(a[n_j + k]);
-      }
       b[m * i + j] = exp(a[n * j + i]) / sum;
     }
   }

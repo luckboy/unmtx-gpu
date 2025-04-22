@@ -66,12 +66,12 @@ pub struct ClBackend
     inner: Mutex<ClInnerBackend>,
 }
 
-fn preferred_work_sizes(n: usize, m: usize, group_size_for_1d: usize, group_size_for_2d: usize, is_mul: bool) -> (usize, usize, usize, usize)
+fn preferred_work_sizes(n: usize, m: usize, group_size_for_1d: usize, group_size_for_2d: usize, are_tiles: bool) -> (usize, usize, usize, usize)
 {
-    if m == 1 && !is_mul {
+    if m == 1 && !are_tiles {
         let n2 = ((n + group_size_for_1d - 1) / group_size_for_1d) * group_size_for_1d;
         (group_size_for_1d, 1, n2, 1)
-    } else if n == 1 && !is_mul {
+    } else if n == 1 && !are_tiles {
         let m2 = ((m + group_size_for_1d - 1) / group_size_for_1d) * group_size_for_1d;
         (1, group_size_for_1d, 1, m2)
     } else {
@@ -352,6 +352,38 @@ impl ClBackend
                 }
         })
     }
+
+    fn check_and_enqueue_nd_range_for_fun_and_tiles(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    {
+        self.check_and_enqueue_nd_range2(kernel_name, a, b, |a2, b2| {
+                if a2.len != n * m {
+                    return Err(Error::BackendArrayElemCount(a2.len, n * m));
+                }
+                if b2.len != n * m {
+                    return Err(Error::BackendArrayElemCount(b2.len, n * m));
+                }
+                Ok(())
+        }, |inner, kernel, a_mem, b_mem| {
+                let n2 = n as u64;
+                let m2 = m as u64;
+                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, true);
+                unsafe {
+                    let res = ExecuteKernel::new(kernel)
+                    .set_arg(&a_mem)
+                    .set_arg(&b_mem)
+                    .set_arg_local_buffer(n3 * m3 *size_of::<f32>())
+                    .set_arg(&n2)
+                    .set_arg(&m2)
+                    .set_local_work_sizes(&[n3, m3])
+                    .set_global_work_sizes(&[n4, m4])
+                    .enqueue_nd_range(&inner.command_queue);
+                    match res {
+                        Ok(event) => Ok(event),
+                        Err(err) => Err(Error::OpenCl(err)),
+                    }
+                }
+        })
+    }
 }
 
 impl Backend for ClBackend
@@ -599,10 +631,10 @@ impl Backend for ClBackend
     { self.check_and_enqueue_nd_range_for_fun("tanh_at", a, b, n, m) }
 
     fn softmax_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("softmax_a", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun_and_tiles("softmax_a", a, b, n, m) }
 
     fn softmax_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("softmax_at", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun_and_tiles("softmax_at", a, b, n, m) }
 }
 
 #[cfg(test)]

@@ -97,16 +97,16 @@ pub struct CudaBackend
     has_cublas: bool,
 }
 
-fn preferred_launch_config(n: usize, m: usize, is_mul: bool) -> LaunchConfig
+fn preferred_launch_config(n: usize, m: usize, are_tiles: bool, is_mul: bool) -> LaunchConfig
 {
-    if m == 1 && !is_mul {
+    if m == 1 && !are_tiles {
         let n2 = ((n + 1023) / 1024) as u32;
         LaunchConfig {
             grid_dim: (n2, 1, 1),
             block_dim: (1024, 1, 1),
             shared_mem_bytes: 0,
         }
-    } else if n == 1 && !is_mul {
+    } else if n == 1 && !are_tiles {
         let m2 = ((m + 1023) / 1024) as u32;
         LaunchConfig {
             grid_dim: (1, m2, 1),
@@ -116,8 +116,12 @@ fn preferred_launch_config(n: usize, m: usize, is_mul: bool) -> LaunchConfig
     } else {
         let n2 = ((n + 31) / 32) as u32;
         let m2 = ((m + 31) / 32) as u32;
-        let shared_mem_bytes = if is_mul {
-            (1024 * 2 * size_of::<f32>()) as u32
+        let shared_mem_bytes = if are_tiles {
+            if is_mul {
+                (1024 * 2 * size_of::<f32>()) as u32
+            } else {
+                (1024 * size_of::<f32>()) as u32
+            }
         } else {
             0
         };
@@ -318,7 +322,7 @@ impl CudaBackend
                 }
                 Ok(())
         }, |_, kernel, a_param, b_param| {
-                let config = preferred_launch_config(n, m, false);
+                let config = preferred_launch_config(n, m, false, false);
                 let mut params = vec![
                     a_param,
                     b_param,
@@ -348,7 +352,7 @@ impl CudaBackend
                 }
                 Ok(())
         }, |_, kernel, a_param, b_param, c_param| {
-                let config = preferred_launch_config(n, m, false);
+                let config = preferred_launch_config(n, m, false, false);
                 let mut params = vec![
                     a_param,
                     b_param,
@@ -379,7 +383,7 @@ impl CudaBackend
                 }
                 Ok(())
         }, |_, kernel, a_param, b_param, c_param| {
-                let config = preferred_launch_config(n, m, true);
+                let config = preferred_launch_config(n, m, true, true);
                 let mut params = vec![
                     a_param,
                     b_param,
@@ -408,7 +412,7 @@ impl CudaBackend
                 }
                 Ok(())
         }, |_, kernel, a_param, c_param| {
-                let config = preferred_launch_config(n, m, false);
+                let config = preferred_launch_config(n, m, false, false);
                 let mut params = vec![
                     a_param,
                     b.as_kernel_param(),
@@ -425,6 +429,34 @@ impl CudaBackend
         })
     }
 
+    fn check_and_launch_for_fun_and_tiles(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    {
+        self.check_and_launch2(kernel_name, a, b, |a2, b2| {
+                if a2.len != n * m {
+                    return Err(Error::BackendArrayElemCount(a2.len, n * m));
+                }
+                if b2.len != n * m {
+                    return Err(Error::BackendArrayElemCount(b2.len, n * m));
+                }
+                Ok(())
+        }, |_, kernel, a_param, b_param| {
+                let config = preferred_launch_config(n, m, true, false);
+                let mut params = vec![
+                    a_param,
+                    b_param,
+                    n.as_kernel_param(),
+                    m.as_kernel_param()
+                ];
+                unsafe {
+                    match kernel.launch(config, &mut params) {
+                        Ok(()) => Ok(()),
+                        Err(err) => Err(Error::Cuda(err)),
+                    }
+                }
+        })
+    }
+
+    
     fn check_and_launch_cublas_for_mul(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize, is_trans_a: bool, is_trans_b: bool) -> Result<()>
     {
         self.check_and_launch_cublas3(a, b, c, |a2, b2, c2| {
@@ -472,7 +504,6 @@ impl CudaBackend
                 }
         })
     }
-
 }
 
 impl Backend for CudaBackend
@@ -726,10 +757,10 @@ impl Backend for CudaBackend
     { self.check_and_launch_for_fun("tanh_at", a, b, n, m) }
 
     fn softmax_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_launch_for_fun("softmax_a", a, b, n, m) }
+    { self.check_and_launch_for_fun_and_tiles("softmax_a", a, b, n, m) }
 
     fn softmax_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_launch_for_fun("softmax_at", a, b, n, m) }
+    { self.check_and_launch_for_fun_and_tiles("softmax_at", a, b, n, m) }
 }
 
 #[cfg(test)]

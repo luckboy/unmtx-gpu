@@ -576,57 +576,81 @@ __kernel void tanh_at(__global const float *a, __global float *b, ulong n, ulong
   }
 }
 
-__kernel void softmax_a(__global const float *a, __global float *b, ulong n, ulong m)
+__kernel void softmax_a(__global const float *a, __global float *b, __local float *es, ulong n, ulong m)
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
   size_t i = get_global_id(0);
   size_t j = get_global_id(1);
+  size_t k;
+  size_t tile_width = get_local_size(0);
+  size_t ti = get_local_id(0);
+  size_t tj = get_local_id(1);
+  size_t tile_width_ti = tile_width * ti;
+  size_t tile_width_3 = tile_width & ~((size_t) 3);
+  float sum = 0.0f;
+  for(k = 0; k < n2; k += tile_width) {
+    size_t k_ti = k + ti;
+    size_t tk;
+    es[tile_width_ti + tj] = 0.0f;
+    if(j < m2 && k_ti < n2) {
+      es[tile_width_ti + tj] = exp(a[m2 * k_ti + j]);
+    }
+    barrier(CLK_LOCAL_MEM_FENCE);
+    for(tk = 0; tk < tile_width_3; tk += 4) {
+      __private float4 ev;
+      ev.x = es[tile_width * (tk + 0) + tj];
+      ev.y = es[tile_width * (tk + 1) + tj];
+      ev.z = es[tile_width * (tk + 2) + tj];
+      ev.w = es[tile_width * (tk + 3) + tj];
+      sum += ev.x + ev.y + ev.z + ev.w;
+    }
+    for(; tk < tile_width_3; tk++) {
+      sum += es[tile_width * tk + tj];
+    }
+    barrier(CLK_LOCAL_MEM_FENCE);
+  }
   if(i < n2 && j < m2) {
-    size_t n2_3 = n2 & ~((size_t) 3);
-    size_t k;
-    float sum = 0.0f;
-    for(k = 0; k < n2_3; k += 4) {
-      __private float4 av;
-      __private float4 tv;
-      av.x = a[m2 * (k + 0) + j];
-      av.y = a[m2 * (k + 1) + j];
-      av.z = a[m2 * (k + 2) + j];
-      av.w = a[m2 * (k + 3) + j];
-      tv = exp(av);
-      sum += tv.x + tv.y + tv.z + tv.w;
-    }
-    for(; k < n2; k++) {
-      sum += exp(a[m2 * k + j]);
-    }
     b[m2 * i + j] = exp(a[m2 * i + j]) / sum;
   }
 }
 
-__kernel void softmax_at(__global const float *a, __global float *b, ulong n, ulong m)
+__kernel void softmax_at(__global const float *a, __global float *b, __local float *es, ulong n, ulong m)
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
   size_t i = get_global_id(0);
   size_t j = get_global_id(1);
+  size_t k;
+  size_t tile_width = get_local_size(0);
+  size_t ti = get_local_id(0);
+  size_t tj = get_local_id(1);
+  size_t tile_width_ti = tile_width * ti;
+  size_t tile_width_3 = tile_width & ~((size_t) 3);
+  size_t n2_j = n2 * j;
+  float sum = 0.0f;
+  for(k = 0; k < n2; k += tile_width) {
+    size_t k_ti = k + ti;
+    size_t tk;
+    es[tile_width_ti + tj] = 0.0f;
+    if(j < m2 && k_ti < n2) {
+      es[tile_width_ti + tj] = exp(a[n2_j + k_ti]);
+    }
+    barrier(CLK_LOCAL_MEM_FENCE);
+    for(tk = 0; tk < tile_width_3; tk += 4) {
+      __private float4 ev;
+      ev.x = es[tile_width * (tk + 0) + tj];
+      ev.y = es[tile_width * (tk + 1) + tj];
+      ev.z = es[tile_width * (tk + 2) + tj];
+      ev.w = es[tile_width * (tk + 3) + tj];
+      sum += ev.x + ev.y + ev.z + ev.w;
+    }
+    for(; tk < tile_width_3; tk++) {
+      sum += es[tile_width * tk + tj];
+    }
+    barrier(CLK_LOCAL_MEM_FENCE);
+  }
   if(i < n2 && j < m2) {
-    size_t n2_j = n2 * j;
-    size_t n2_3 = n2 & ~((size_t) 3);
-    size_t k;
-    float sum = 0.0f;
-    for(k = 0; k < n2_3; k += 4) {
-      __private float4 av;
-      __private float4 tv;
-      av.x = a[n2_j + k + 0];
-      av.y = a[n2_j + k + 1];
-      av.z = a[n2_j + k + 2];
-      av.w = a[n2_j + k + 3];
-      tv = exp(av);
-      sum += tv.x + tv.y + tv.z + tv.w;
-    }
-    for(; k < n2; k++) {
-      sum += exp(a[n2_j + k]);
-    }
     b[m2 * i + j] = exp(a[n2 * j + i]) / sum;
   }
 }
