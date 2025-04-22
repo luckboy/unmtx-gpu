@@ -93,7 +93,7 @@ struct CudaInnerBackend
 pub struct CudaBackend
 {
     inner: Mutex<CudaInnerBackend>,
-    is_cublas: bool,
+    has_cublas: bool,
 }
 
 fn preferred_launch_config(n: usize, m: usize) -> LaunchConfig
@@ -128,13 +128,13 @@ impl CudaBackend
     pub fn new() -> Result<CudaBackend>
     {
         if cfg!(feature = "default_cublas") {
-            Self::new_with_ordinal(0, true)
+            Self::new_with_ordinal_and_cublas_flag(0, true)
         } else {
-            Self::new_with_ordinal(0, false)
+            Self::new_with_ordinal_and_cublas_flag(0, false)
         }
     }
 
-    pub fn new_with_ordinal(ordinal: usize, is_cublas: bool) -> Result<CudaBackend>
+    pub fn new_with_ordinal_and_cublas_flag(ordinal: usize, is_cublas: bool) -> Result<CudaBackend>
     {
         let device = match CudaDevice::new(ordinal) {
             Ok(tmp_device) => tmp_device,
@@ -158,11 +158,11 @@ impl CudaBackend
         } else {
             None
         };
-        Ok(CudaBackend { inner: Mutex::new(CudaInnerBackend { device, cublas, }), is_cublas, })
+        Ok(CudaBackend { inner: Mutex::new(CudaInnerBackend { device, cublas, }), has_cublas: is_cublas, })
     }
     
-    pub fn is_cublas(&self) -> bool
-    { self.is_cublas }
+    pub fn has_cublas(&self) -> bool
+    { self.has_cublas }
     
     fn check_and_launch2<F, G>(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, f: F, g: G) -> Result<()>
         where F: FnOnce(&CudaBackendArray, &CudaBackendArray) -> Result<()>,
@@ -473,7 +473,7 @@ impl Backend for CudaBackend
 {
     fn name(&self) -> &'static str
     {
-        if self.is_cublas {
+        if self.has_cublas {
             "CUDA(cuBLAS)"
         } else {
             "CUDA"
@@ -610,7 +610,7 @@ impl Backend for CudaBackend
     
     fn mul_a_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize) -> Result<()>
     {
-        if self.is_cublas {
+        if self.has_cublas {
             self.check_and_launch_cublas_for_mul(a, b, c, n, m, l, false, false)
         } else {
             self.check_and_launch_for_mul("mul_a_b", a, b, c, n, m, l)
@@ -619,7 +619,7 @@ impl Backend for CudaBackend
 
     fn mul_at_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize) -> Result<()>
     {
-        if self.is_cublas {
+        if self.has_cublas {
             self.check_and_launch_cublas_for_mul(a, b, c, n, m, l, true, false)
         } else {
             self.check_and_launch_for_mul("mul_at_b", a, b, c, n, m, l)
@@ -628,7 +628,7 @@ impl Backend for CudaBackend
 
     fn mul_a_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize) -> Result<()>
     {
-        if self.is_cublas {
+        if self.has_cublas {
             self.check_and_launch_cublas_for_mul(a, b, c, n, m, l, false, true)
         } else {
             self.check_and_launch_for_mul("mul_a_bt", a, b, c, n, m, l) 
@@ -637,7 +637,7 @@ impl Backend for CudaBackend
 
     fn mul_at_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize) -> Result<()>
     {
-        if self.is_cublas {
+        if self.has_cublas {
             self.check_and_launch_cublas_for_mul(a, b, c, n, m, l, true, true)
         } else {
             self.check_and_launch_for_mul("mul_at_bt", a, b, c, n, m, l)
