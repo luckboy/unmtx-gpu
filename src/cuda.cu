@@ -8,7 +8,7 @@
 #define TILE_WIDTH      32
 
 #define MTHREAD_COUNT   32
-#define MTILE_WIDTH     (32 << 2)
+#define MTILE_WIDTH     (MTHREAD_COUNT << 1)
 
 extern "C" {
   __global__ void transpose_a(const float *a, float *b, size_t n, size_t m)
