@@ -75,9 +75,9 @@ fn preferred_work_sizes(n: usize, m: usize, group_size_for_1d: usize, group_size
         let m2 = ((m + group_size_for_1d - 1) / group_size_for_1d) * group_size_for_1d;
         (1, group_size_for_1d, 1, m2)
     } else if is_mul {
-        let n2 = (((n + 1) / 2 + group_size_for_2d - 1) / group_size_for_2d) * group_size_for_2d;
-        let m2 = (((m + 1) / 2 + group_size_for_2d - 1) / group_size_for_2d) * group_size_for_2d;
-        (group_size_for_2d, group_size_for_2d, n2, m2)
+        let n2 = (((n + 3) / 4 + (group_size_for_2d / 2) - 1) / (group_size_for_2d / 2)) * (group_size_for_2d / 2);
+        let m2 = (((m + 3) / 4 + (group_size_for_2d / 2) - 1) / (group_size_for_2d / 2)) * (group_size_for_2d / 2);
+        (group_size_for_2d / 2, group_size_for_2d / 2, n2, m2)
     } else {
         let n2 = ((n + group_size_for_2d - 1) / group_size_for_2d) * group_size_for_2d;
         let m2 = ((m + group_size_for_2d - 1) / group_size_for_2d) * group_size_for_2d;
@@ -309,8 +309,8 @@ impl ClBackend
                     .set_arg(&a_mem)
                     .set_arg(&b_mem)
                     .set_arg(&c_mem)
-                    .set_arg_local_buffer(n3 * m3 * 2 * size_of::<f32>())
-                    .set_arg_local_buffer(n3 * m3 * 2 * size_of::<f32>())
+                    .set_arg_local_buffer(n3 * m3 * 4 * size_of::<f32>())
+                    .set_arg_local_buffer(n3 * m3 * 4 * size_of::<f32>())
                     .set_arg(&n2)
                     .set_arg(&m2)
                     .set_arg(&l2)

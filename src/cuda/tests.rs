@@ -13,11 +13,11 @@ fn test_cuda_backend_new_creates_backend()
 {
     match CudaBackend::new() {
         Ok(_) => assert!(true),
-        Err(_) => assert!(false),
-        //Err(err) => {
-        //    println!("{}", err);
-        //    assert!(false)
-        //},
+        //Err(_) => assert!(false),
+        Err(err) => {
+            println!("{}", err);
+            assert!(false)
+        },
     }
 }
 
@@ -263,6 +263,7 @@ fn test_cuda_backend_mul_a_b_multiplies_backend_arrays()
         Err(_) => assert!(false),
     }
 }
+
 
 #[test]
 fn test_cuda_backend_mul_at_b_multiplies_backend_arrays()
