@@ -7,6 +7,9 @@
 //
 #define TILE_WIDTH      32
 
+#define MTHREAD_COUNT   32
+#define MTILE_WIDTH     (32 << 2)
+
 extern "C" {
   __global__ void transpose_a(const float *a, float *b, size_t n, size_t m)
   {
@@ -91,177 +94,257 @@ extern "C" {
 
   __global__ void mul_a_b(const float *a, const float *b, float *c, size_t n, size_t m, size_t l)
   {
-    __shared__ float as[TILE_WIDTH][TILE_WIDTH];
-    __shared__ float bs[TILE_WIDTH][TILE_WIDTH];
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
+    __shared__ float as[MTILE_WIDTH][MTHREAD_COUNT];
+    __shared__ float bs[MTHREAD_COUNT][MTILE_WIDTH];
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
     size_t k;
     size_t ti = threadIdx.x;
     size_t tj = threadIdx.y;
-    size_t l_i = l * i;
-    float cij = 0.0f;
-    for(k = 0; k < l; k += TILE_WIDTH) {
-      size_t k_ti = k + ti;
-      size_t k_tj = k + tj;
+    size_t bi = ti << 1;
+    size_t bj = tj << 1;
+    float ar1;
+    float ar2;
+    float br1;
+    float br2;
+    float cr11 = 0.0f;
+    float cr12 = 0.0f;
+    float cr21 = 0.0f;
+    float cr22 = 0.0f;
+    for(k = 0; k < l; k += MTHREAD_COUNT) {
       size_t tk;
-      as[ti][tj] = 0.0f;
-      if(i < n && k_tj < l) {
-        as[ti][tj] = a[l_i + k_tj];
+      as[bi + 0][tj] = 0.0f;
+      if(i + 0 < n && k + tj < l) {
+        as[bi + 0][tj] = a[l * (i + 0) + k + tj];
       }
-      bs[ti][tj] = 0.0f;
-      if(j < m && k_ti < l) {
-        bs[ti][tj] = b[m * k_ti + j];
+      as[bi + 1][tj] = 0.0f;
+      if(i + 1 < n && k + tj < l) {
+        as[bi + 1][tj] = a[l * (i + 1) + k + tj];
+      }
+      bs[ti][bj + 0] = 0.0f;
+      if(j + 0 < m && k + ti < l) {
+        bs[ti][bj + 0] = b[m * (k + ti) + j + 0];
+      }
+      bs[ti][bj + 1] = 0.0f;
+      if(j + 1 < m && k + ti < l) {
+        bs[ti][bj + 1] = b[m * (k + ti) + j + 1];
       }
       __syncthreads();
-      for(tk = 0; tk < TILE_WIDTH; tk += 4) {
-        float4 av;
-        float4 bv;
-        av.x = as[ti][tk + 0];
-        av.y = as[ti][tk + 1];
-        av.z = as[ti][tk + 2];
-        av.w = as[ti][tk + 3];
-        bv.x = bs[tk + 0][tj];
-        bv.y = bs[tk + 1][tj];
-        bv.z = bs[tk + 2][tj];
-        bv.w = bs[tk + 3][tj];
-        cij += av.x * bv.x + av.y * bv.y + av.z * bv.z + av.w * bv.w;
+      for(tk = 0; tk < MTHREAD_COUNT; tk++) {
+        ar1 = as[bi + 0][tk];
+        ar2 = as[bi + 1][tk];
+        br1 = bs[tk][bj + 0];
+        br2 = bs[tk][bj + 1];
+        cr11 += ar1 * br1;
+        cr12 += ar1 * br2;
+        cr21 += ar2 * br1;
+        cr22 += ar2 * br2;
       }
       __syncthreads();
     }
-    if(i < n && j < m) {
-      c[m * i + j] = cij;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = cr11;
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = cr12;
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = cr21;
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = cr22;
     }
   }
 
   __global__ void mul_at_b(const float *a, const float *b, float *c, size_t n, size_t m, size_t l)
   {
-    __shared__ float as[TILE_WIDTH][TILE_WIDTH];
-    __shared__ float bs[TILE_WIDTH][TILE_WIDTH];
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
+    __shared__ float as[MTILE_WIDTH][MTHREAD_COUNT];
+    __shared__ float bs[MTHREAD_COUNT][MTILE_WIDTH];
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
     size_t k;
     size_t ti = threadIdx.x;
     size_t tj = threadIdx.y;
-    float cij = 0.0f;
-    for(k = 0; k < l; k += TILE_WIDTH) {
-      size_t k_ti = k + ti;
-      size_t k_tj = k + tj;
+    size_t bi = ti << 1;
+    size_t bj = tj << 1;
+    float ar1;
+    float ar2;
+    float br1;
+    float br2;
+    float cr11 = 0.0f;
+    float cr12 = 0.0f;
+    float cr21 = 0.0f;
+    float cr22 = 0.0f;
+    for(k = 0; k < l; k += MTHREAD_COUNT) {
       size_t tk;
-      as[ti][tj] = 0.0f;
-      if(i < n && k_tj < l) {
-        as[ti][tj] = a[n * k_tj + i];
+      as[bi + 0][tj] = 0.0f;
+      if(i + 0 < n && k + tj < l) {
+        as[bi + 0][tj] = a[n * (k + tj) + i + 0];
       }
-      bs[ti][tj] = 0.0f;
-      if(j < m && k_ti < l) {
-        bs[ti][tj] = b[m * k_ti + j];
+      as[bi + 1][tj] = 0.0f;
+      if(i + 1 < n && k + tj < l) {
+        as[bi + 1][tj] = a[n * (k + tj) + i + 1];
+      }
+      bs[ti][bj + 0] = 0.0f;
+      if(j + 0 < m && k + ti < l) {
+        bs[ti][bj + 0] = b[m * (k + ti) + j + 0];
+      }
+      bs[ti][bj + 1] = 0.0f;
+      if(j + 1 < m && k + ti < l) {
+        bs[ti][bj + 1] = b[m * (k + ti) + j + 1];
       }
       __syncthreads();
-      for(tk = 0; tk < TILE_WIDTH; tk += 4) {
-        float4 av;
-        float4 bv;
-        av.x = as[ti][tk + 0];
-        av.y = as[ti][tk + 1];
-        av.z = as[ti][tk + 2];
-        av.w = as[ti][tk + 3];
-        bv.x = bs[tk + 0][tj];
-        bv.y = bs[tk + 1][tj];
-        bv.z = bs[tk + 2][tj];
-        bv.w = bs[tk + 3][tj];
-        cij += av.x * bv.x + av.y * bv.y + av.z * bv.z + av.w * bv.w;
+      for(tk = 0; tk < MTHREAD_COUNT; tk++) {
+        ar1 = as[bi + 0][tk];
+        ar2 = as[bi + 1][tk];
+        br1 = bs[tk][bj + 0];
+        br2 = bs[tk][bj + 1];
+        cr11 += ar1 * br1;
+        cr12 += ar1 * br2;
+        cr21 += ar2 * br1;
+        cr22 += ar2 * br2;
       }
       __syncthreads();
     }
-    if(i < n && j < m) {
-      c[m * i + j] = cij;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = cr11;
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = cr12;
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = cr21;
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = cr22;
     }
   }
 
   __global__ void mul_a_bt(const float *a, const float *b, float *c, size_t n, size_t m, size_t l)
   {
-    __shared__ float as[TILE_WIDTH][TILE_WIDTH];
-    __shared__ float bs[TILE_WIDTH][TILE_WIDTH];
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
+    __shared__ float as[MTILE_WIDTH][MTHREAD_COUNT];
+    __shared__ float bs[MTHREAD_COUNT][MTILE_WIDTH];
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
     size_t k;
     size_t ti = threadIdx.x;
     size_t tj = threadIdx.y;
-    size_t l_i = l * i;
-    size_t l_j = l * j;
-    float cij = 0.0f;
-    for(k = 0; k < l; k += TILE_WIDTH) {
-      size_t k_ti = k + ti;
-      size_t k_tj = k + tj;
+    size_t bi = ti << 1;
+    size_t bj = tj << 1;
+    float ar1;
+    float ar2;
+    float br1;
+    float br2;
+    float cr11 = 0.0f;
+    float cr12 = 0.0f;
+    float cr21 = 0.0f;
+    float cr22 = 0.0f;
+    for(k = 0; k < l; k += MTHREAD_COUNT) {
       size_t tk;
-      as[ti][tj] = 0.0f;
-      if(i < n && k_tj < l) {
-        as[ti][tj] = a[l_i + k_tj];
+      as[bi + 0][tj] = 0.0f;
+      if(i + 0 < n && k + tj < l) {
+        as[bi + 0][tj] = a[l * (i + 0) + k + tj];
       }
-      bs[ti][tj] = 0.0f;
-      if(j < m && k_ti < l) {
-        bs[ti][tj] = b[l_j + k_ti];
+      as[bi + 1][tj] = 0.0f;
+      if(i + 1 < n && k + tj < l) {
+        as[bi + 1][tj] = a[l * (i + 1) + k + tj];
+      }
+      bs[ti][bj + 0] = 0.0f;
+      if(j + 0 < m && k + ti < l) {
+        bs[ti][bj + 0] = b[l * (j + 0) + k + ti];
+      }
+      bs[ti][bj + 1] = 0.0f;
+      if(j + 1 < m && k + ti < l) {
+        bs[ti][bj + 1] = b[l * (j + 1) + k + ti];
       }
       __syncthreads();
-      for(tk = 0; tk < TILE_WIDTH; tk += 4) {
-        float4 av;
-        float4 bv;
-        av.x = as[ti][tk + 0];
-        av.y = as[ti][tk + 1];
-        av.z = as[ti][tk + 2];
-        av.w = as[ti][tk + 3];
-        bv.x = bs[tk + 0][tj];
-        bv.y = bs[tk + 1][tj];
-        bv.z = bs[tk + 2][tj];
-        bv.w = bs[tk + 3][tj];
-        cij += av.x * bv.x + av.y * bv.y + av.z * bv.z + av.w * bv.w;
+      for(tk = 0; tk < MTHREAD_COUNT; tk++) {
+        ar1 = as[bi + 0][tk];
+        ar2 = as[bi + 1][tk];
+        br1 = bs[tk][bj + 0];
+        br2 = bs[tk][bj + 1];
+        cr11 += ar1 * br1;
+        cr12 += ar1 * br2;
+        cr21 += ar2 * br1;
+        cr22 += ar2 * br2;
       }
       __syncthreads();
     }
-    if(i < n && j < m) {
-      c[m * i + j] = cij;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = cr11;
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = cr12;
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = cr21;
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = cr22;
     }
   }
 
   __global__ void mul_at_bt(const float *a, const float *b, float *c, size_t n, size_t m, size_t l)
   {
-    __shared__ float as[TILE_WIDTH][TILE_WIDTH];
-    __shared__ float bs[TILE_WIDTH][TILE_WIDTH];
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
+    __shared__ float as[MTILE_WIDTH][MTHREAD_COUNT];
+    __shared__ float bs[MTHREAD_COUNT][MTILE_WIDTH];
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
     size_t k;
     size_t ti = threadIdx.x;
     size_t tj = threadIdx.y;
-    size_t l_j = l * j;
-    float cij = 0.0f;
-    for(k = 0; k < l; k += TILE_WIDTH) {
-      size_t k_ti = k + ti;
-      size_t k_tj = k + tj;
+    size_t bi = ti << 1;
+    size_t bj = tj << 1;
+    float ar1;
+    float ar2;
+    float br1;
+    float br2;
+    float cr11 = 0.0f;
+    float cr12 = 0.0f;
+    float cr21 = 0.0f;
+    float cr22 = 0.0f;
+    for(k = 0; k < l; k += MTHREAD_COUNT) {
       size_t tk;
-      as[ti][tj] = 0.0f;
-      if(i < n && k_tj < l) {
-        as[ti][tj] = a[n * k_tj + i];
+      as[bi + 0][tj] = 0.0f;
+      if(i + 0 < n && k + tj < l) {
+        as[bi + 0][tj] = a[n * (k + tj) + i + 0];
       }
-      bs[ti][tj] = 0.0f;
-      if(j < m && k_ti < l) {
-        bs[ti][tj] = b[l_j + k_ti];
+      as[bi + 1][tj] = 0.0f;
+      if(i + 1 < n && k + tj < l) {
+        as[bi + 1][tj] = a[n * (k + tj) + i + 1];
+      }
+      bs[ti][bj + 0] = 0.0f;
+      if(j + 0 < m && k + ti < l) {
+        bs[ti][bj + 0] = b[l * (j + 0) + k + ti];
+      }
+      bs[ti][bj + 1] = 0.0f;
+      if(j + 1 < m && k + ti < l) {
+        bs[ti][bj + 1] = b[l * (j + 1) + k + ti];
       }
       __syncthreads();
-      for(tk = 0; tk < TILE_WIDTH; tk += 4) {
-        float4 av;
-        float4 bv;
-        av.x = as[ti][tk + 0];
-        av.y = as[ti][tk + 1];
-        av.z = as[ti][tk + 2];
-        av.w = as[ti][tk + 3];
-        bv.x = bs[tk + 0][tj];
-        bv.y = bs[tk + 1][tj];
-        bv.z = bs[tk + 2][tj];
-        bv.w = bs[tk + 3][tj];
-        cij += av.x * bv.x + av.y * bv.y + av.z * bv.z + av.w * bv.w;
+      for(tk = 0; tk < MTHREAD_COUNT; tk++) {
+        ar1 = as[bi + 0][tk];
+        ar2 = as[bi + 1][tk];
+        br1 = bs[tk][bj + 0];
+        br2 = bs[tk][bj + 1];
+        cr11 += ar1 * br1;
+        cr12 += ar1 * br2;
+        cr21 += ar2 * br1;
+        cr22 += ar2 * br2;
       }
       __syncthreads();
     }
-    if(i < n && j < m) {
-      c[m * i + j] = cij;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = cr11;
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = cr12;
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = cr21;
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = cr22;
     }
   }
 

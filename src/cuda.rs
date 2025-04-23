@@ -113,15 +113,24 @@ fn preferred_launch_config(n: usize, m: usize, are_tiles: bool, is_mul: bool) ->
             block_dim: (1, 1024, 1),
             shared_mem_bytes: 0,
         }
+    } else if is_mul {
+        let n2 = (((n + 1) / 2 + 31) / 32) as u32;
+        let m2 = (((m + 1) / 2 + 31) / 32) as u32;
+        let shared_mem_bytes = if are_tiles {
+            (1024 * 2 * 2 * size_of::<f32>()) as u32
+        } else {
+            0
+        };
+        LaunchConfig {
+            grid_dim: (n2, m2, 1),
+            block_dim: (32, 32, 1),
+            shared_mem_bytes,
+        }
     } else {
         let n2 = ((n + 31) / 32) as u32;
         let m2 = ((m + 31) / 32) as u32;
         let shared_mem_bytes = if are_tiles {
-            if is_mul {
-                (1024 * 2 * size_of::<f32>()) as u32
-            } else {
-                (1024 * size_of::<f32>()) as u32
-            }
+            (1024 * size_of::<f32>()) as u32
         } else {
             0
         };
