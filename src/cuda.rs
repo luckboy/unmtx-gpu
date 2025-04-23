@@ -7,7 +7,6 @@
 //
 use std::ffi::c_int;
 use std::ffi::c_void;
-use std::mem::size_of;
 use std::sync::Arc;
 use std::sync::Mutex;
 use crate::Backend;
@@ -116,28 +115,18 @@ fn preferred_launch_config(n: usize, m: usize, are_tiles: bool, is_mul: bool) ->
     } else if is_mul {
         let n2 = (((n + 3) / 4 + 15) / 16) as u32;
         let m2 = (((m + 3) / 4 + 15) / 16) as u32;
-        let shared_mem_bytes = if are_tiles {
-            (256 * 4 * 2 * size_of::<f32>()) as u32
-        } else {
-            0
-        };
         LaunchConfig {
             grid_dim: (n2, m2, 1),
             block_dim: (16, 16, 1),
-            shared_mem_bytes,
+            shared_mem_bytes: 0,
         }
     } else {
         let n2 = ((n + 31) / 32) as u32;
         let m2 = ((m + 31) / 32) as u32;
-        let shared_mem_bytes = if are_tiles {
-            (1024 * size_of::<f32>()) as u32
-        } else {
-            0
-        };
         LaunchConfig {
             grid_dim: (n2, m2, 1),
             block_dim: (32, 32, 1),
-            shared_mem_bytes,
+            shared_mem_bytes: 0,
         }
     }
 }
