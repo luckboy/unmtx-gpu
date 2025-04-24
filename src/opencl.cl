@@ -977,18 +977,19 @@ __kernel void softmax_a(__global const float *a, __global float *b, __local floa
   size_t i = get_global_id(0);
   size_t j = get_global_id(1);
   size_t k;
-  size_t tile_width = get_local_size(0);
+  size_t tile_width = get_local_size(1);
+  size_t tile_height = get_local_size(0);
   size_t ti = get_local_id(0);
   size_t tj = get_local_id(1);
   float sum = 0.0f;
-  for(k = 0; k < n2; k += tile_width) {
+  for(k = 0; k < n2; k += tile_height) {
     size_t tk;
     es[tile_width * ti + tj] = 0.0f;
     if(j < m2 && k + ti < n2) {
       es[tile_width * ti + tj] = exp(a[m2 * (k + ti) + j]);
     }
     barrier(CLK_LOCAL_MEM_FENCE);
-    for(tk = 0; tk < tile_width; tk++) {
+    for(tk = 0; tk < tile_height; tk++) {
       sum += es[tile_width * tk + tj];
     }
     barrier(CLK_LOCAL_MEM_FENCE);
@@ -1005,18 +1006,19 @@ __kernel void softmax_at(__global const float *a, __global float *b, __local flo
   size_t i = get_global_id(0);
   size_t j = get_global_id(1);
   size_t k;
-  size_t tile_width = get_local_size(0);
+  size_t tile_width = get_local_size(1);
+  size_t tile_height = get_local_size(0);
   size_t ti = get_local_id(0);
   size_t tj = get_local_id(1);
   float sum = 0.0f;
-  for(k = 0; k < n2; k += tile_width) {
+  for(k = 0; k < n2; k += tile_height) {
     size_t tk;
     es[tile_width * ti + tj] = 0.0f;
     if(j < m2 && k + ti < n2) {
       es[tile_width * ti + tj] = exp(a[n2 * j + k + ti]);
     }
     barrier(CLK_LOCAL_MEM_FENCE);
-    for(tk = 0; tk < tile_width; tk++) {
+    for(tk = 0; tk < tile_height; tk++) {
       sum += es[tile_width * tk + tj];
     }
     barrier(CLK_LOCAL_MEM_FENCE);

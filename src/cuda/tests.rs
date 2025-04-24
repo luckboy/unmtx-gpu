@@ -881,6 +881,28 @@ fn test_cuda_backend_softmax_a_calculates_softmax_for_backend_array()
                 },
                 Err(_) => assert!(false),
             }
+            let a6 = fixture_a(4, 1);
+            match backend_softmax_a(&backend, a6.as_slice(), 4, 1) {
+                Ok(b6) => {
+                    let expected_b6 = expected_softmax_a(a6.as_slice(), 4, 1);
+                    assert_eq!(expected_b6.len(), b6.len());
+                    for i in 0usize..4usize {
+                        assert!((expected_b6[i] - b6[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a7 = fixture_a(1, 4);
+            match backend_softmax_a(&backend, a7.as_slice(), 1, 4) {
+                Ok(b7) => {
+                    let expected_b7 = expected_softmax_a(a6.as_slice(), 1, 4);
+                    assert_eq!(expected_b7.len(), b7.len());
+                    for i in 0usize..4usize {
+                        assert!((expected_b7[i] - b7[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
         },
         Err(_) => assert!(false),
     }
@@ -942,6 +964,28 @@ fn test_cuda_backend_softmax_at_calculates_softmax_for_backend_array()
                     assert_eq!(expected_b5.len(), b5.len());
                     for i in 0usize..(8usize * 3usize) {
                         assert!((expected_b5[i] - b5[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a6 = fixture_a(1, 4);
+            match backend_softmax_at(&backend, a6.as_slice(), 4, 1) {
+                Ok(b6) => {
+                    let expected_b6 = expected_softmax_at(a6.as_slice(), 4, 1);
+                    assert_eq!(expected_b6.len(), b6.len());
+                    for i in 0usize..4usize {
+                        assert!((expected_b6[i] - b6[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a7 = fixture_a(4, 1);
+            match backend_softmax_at(&backend, a7.as_slice(), 1, 4) {
+                Ok(b7) => {
+                    let expected_b7 = expected_softmax_at(a6.as_slice(), 1, 4);
+                    assert_eq!(expected_b7.len(), b7.len());
+                    for i in 0usize..4usize {
+                        assert!((expected_b7[i] - b7[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),

@@ -5,7 +5,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-#define TILE_WIDTH      32
+#define TILE_SIZE       1024
 
 #define MTHREAD_COUNT   16
 #define MTILE_WIDTH     (MTHREAD_COUNT << 2)
@@ -902,22 +902,24 @@ extern "C" {
 
   __global__ void softmax_a(const float *a, float *b, size_t n, size_t m)
   {
-    __shared__ float es[TILE_WIDTH][TILE_WIDTH];
+    __shared__ float es[TILE_SIZE];
     size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
     size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
     size_t k;
+    size_t tile_width = blockDim.y;
+    size_t tile_height = blockDim.x;
     size_t ti = threadIdx.x;
     size_t tj = threadIdx.y;
     float sum = 0.0f;
-    for(k = 0; k < n; k += TILE_WIDTH) {
+    for(k = 0; k < n; k += tile_height) {
       size_t tk;
-      es[ti][tj] = 0.0f;
+      es[tile_width * ti + tj] = 0.0f;
       if(j < m && k + ti < n) {
-        es[ti][tj] = exp(a[m * (k + ti) + j]);
+        es[tile_width * ti + tj] = exp(a[m * (k + ti) + j]);
       }
       __syncthreads();
-      for(tk = 0; tk < TILE_WIDTH; tk++) {
-        sum += es[tk][tj];
+      for(tk = 0; tk < tile_height; tk++) {
+        sum += es[tile_width * tk + tj];
       }
       __syncthreads();
     }
@@ -928,22 +930,24 @@ extern "C" {
 
   __global__ void softmax_at(const float *a, float *b, size_t n, size_t m)
   {
-    __shared__ float es[TILE_WIDTH][TILE_WIDTH];
+    __shared__ float es[TILE_SIZE];
     size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
     size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
     size_t k;
+    size_t tile_width = blockDim.y;
+    size_t tile_height = blockDim.x;
     size_t ti = threadIdx.x;
     size_t tj = threadIdx.y;
     float sum = 0.0f;
-    for(k = 0; k < n; k += TILE_WIDTH) {
+    for(k = 0; k < n; k += tile_height) {
       size_t tk;
-      es[ti][tj] = 0.0f;
+      es[tile_width * ti + tj] = 0.0f;
       if(j < m && k + ti < n) {
-        es[ti][tj] = exp(a[n * j + k + ti]);
+        es[tile_width * ti + tj] = exp(a[n * j + k + ti]);
       }
       __syncthreads();
-      for(tk = 0; tk < TILE_WIDTH; tk++) {
-        sum += es[tk][tj];
+      for(tk = 0; tk < tile_height; tk++) {
+        sum += es[tile_width * tk + tj];
       }
       __syncthreads();
     }

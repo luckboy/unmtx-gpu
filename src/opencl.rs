@@ -66,12 +66,12 @@ pub struct ClBackend
     inner: Mutex<ClInnerBackend>,
 }
 
-fn preferred_work_sizes(n: usize, m: usize, group_size_for_1d: usize, group_size_for_2d: usize, are_tiles: bool, is_mul: bool) -> (usize, usize, usize, usize)
+fn preferred_work_sizes(n: usize, m: usize, group_size_for_1d: usize, group_size_for_2d: usize, is_mul: bool) -> (usize, usize, usize, usize)
 {
-    if m == 1 && !are_tiles {
+    if m == 1 {
         let n2 = ((n + group_size_for_1d - 1) / group_size_for_1d) * group_size_for_1d;
         (group_size_for_1d, 1, n2, 1)
-    } else if n == 1 && !are_tiles {
+    } else if n == 1 {
         let m2 = ((m + group_size_for_1d - 1) / group_size_for_1d) * group_size_for_1d;
         (1, group_size_for_1d, 1, m2)
     } else if is_mul {
@@ -233,7 +233,7 @@ impl ClBackend
         }, |inner, kernel, a_mem, b_mem| {
                 let n2 = n as u64;
                 let m2 = m as u64;
-                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, false, false);
+                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, false);
                 unsafe {
                     let res = ExecuteKernel::new(kernel)
                     .set_arg(&a_mem)
@@ -267,7 +267,7 @@ impl ClBackend
         }, |inner, kernel, a_mem, b_mem, c_mem| {
                 let n2 = n as u64;
                 let m2 = m as u64;
-                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, false, false);
+                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, false);
                 unsafe {
                     let res = ExecuteKernel::new(kernel)
                     .set_arg(&a_mem)
@@ -303,7 +303,7 @@ impl ClBackend
                 let n2 = n as u64;
                 let m2 = m as u64;
                 let l2 = l as u64;
-                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, true, true);
+                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, true);
                 unsafe {
                     let res = ExecuteKernel::new(kernel)
                     .set_arg(&a_mem)
@@ -338,7 +338,7 @@ impl ClBackend
         }, |inner, kernel, a_mem, c_mem| {
                 let n2 = n as u64;
                 let m2 = m as u64;
-                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, false, false);
+                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, false);
                 unsafe {
                     let res = ExecuteKernel::new(kernel)
                     .set_arg(&a_mem)
@@ -370,7 +370,7 @@ impl ClBackend
         }, |inner, kernel, a_mem, b_mem| {
                 let n2 = n as u64;
                 let m2 = m as u64;
-                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, true, false);
+                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, false);
                 unsafe {
                     let res = ExecuteKernel::new(kernel)
                     .set_arg(&a_mem)
@@ -402,7 +402,7 @@ impl ClBackend
         }, |inner, kernel, a_mem, b_mem| {
                 let n2 = n as u64;
                 let m2 = m as u64;
-                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, false, false);
+                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, false);
                 unsafe {
                     let res = ExecuteKernel::new(kernel)
                     .set_arg(&a_mem)
@@ -433,7 +433,7 @@ impl ClBackend
         }, |inner, kernel, a_mem, b_mem| {
                 let n2 = n as u64;
                 let m2 = m as u64;
-                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, false, false);
+                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, false);
                 unsafe {
                     let res = ExecuteKernel::new(kernel)
                     .set_arg(&a_mem)
