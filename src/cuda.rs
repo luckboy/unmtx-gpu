@@ -74,7 +74,9 @@ const KERNELS: &'static [&'static str] = &[
     "tanh_a",
     "tanh_at",
     "softmax_a",
-    "softmax_at"
+    "softmax_at",
+    "repeat_col_a",
+    "repeat_row_a"
 ];
 
 #[derive(Debug)]
@@ -454,6 +456,59 @@ impl CudaBackend
         })
     }
 
+    fn check_and_launch_for_repeat_col(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    {
+        self.check_and_launch2(kernel_name, a, b, |a2, b2| {
+                if a2.len != n {
+                    return Err(Error::BackendArrayElemCount(a2.len, n));
+                }
+                if b2.len != n * m {
+                    return Err(Error::BackendArrayElemCount(b2.len, n * m));
+                }
+                Ok(())
+        }, |_, kernel, a_param, b_param| {
+                let config = preferred_launch_config(n, m, false, false);
+                let mut params = vec![
+                    a_param,
+                    b_param,
+                    n.as_kernel_param(),
+                    m.as_kernel_param()
+                ];
+                unsafe {
+                    match kernel.launch(config, &mut params) {
+                        Ok(()) => Ok(()),
+                        Err(err) => Err(Error::Cuda(err)),
+                    }
+                }
+        })
+    }
+
+    fn check_and_launch_for_repeat_row(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    {
+        self.check_and_launch2(kernel_name, a, b, |a2, b2| {
+                if a2.len != m {
+                    return Err(Error::BackendArrayElemCount(a2.len, m));
+                }
+                if b2.len != n * m {
+                    return Err(Error::BackendArrayElemCount(b2.len, n * m));
+                }
+                Ok(())
+        }, |_, kernel, a_param, b_param| {
+                let config = preferred_launch_config(n, m, false, false);
+                let mut params = vec![
+                    a_param,
+                    b_param,
+                    n.as_kernel_param(),
+                    m.as_kernel_param()
+                ];
+                unsafe {
+                    match kernel.launch(config, &mut params) {
+                        Ok(()) => Ok(()),
+                        Err(err) => Err(Error::Cuda(err)),
+                    }
+                }
+        })
+    }    
     
     fn check_and_launch_cublas_for_mul(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize, is_trans_a: bool, is_trans_b: bool) -> Result<()>
     {
@@ -759,6 +814,12 @@ impl Backend for CudaBackend
 
     fn softmax_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
     { self.check_and_launch_for_fun_and_tiles("softmax_at", a, b, n, m) }
+
+    fn repeat_col_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_repeat_col("repeat_col_a", a, b, n, m) }
+
+    fn repeat_row_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_repeat_row("repeat_row_a", a, b, n, m) }
 }
 
 #[cfg(test)]

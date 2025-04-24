@@ -236,6 +236,10 @@ pub trait Backend
     /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>softmax</mi><mo fence="true">(</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup><mo fence="true">)</mo></mrow></math>).
     fn softmax_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
+
+    fn repeat_col_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
+
+    fn repeat_row_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 }
 
 /// An error enumeration.
@@ -256,6 +260,8 @@ pub enum Error
     ResTransposition,
     /// A number of matrix elements isn't equal to a number of elements.
     MatrixElemCount(usize, usize),
+    /// A matrix isn't a vector.
+    IsNotVector,
     /// A mutex can't be locked.
     Mutex,
     /// An OpenCL error.
@@ -303,6 +309,7 @@ impl fmt::Display for Error
             Error::ArgTransposition => write!(f, "argument matrix is transposed"),
             Error::ResTransposition => write!(f, "result matrix is transposed"),
             Error::MatrixElemCount(n1, n2) => write!(f, "number of matrix elements isn't equal to number of elements ({}, {})", n1, n2),
+            Error::IsNotVector => write!(f, "matrix isn't vector"),
             Error::Mutex => write!(f, "can't lock mutex"),
             #[cfg(feature = "opencl")]
             Error::OpenCl(err) => write!(f, "OpenCL error: {}", err),
@@ -753,6 +760,19 @@ impl Matrix
         let frontend = Frontend::new().unwrap();
         let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
         frontend.softmax(self, &res).unwrap();
+        res
+    }
+    
+    pub fn repeat(&self, n: usize) -> Self
+    {
+        assert!(self.col_count == 1 || self.row_count == 1); 
+        let frontend = Frontend::new().unwrap();
+        let res = if self.col_count == 1 {
+            unsafe { frontend.create_matrix(self.row_count, n) }.unwrap()
+        } else {
+            unsafe { frontend.create_matrix(n, self.col_count) }.unwrap()
+        };
+        frontend.repeat(self, &res).unwrap();
         res
     }
 }
@@ -1931,6 +1951,26 @@ impl Frontend
             return Err(Error::ResTransposition);
         }
         self.backend.transpose_a(&*a.array, &*b.array, a.col_count, a.row_count)
+    }
+
+    pub fn repeat(&self, a: &Matrix, b: &Matrix) -> Result<()>
+    {
+        if b.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if a.col_count == 1 {
+            if a.row_count != b.row_count {
+                return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count));
+            }
+            self.backend.repeat_col_a(&*a.array, &*b.array, a.row_count, b.col_count)
+        } else if a.row_count == 1 {
+            if a.col_count != b.col_count {
+                return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count));
+            }
+            self.backend.repeat_row_a(&*a.array, &*b.array, b.row_count, a.col_count)
+        } else {
+            Err(Error::IsNotVector)
+        }
     }
 }
 

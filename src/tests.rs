@@ -534,6 +534,26 @@ fn test_frontend_softmax_calculates_sigmoid_for_matrix()
 }
 
 #[test]
+fn test_frontend_repeat_repeats_column_or_row()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let a1 = fixture_a(2, 1);
+            match frontend_repeat_for_col_a(&frontend, a1.as_slice(), 2, 3) {
+                Ok(b1) => assert_eq!(expected_repeat_col_a(a1.as_slice(), 2, 3), b1),
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a(1, 3);
+            match frontend_repeat_for_row_a(&frontend, a2.as_slice(), 2, 3) {
+                Ok(b2) => assert_eq!(expected_repeat_row_a(a2.as_slice(), 2, 3), b2),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
 fn test_matrix_creates_matrix()
 {
     let a = matrix![
@@ -850,4 +870,15 @@ fn test_matrix_softmax_calculates_softmax_for_matrix()
     for i in 0usize..(2usize * 3usize) {
         assert!((expected_b_elems[i] - b_elems[i]).abs() < 0.001);
     }
+}
+
+#[test]
+fn test_matrix_repeat_repeats_column_or_row()
+{
+    let a_elems1 = fixture_a(2, 1);
+    let a1 = Matrix::new_with_elems(2, 1, a_elems1.as_slice());
+    assert_eq!(expected_repeat_col_a(a_elems1.as_slice(), 2, 3), a1.repeat(3).elems());
+    let a_elems2 = fixture_a(1, 3);
+    let a2 = Matrix::new_with_elems(1, 3, a_elems2.as_slice());
+    assert_eq!(expected_repeat_row_a(a_elems2.as_slice(), 2, 3), a2.repeat(2).elems());
 }

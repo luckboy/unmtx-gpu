@@ -952,6 +952,36 @@ fn test_cuda_backend_softmax_at_calculates_softmax_for_backend_array()
 }
 
 #[test]
+fn test_cuda_backend_repeat_col_a_repeats_column_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a(2, 1);
+            match backend_repeat_col_a(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => assert_eq!(expected_repeat_col_a(a.as_slice(), 2, 3), b),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_repeat_row_a_repeats_row_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a(1, 3);
+            match backend_repeat_row_a(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => assert_eq!(expected_repeat_row_a(a.as_slice(), 2, 3), b),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
 fn test_cuda_backend_sigmoid_a_uses_one_backend_array_for_a_a()
 {
     match CudaBackend::new() {

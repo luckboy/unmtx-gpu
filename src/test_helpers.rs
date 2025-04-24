@@ -492,6 +492,26 @@ pub(crate) fn backend_softmax_at(backend: &dyn Backend, a_elems: &[f32], n: usiz
     Ok(b_elems)
 }
 
+pub(crate) fn backend_repeat_col_a(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.repeat_col_a(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_repeat_row_a(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.repeat_row_a(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
 pub(crate) fn backend_sigmoid_a_a(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
 {
     let a = backend.alloc_and_store(a_elems)?;
@@ -954,6 +974,24 @@ pub(crate) fn frontend_softmax_for_at(frontend: &Frontend, a_elems: &[f32], n: u
     Ok(frontend.elems_and_transpose_flag(&b)?.0)
 }
 
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_repeat_for_col_a(frontend: &Frontend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(n, 1, a_elems)?;
+    let b = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.repeat(&a, &b)?;
+    Ok(frontend.elems_and_transpose_flag(&b)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_repeat_for_row_a(frontend: &Frontend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(1, m, a_elems)?;
+    let b = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.repeat(&a, &b)?;
+    Ok(frontend.elems_and_transpose_flag(&b)?.0)
+}
+
 pub(crate) fn expected_transpose_a(a: &[f32], n: usize, m: usize) -> Vec<f32>
 {
     let mut b = vec![0.0f32; n * m];
@@ -1398,6 +1436,28 @@ pub(crate) fn expected_softmax_at(a: &[f32], n: usize, m: usize) -> Vec<f32>
                 sum += a[n * j + k].exp();
             }
             b[m * i + j] = a[n * j + i].exp() / sum;
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_repeat_col_a(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[i];
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_repeat_row_a(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[j];
         }
     }
     b

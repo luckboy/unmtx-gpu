@@ -388,6 +388,68 @@ impl ClBackend
                 }
         })
     }
+
+    fn check_and_enqueue_nd_range_for_repeat_col(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    {
+        self.check_and_enqueue_nd_range2(kernel_name, a, b, |a2, b2| {
+                if a2.len != n {
+                    return Err(Error::BackendArrayElemCount(a2.len, n));
+                }
+                if b2.len != n * m {
+                    return Err(Error::BackendArrayElemCount(b2.len, n * m));
+                }
+                Ok(())
+        }, |inner, kernel, a_mem, b_mem| {
+                let n2 = n as u64;
+                let m2 = m as u64;
+                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, false, false);
+                unsafe {
+                    let res = ExecuteKernel::new(kernel)
+                    .set_arg(&a_mem)
+                    .set_arg(&b_mem)
+                    .set_arg(&n2)
+                    .set_arg(&m2)
+                    .set_local_work_sizes(&[n3, m3])
+                    .set_global_work_sizes(&[n4, m4])
+                    .enqueue_nd_range(&inner.command_queue);
+                    match res {
+                        Ok(event) => Ok(event),
+                        Err(err) => Err(Error::OpenCl(err)),
+                    }
+                }
+        })
+    }
+
+    fn check_and_enqueue_nd_range_for_repeat_row(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    {
+        self.check_and_enqueue_nd_range2(kernel_name, a, b, |a2, b2| {
+                if a2.len != m {
+                    return Err(Error::BackendArrayElemCount(a2.len, m));
+                }
+                if b2.len != n * m {
+                    return Err(Error::BackendArrayElemCount(b2.len, n * m));
+                }
+                Ok(())
+        }, |inner, kernel, a_mem, b_mem| {
+                let n2 = n as u64;
+                let m2 = m as u64;
+                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, false, false);
+                unsafe {
+                    let res = ExecuteKernel::new(kernel)
+                    .set_arg(&a_mem)
+                    .set_arg(&b_mem)
+                    .set_arg(&n2)
+                    .set_arg(&m2)
+                    .set_local_work_sizes(&[n3, m3])
+                    .set_global_work_sizes(&[n4, m4])
+                    .enqueue_nd_range(&inner.command_queue);
+                    match res {
+                        Ok(event) => Ok(event),
+                        Err(err) => Err(Error::OpenCl(err)),
+                    }
+                }
+        })
+    }
 }
 
 impl Backend for ClBackend
@@ -639,6 +701,12 @@ impl Backend for ClBackend
 
     fn softmax_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
     { self.check_and_enqueue_nd_range_for_fun_and_tiles("softmax_at", a, b, n, m) }
+
+    fn repeat_col_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_enqueue_nd_range_for_repeat_col("repeat_col_a", a, b, n, m) }
+
+    fn repeat_row_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_enqueue_nd_range_for_repeat_row("repeat_row_a", a, b, n, m) }
 }
 
 #[cfg(test)]
