@@ -259,6 +259,11 @@ fn test_cl_backend_mul_a_b_multiplies_backend_arrays()
                 Ok(c5) => assert_eq!(expected_mul_a_b(a5.as_slice(), b5.as_slice(), 2, 3, 8), c5),
                 Err(_) => assert!(false),
             }
+            let (a6, b6) = fixture_a_b(8, 8, 8, 8);
+            match backend_mul_a_b(&backend, a6.as_slice(), b6.as_slice(), 8, 8, 8) {
+                Ok(c6) => assert_eq!(expected_mul_a_b(a6.as_slice(), b6.as_slice(), 8, 8, 8), c6),
+                Err(_) => assert!(false),
+            }
         },
         Err(_) => assert!(false),
     }
@@ -292,6 +297,11 @@ fn test_cl_backend_mul_at_b_multiplies_backend_arrays()
             let (a5, b5) = fixture_a_b(8, 2, 8, 3);
             match backend_mul_at_b(&backend, a5.as_slice(), b5.as_slice(), 2, 3, 8) {
                 Ok(c5) => assert_eq!(expected_mul_at_b(a5.as_slice(), b5.as_slice(), 2, 3, 8), c5),
+                Err(_) => assert!(false),
+            }
+            let (a6, b6) = fixture_a_b(8, 8, 8, 8);
+            match backend_mul_at_b(&backend, a6.as_slice(), b6.as_slice(), 8, 8, 8) {
+                Ok(c6) => assert_eq!(expected_mul_at_b(a6.as_slice(), b6.as_slice(), 8, 8, 8), c6),
                 Err(_) => assert!(false),
             }
         },
@@ -329,6 +339,11 @@ fn test_cl_backend_mul_a_bt_multiplies_backend_arrays()
                 Ok(c5) => assert_eq!(expected_mul_a_bt(a5.as_slice(), b5.as_slice(), 2, 3, 8), c5),
                 Err(_) => assert!(false),
             }
+            let (a6, b6) = fixture_a_b(8, 8, 8, 8);
+            match backend_mul_a_bt(&backend, a6.as_slice(), b6.as_slice(), 8, 8, 8) {
+                Ok(c6) => assert_eq!(expected_mul_a_bt(a6.as_slice(), b6.as_slice(), 8, 8, 8), c6),
+                Err(_) => assert!(false),
+            }
         },
         Err(_) => assert!(false),
     }
@@ -362,6 +377,11 @@ fn test_cl_backend_mul_at_bt_multiplies_backend_arrays()
             let (a5, b5) = fixture_a_b(8, 2, 3, 8);
             match backend_mul_at_bt(&backend, a5.as_slice(), b5.as_slice(), 2, 3, 8) {
                 Ok(c5) => assert_eq!(expected_mul_at_bt(a5.as_slice(), b5.as_slice(), 2, 3, 8), c5),
+                Err(_) => assert!(false),
+            }
+            let (a6, b6) = fixture_a_b(8, 8, 8, 8);
+            match backend_mul_at_bt(&backend, a6.as_slice(), b6.as_slice(), 8, 8, 8) {
+                Ok(c6) => assert_eq!(expected_mul_at_bt(a6.as_slice(), b6.as_slice(), 8, 8, 8), c6),
                 Err(_) => assert!(false),
             }
         },
