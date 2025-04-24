@@ -100,14 +100,14 @@ pub struct CudaBackend
 
 fn preferred_launch_config(n: usize, m: usize, is_mul: bool) -> LaunchConfig
 {
-    if m == 1 {
+    if m == 1 && !is_mul {
         let n2 = ((n + 1023) / 1024) as u32;
         LaunchConfig {
             grid_dim: (n2, 1, 1),
             block_dim: (1024, 1, 1),
             shared_mem_bytes: 0,
         }
-    } else if n == 1 {
+    } else if n == 1 && !is_mul {
         let m2 = ((m + 1023) / 1024) as u32;
         LaunchConfig {
             grid_dim: (1, m2, 1),

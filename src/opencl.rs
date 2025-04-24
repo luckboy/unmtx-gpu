@@ -68,10 +68,10 @@ pub struct ClBackend
 
 fn preferred_work_sizes(n: usize, m: usize, group_size_for_1d: usize, group_size_for_2d: usize, is_mul: bool) -> (usize, usize, usize, usize)
 {
-    if m == 1 {
+    if m == 1 && !is_mul {
         let n2 = ((n + group_size_for_1d - 1) / group_size_for_1d) * group_size_for_1d;
         (group_size_for_1d, 1, n2, 1)
-    } else if n == 1 {
+    } else if n == 1 && !is_mul {
         let m2 = ((m + group_size_for_1d - 1) / group_size_for_1d) * group_size_for_1d;
         (1, group_size_for_1d, 1, m2)
     } else if is_mul {
