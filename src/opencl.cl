@@ -980,26 +980,15 @@ __kernel void softmax_a(__global const float *a, __global float *b, __local floa
   size_t tile_width = get_local_size(0);
   size_t ti = get_local_id(0);
   size_t tj = get_local_id(1);
-  size_t tile_width_ti = tile_width * ti;
-  size_t tile_width_3 = tile_width & ~((size_t) 3);
   float sum = 0.0f;
   for(k = 0; k < n2; k += tile_width) {
-    size_t k_ti = k + ti;
     size_t tk;
-    es[tile_width_ti + tj] = 0.0f;
-    if(j < m2 && k_ti < n2) {
-      es[tile_width_ti + tj] = exp(a[m2 * k_ti + j]);
+    es[tile_width * ti + tj] = 0.0f;
+    if(j < m2 && k + ti < n2) {
+      es[tile_width * ti + tj] = exp(a[m2 * (k + ti) + j]);
     }
     barrier(CLK_LOCAL_MEM_FENCE);
-    for(tk = 0; tk < tile_width_3; tk += 4) {
-      __private float4 ev;
-      ev.x = es[tile_width * (tk + 0) + tj];
-      ev.y = es[tile_width * (tk + 1) + tj];
-      ev.z = es[tile_width * (tk + 2) + tj];
-      ev.w = es[tile_width * (tk + 3) + tj];
-      sum += ev.x + ev.y + ev.z + ev.w;
-    }
-    for(; tk < tile_width_3; tk++) {
+    for(tk = 0; tk < tile_width; tk++) {
       sum += es[tile_width * tk + tj];
     }
     barrier(CLK_LOCAL_MEM_FENCE);
@@ -1019,27 +1008,15 @@ __kernel void softmax_at(__global const float *a, __global float *b, __local flo
   size_t tile_width = get_local_size(0);
   size_t ti = get_local_id(0);
   size_t tj = get_local_id(1);
-  size_t tile_width_ti = tile_width * ti;
-  size_t tile_width_3 = tile_width & ~((size_t) 3);
-  size_t n2_j = n2 * j;
   float sum = 0.0f;
   for(k = 0; k < n2; k += tile_width) {
-    size_t k_ti = k + ti;
     size_t tk;
-    es[tile_width_ti + tj] = 0.0f;
-    if(j < m2 && k_ti < n2) {
-      es[tile_width_ti + tj] = exp(a[n2_j + k_ti]);
+    es[tile_width * ti + tj] = 0.0f;
+    if(j < m2 && k + ti < n2) {
+      es[tile_width * ti + tj] = exp(a[n2 * j + k + ti]);
     }
     barrier(CLK_LOCAL_MEM_FENCE);
-    for(tk = 0; tk < tile_width_3; tk += 4) {
-      __private float4 ev;
-      ev.x = es[tile_width * (tk + 0) + tj];
-      ev.y = es[tile_width * (tk + 1) + tj];
-      ev.z = es[tile_width * (tk + 2) + tj];
-      ev.w = es[tile_width * (tk + 3) + tj];
-      sum += ev.x + ev.y + ev.z + ev.w;
-    }
-    for(; tk < tile_width_3; tk++) {
+    for(tk = 0; tk < tile_width; tk++) {
       sum += es[tile_width * tk + tj];
     }
     barrier(CLK_LOCAL_MEM_FENCE);

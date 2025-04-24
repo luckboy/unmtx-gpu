@@ -910,20 +910,14 @@ extern "C" {
     size_t tj = threadIdx.y;
     float sum = 0.0f;
     for(k = 0; k < n; k += TILE_WIDTH) {
-      size_t k_ti = k + ti;
       size_t tk;
       es[ti][tj] = 0.0f;
-      if(j < m && k_ti < n) {
-        es[ti][tj] = exp(a[m * k_ti + j]);
+      if(j < m && k + ti < n) {
+        es[ti][tj] = exp(a[m * (k + ti) + j]);
       }
       __syncthreads();
-      for(tk = 0; tk < TILE_WIDTH; tk += 4) {
-        float4 ev;
-        ev.x = es[tk + 0][tj];
-        ev.y = es[tk + 1][tj];
-        ev.z = es[tk + 2][tj];
-        ev.w = es[tk + 3][tj];
-        sum += ev.x + ev.y + ev.z + ev.w;
+      for(tk = 0; tk < TILE_WIDTH; tk++) {
+        sum += es[tk][tj];
       }
       __syncthreads();
     }
@@ -940,23 +934,16 @@ extern "C" {
     size_t k;
     size_t ti = threadIdx.x;
     size_t tj = threadIdx.y;
-    size_t n_j = n * j;
     float sum = 0.0f;
     for(k = 0; k < n; k += TILE_WIDTH) {
-      size_t k_ti = k + ti;
       size_t tk;
       es[ti][tj] = 0.0f;
-      if(j < m && k_ti < n) {
-        es[ti][tj] = exp(a[n_j + k_ti]);
+      if(j < m && k + ti < n) {
+        es[ti][tj] = exp(a[n * j + k + ti]);
       }
       __syncthreads();
-      for(tk = 0; tk < TILE_WIDTH; tk += 4) {
-        float4 ev;
-        ev.x = es[tk + 0][tj];
-        ev.y = es[tk + 1][tj];
-        ev.z = es[tk + 2][tj];
-        ev.w = es[tk + 3][tj];
-        sum += ev.x + ev.y + ev.z + ev.w;
+      for(tk = 0; tk < TILE_WIDTH; tk++) {
+        sum += es[tk][tj];
       }
       __syncthreads();
     }
