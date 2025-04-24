@@ -237,8 +237,12 @@ pub trait Backend
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>softmax</mi><mo fence="true">(</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup><mo fence="true">)</mo></mrow></math>).
     fn softmax_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
+    /// Repeats the `a` vector as column
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mi mathvariant="italic">ij</mi></msub><mo>=</mo><msub><mi>a</mi><mi>i</mi></msub></mrow></math>).
     fn repeat_col_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
+    /// Repeats the `a` vector as row
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mi mathvariant="italic">ij</mi></msub><mo>=</mo><msub><mi>a</mi><mi>j</mi></msub></mrow></math>).
     fn repeat_row_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 }
 
@@ -763,6 +767,22 @@ impl Matrix
         res
     }
     
+    /// Repeats the vector as column or a row.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0],
+    ///     [2.0]
+    /// ];
+    /// let b = a.repeat(3);
+    /// assert_eq!(vec![1.0, 1.0, 1.0, 2.0, 2.0, 2.0], b.elems());
+    /// let c = matrix![[1.0, 2.0, 3.0]];
+    /// let d = c.repeat(2);
+    /// assert_eq!(vec![1.0, 2.0, 3.0, 1.0, 2.0, 3.0], d.elems());
+    /// ```
     pub fn repeat(&self, n: usize) -> Self
     {
         assert!(self.col_count == 1 || self.row_count == 1); 
@@ -1953,6 +1973,28 @@ impl Frontend
         self.backend.transpose_a(&*a.array, &*b.array, a.col_count, a.row_count)
     }
 
+    /// Repeats the `a` vector as column or a row
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mi mathvariant="italic">ij</mi></msub><mo>=</mo><msub><mi>a</mi><mi>i</mi></msub></mrow></math> or 
+    /// <math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mi mathvariant="italic">ij</mi></msub><mo>=</mo><msub><mi>a</mi><mi>j</mi></msub></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0],
+    ///     [2.0]
+    /// ];
+    /// let b = Matrix::new(2, 3);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.repeat(&a, &b).unwrap();
+    /// assert_eq!(vec![1.0, 1.0, 1.0, 2.0, 2.0, 2.0], b.elems());
+    /// let c = matrix![[1.0, 2.0, 3.0]];
+    /// let d = Matrix::new(2, 3);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.repeat(&c, &d).unwrap();
+    /// assert_eq!(vec![1.0, 2.0, 3.0, 1.0, 2.0, 3.0], d.elems());
+    /// ```
     pub fn repeat(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if b.is_transposed {
