@@ -299,10 +299,10 @@ impl CudaBackend
                         g(&*inner_g, a_device_ptr, a_device_ptr, a_device_ptr)?
                     },
                 }
-                //match inner_g.device.synchronize() {
-                //    Ok(()) => (),
-                //    Err(err) => return Err(Error::Cuda(err)),
-                //}
+                match inner_g.device.synchronize() {
+                    Ok(()) => (),
+                    Err(err) => return Err(Error::Cuda(err)),
+                }
                 Ok(())
             },
             _ => Err(Error::InvalidBackendArray),
