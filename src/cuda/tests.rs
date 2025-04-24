@@ -269,7 +269,6 @@ fn test_cuda_backend_mul_a_b_multiplies_backend_arrays()
     }
 }
 
-
 #[test]
 fn test_cuda_backend_mul_at_b_multiplies_backend_arrays()
 {
