@@ -17,8 +17,9 @@
 //!
 //! A frontend-backend architecture is used by this library. The frontend of this library can use
 //! one of two backends (OpenCL or CUDA). These backend allows to use GPUs by the computing
-//! platforms. This library provides a high-level interfece to operations of matrices by the
-//! frontend and methods of a [Matrix] structure.
+//! platforms. The frontend and the backend can have many instances. This library provides a
+//! high-level interfece to operations of matrices by the frontend and methods of a [`Matrix`]
+//! structure.
 //!
 //! # Examples
 //!
@@ -1355,7 +1356,7 @@ impl DivAssign<&f32> for Matrix
 ///
 /// The frontend contains methods which operate on matrices or calculate functions for the
 /// matrices. Backend methods are called by the frontend to operate the matrices. The frontend is
-/// high-level layer that can be directly used by programmer or a [Matrix] structure.
+/// high-level layer that can be directly used by programmer or a [`Matrix`] structure.
 pub struct Frontend
 {
     backend: Arc<dyn Backend>,
