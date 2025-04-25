@@ -5,6 +5,40 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
+//! Micro neural matrix library for GPU is small library that operates on matrices.
+//!
+//! This library uses GPUs by the following computing platforms:
+//!
+//! - OpenCL
+//! - CUDA
+//!
+//! If this library uses CUDA, this library can use the cuBLAS library to multiplication of
+//! matrices.
+//!
+//! A frontend-backend architecture is used by this library. The frontend of this library can use
+//! one of two backends (OpenCL or CUDA). These backend allows to use GPUs by the computing
+//! platforms. This library provides a high-level interfece to operations of matrices by the
+//! frontend and methods of a [Matrix] structure.
+//!
+//! # Examples
+//!
+//! ```
+//! # use unmtx_gpu::*;
+//! let a = matrix![
+//!     [1.0, 2.0],
+//!     [3.0, 4.0]
+//! ];
+//! let x = matrix![
+//!     [5.0],
+//!     [6.0]
+//! ];
+//! let b = matrix![
+//!     [7.0],
+//!     [8.0]
+//! ];
+//! let c = a * x + b;
+//! assert_eq!(vec![1.0 * 5.0 + 2.0 * 6.0 + 7.0, 3.0 * 5.0 + 4.0 * 6.0 + 8.0], c.elems());
+//! ```
 use std::ops::Add;
 use std::ops::AddAssign;
 use std::ops::Sub;
@@ -420,7 +454,7 @@ pub fn initialize_default_backend_for_uninitialized() -> Result<()>
     Ok(())
 }
 
-/// Finalize a default backend.
+/// Finalizes a default backend.
 pub fn finalize_default_backend() -> Result<()>
 { unset_default_backend() }
 
