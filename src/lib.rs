@@ -477,7 +477,7 @@ pub fn finalize_default_backend() -> Result<()>
 #[macro_export]
 macro_rules! matrix {
     ($([$($elem:expr),* $(,)*]),* $(,)*) => {
-        Matrix::new_with_elem_vecs(vec![$(vec![$($elem),*]),*].as_slice())
+        $crate::Matrix::new_with_elem_vecs(vec![$(vec![$($elem),*]),*].as_slice())
     };
 }
 
