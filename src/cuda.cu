@@ -7,8 +7,8 @@
 //
 #define TILE_SIZE       1024
 
-#define MTHREAD_COUNT   16
-#define MTILE_WIDTH     (MTHREAD_COUNT << 2)
+#define MTHREAD_SIZE    16
+#define MTILE_WIDTH     (MTHREAD_SIZE << 2)
 
 extern "C" {
   __global__ void transpose_a(const float *a, float *b, size_t n, size_t m)
@@ -94,8 +94,8 @@ extern "C" {
 
   __global__ void mul_a_b(const float *a, const float *b, float *c, size_t n, size_t m, size_t l)
   {
-    __shared__ float as[MTILE_WIDTH][MTHREAD_COUNT];
-    __shared__ float bs[MTHREAD_COUNT][MTILE_WIDTH];
+    __shared__ float as[MTILE_WIDTH][MTHREAD_SIZE];
+    __shared__ float bs[MTHREAD_SIZE][MTILE_WIDTH];
     size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 2;
     size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 2;
     size_t k;
@@ -127,7 +127,7 @@ extern "C" {
     float cr42 = 0.0f;
     float cr43 = 0.0f;
     float cr44 = 0.0f;
-    for(k = 0; k < l; k += MTHREAD_COUNT) {
+    for(k = 0; k < l; k += MTHREAD_SIZE) {
       size_t tk;
       as[bi + 0][tj] = 0.0f;
       if(i + 0 < n && k + tj < l) {
@@ -162,7 +162,7 @@ extern "C" {
         bs[ti][bj + 3] = b[m * (k + ti) + j + 3];
       }
       __syncthreads();
-      for(tk = 0; tk < MTHREAD_COUNT; tk++) {
+      for(tk = 0; tk < MTHREAD_SIZE; tk++) {
         ar1 = as[bi + 0][tk];
         ar2 = as[bi + 1][tk];
         ar3 = as[bi + 2][tk];
@@ -242,8 +242,8 @@ extern "C" {
 
   __global__ void mul_at_b(const float *a, const float *b, float *c, size_t n, size_t m, size_t l)
   {
-    __shared__ float as[MTILE_WIDTH][MTHREAD_COUNT];
-    __shared__ float bs[MTHREAD_COUNT][MTILE_WIDTH];
+    __shared__ float as[MTILE_WIDTH][MTHREAD_SIZE];
+    __shared__ float bs[MTHREAD_SIZE][MTILE_WIDTH];
     size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 2;
     size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 2;
     size_t k;
@@ -275,7 +275,7 @@ extern "C" {
     float cr42 = 0.0f;
     float cr43 = 0.0f;
     float cr44 = 0.0f;
-    for(k = 0; k < l; k += MTHREAD_COUNT) {
+    for(k = 0; k < l; k += MTHREAD_SIZE) {
       size_t tk;
       as[bi + 0][tj] = 0.0f;
       if(i + 0 < n && k + tj < l) {
@@ -310,7 +310,7 @@ extern "C" {
         bs[ti][bj + 3] = b[m * (k + ti) + j + 3];
       }
       __syncthreads();
-      for(tk = 0; tk < MTHREAD_COUNT; tk++) {
+      for(tk = 0; tk < MTHREAD_SIZE; tk++) {
         ar1 = as[bi + 0][tk];
         ar2 = as[bi + 1][tk];
         ar3 = as[bi + 2][tk];
@@ -390,8 +390,8 @@ extern "C" {
 
   __global__ void mul_a_bt(const float *a, const float *b, float *c, size_t n, size_t m, size_t l)
   {
-    __shared__ float as[MTILE_WIDTH][MTHREAD_COUNT];
-    __shared__ float bs[MTHREAD_COUNT][MTILE_WIDTH];
+    __shared__ float as[MTILE_WIDTH][MTHREAD_SIZE];
+    __shared__ float bs[MTHREAD_SIZE][MTILE_WIDTH];
     size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 2;
     size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 2;
     size_t k;
@@ -423,7 +423,7 @@ extern "C" {
     float cr42 = 0.0f;
     float cr43 = 0.0f;
     float cr44 = 0.0f;
-    for(k = 0; k < l; k += MTHREAD_COUNT) {
+    for(k = 0; k < l; k += MTHREAD_SIZE) {
       size_t tk;
       as[bi + 0][tj] = 0.0f;
       if(i + 0 < n && k + tj < l) {
@@ -458,7 +458,7 @@ extern "C" {
         bs[ti][bj + 3] = b[l * (j + 3) + k + ti];
       }
       __syncthreads();
-      for(tk = 0; tk < MTHREAD_COUNT; tk++) {
+      for(tk = 0; tk < MTHREAD_SIZE; tk++) {
         ar1 = as[bi + 0][tk];
         ar2 = as[bi + 1][tk];
         ar3 = as[bi + 2][tk];
@@ -538,8 +538,8 @@ extern "C" {
 
   __global__ void mul_at_bt(const float *a, const float *b, float *c, size_t n, size_t m, size_t l)
   {
-    __shared__ float as[MTILE_WIDTH][MTHREAD_COUNT];
-    __shared__ float bs[MTHREAD_COUNT][MTILE_WIDTH];
+    __shared__ float as[MTILE_WIDTH][MTHREAD_SIZE];
+    __shared__ float bs[MTHREAD_SIZE][MTILE_WIDTH];
     size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 2;
     size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 2;
     size_t k;
@@ -571,7 +571,7 @@ extern "C" {
     float cr42 = 0.0f;
     float cr43 = 0.0f;
     float cr44 = 0.0f;
-    for(k = 0; k < l; k += MTHREAD_COUNT) {
+    for(k = 0; k < l; k += MTHREAD_SIZE) {
       size_t tk;
       as[bi + 0][tj] = 0.0f;
       if(i + 0 < n && k + tj < l) {
@@ -606,7 +606,7 @@ extern "C" {
         bs[ti][bj + 3] = b[l * (j + 3) + k + ti];
       }
       __syncthreads();
-      for(tk = 0; tk < MTHREAD_COUNT; tk++) {
+      for(tk = 0; tk < MTHREAD_SIZE; tk++) {
         ar1 = as[bi + 0][tk];
         ar2 = as[bi + 1][tk];
         ar3 = as[bi + 2][tk];
