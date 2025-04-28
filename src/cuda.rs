@@ -5,6 +5,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
+//! A module that contains a CUDA backend.
 use std::default::Default;
 use std::ffi::c_int;
 use std::ffi::c_void;
@@ -81,6 +82,9 @@ const KERNELS: &'static [&'static str] = &[
     "repeat_row_a"
 ];
 
+/// A structure of CUDA backend array.
+///
+/// This structure contains the reference to the device memory.
 #[derive(Debug)]
 pub struct CudaBackendArray
 {
@@ -94,6 +98,7 @@ struct CudaInnerBackend
     cublas: Option<CudaBlas>,
 }
 
+/// A structure of CUDA backend.
 pub struct CudaBackend
 {
     inner: Mutex<CudaInnerBackend>,
@@ -148,6 +153,7 @@ fn preferred_launch_config(n: usize, m: usize, is_mul: bool, is_mma: bool) -> La
 
 impl CudaBackend
 {
+    /// Creates a CUDA backend for a first device.
     pub fn new() -> Result<CudaBackend>
     {
         if cfg!(feature = "default_cublas") {
@@ -158,7 +164,13 @@ impl CudaBackend
             Self::new_with_ordinal_and_flags(0, false, false)
         }
     }
-
+    
+    /// Creates a CUDA backend with the ordinal number and the flags.
+    ///
+    /// This method takes the following flags:
+    ///
+    /// - `is_cublas` - use the cuBLAS library to multiplication of matrices
+    /// - `is_mma` - use the mma instruction to multiplication of matrices
     pub fn new_with_ordinal_and_flags(ordinal: usize, is_cublas: bool, is_mma: bool) -> Result<CudaBackend>
     {
         let device = match CudaDevice::new(ordinal) {

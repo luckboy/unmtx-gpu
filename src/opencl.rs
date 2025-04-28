@@ -5,6 +5,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
+//! A module that contains an OpenCL backend.
 use std::mem::size_of;
 use std::ptr::null_mut;
 use std::sync::Arc;
@@ -45,6 +46,9 @@ use opencl3::types::CL_TRUE;
 
 const SOURCE: &'static str = include_str!("opencl.cl");
 
+/// A structure of OpenCL backend array.
+///
+/// This structure contains the reference to an OpenCL buffer.
 #[derive(Debug)]
 pub struct ClBackendArray
 {
@@ -61,6 +65,7 @@ struct ClInnerBackend
     group_size_for_2d: usize,
 }
 
+/// A structure of OpenCL backend.
 pub struct ClBackend
 {
     inner: Mutex<ClInnerBackend>,
@@ -87,6 +92,7 @@ fn preferred_work_sizes(n: usize, m: usize, group_size_for_1d: usize, group_size
 
 impl ClBackend
 {
+    /// Creates an OpenCL backend for a first OpenCL platform and a first OpenCL device.
     pub fn new() -> Result<ClBackend>
     {
         let platforms = match get_platforms() {
@@ -111,6 +117,7 @@ impl ClBackend
         Self::new_with_context(context)
     }
     
+    /// Creates an OpenCL backend with the context.
     pub fn new_with_context(context: Context) -> Result<ClBackend>
     {
         let command_queue = match CommandQueue::create_default_with_properties(&context, 0, 0) {
