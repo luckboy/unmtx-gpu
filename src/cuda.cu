@@ -10,6 +10,8 @@
 #define MTHREAD_SIZE    16
 #define MTILE_WIDTH     (MTHREAD_SIZE << 2)
 
+#define MMA_TILE_WIDTH  64
+
 extern "C" {
   __global__ void transpose_a(const float *a, float *b, size_t n, size_t m)
   {
@@ -91,6 +93,301 @@ extern "C" {
       c[m * i + j] = a[n * j + i] - b[n * j + i];
     }
   }
+
+#ifdef UNMTX_GPU_MMA
+
+  static inline __device__ unsigned float_to_tf32(float x)
+  {
+    unsigned y;
+    asm("cvt.rna.tf32.f32 %0, %1;\n" : "=r"(y) : "f"(x));
+    return y;
+  }
+
+  __global__ void mul_a_b(const float *a, const float *b, float *c, size_t n, size_t m, size_t l)
+  {
+    size_t i = ((size_t) blockIdx.x) * MMA_TILE_WIDTH;
+    size_t j = ((size_t) blockIdx.y) * MMA_TILE_WIDTH;
+    size_t k;
+    size_t tx = threadIdx.x >> 5;
+    size_t stx = threadIdx.x & 31;
+    size_t bi = (tx >> 3) << 4;
+    size_t bj = (tx & 7) << 3;
+    size_t ari = stx >> 2;
+    size_t ark = stx & 3;
+    size_t brj = ari;
+    size_t brk = ark;
+    size_t cri = ari;
+    size_t crj = ark;
+    unsigned ar1;
+    unsigned ar2;
+    unsigned ar3;
+    unsigned ar4;
+    unsigned br1;
+    unsigned br2;
+    float cr1 = 0.0f;
+    float cr2 = 0.0f;
+    float cr3 = 0.0f;
+    float cr4 = 0.0f;
+    unsigned zero = float_to_tf32(0.0f);
+    for(k = 0; k < l; k += 8) {
+      ar1 = zero;
+      if(i + bi + 0 + ari < n && k + 0 + ark < l) {
+        ar1 = float_to_tf32(a[l * (i + bi + 0 + ari) + k + 0 + ark]);
+      }
+      ar2 = zero;
+      if(i + bi + 8 + ari < n && k + 0 + ark < l) {
+        ar2 = float_to_tf32(a[l * (i + bi + 8 + ari) + k + 0 + ark]);
+      }
+      ar3 = zero;
+      if(i + bi + 0 + ari < n && k + 4 + ark < l) {
+        ar3 = float_to_tf32(a[l * (i + bi + 0 + ari) + k + 4 + ark]);
+      }
+      ar4 = zero;
+      if(i + bi + 8 + ari < n && k + 4 + ark < l) {
+        ar4 = float_to_tf32(a[l * (i + bi + 8 + ari) + k + 4 + ark]);
+      }
+      br1 = zero;
+      if(j + bj + brj < m && k + 0 + brk < l) {
+        br1 = float_to_tf32(b[m * (k + 0 + brk) + j + bj + brj]);
+      }
+      br2 = zero;
+      if(j + bj + brj < m && k + 4 + brk < l) {
+        br2 = float_to_tf32(b[m * (k + 4 + brk) + j + bj + brj]);
+      }
+      asm volatile("mma.sync.aligned.m16n8k8.row.col.f32.tf32.tf32.f32\n"
+        "{%0, %1, %2, %3}, {%4, %5, %6, %7}, {%8, %9}, {%0, %1, %2, %3};\n"
+        : "+f"(cr1), "+f"(cr2), "+f"(cr3), "+f"(cr4)
+        : "r"(ar1), "r"(ar2), "r"(ar3), "r"(ar4),
+        "r"(br1), "r"(br2));
+    }
+    if(i + bi + 0 + cri < n && j + bj + (crj << 1) + 0 < m) {
+      c[m * (i + bi + 0 + cri) + j + bj + (crj << 1) + 0] = cr1;
+    }
+    if(i + bi + 0 + cri < n && j + bj + (crj << 1) + 1 < m) {
+      c[m * (i + bi + 0 + cri) + j + bj + (crj << 1) + 1] = cr2;
+    }
+    if(i + bi + 8 + cri < n && j + bj + (crj << 1) + 0 < m) {
+      c[m * (i + bi + 8 + cri) + j + bj + (crj << 1) + 0] = cr3;
+    }
+    if(i + bi + 8 + cri < n && j + bj + (crj << 1) + 1) {
+      c[m * (i + bi + 8 + cri) + j + bj + (crj << 1) + 1] = cr4;
+    }
+  }
+
+  __global__ void mul_at_b(const float *a, const float *b, float *c, size_t n, size_t m, size_t l)
+  {
+    size_t i = ((size_t) blockIdx.x) * MMA_TILE_WIDTH;
+    size_t j = ((size_t) blockIdx.y) * MMA_TILE_WIDTH;
+    size_t k;
+    size_t tx = threadIdx.x >> 5;
+    size_t stx = threadIdx.x & 31;
+    size_t bi = (tx >> 3) << 4;
+    size_t bj = (tx & 7) << 3;
+    size_t ari = stx >> 2;
+    size_t ark = stx & 3;
+    size_t brj = ari;
+    size_t brk = ark;
+    size_t cri = ari;
+    size_t crj = ark;
+    unsigned ar1;
+    unsigned ar2;
+    unsigned ar3;
+    unsigned ar4;
+    unsigned br1;
+    unsigned br2;
+    float cr1 = 0.0f;
+    float cr2 = 0.0f;
+    float cr3 = 0.0f;
+    float cr4 = 0.0f;
+    unsigned zero = float_to_tf32(0.0f);
+    for(k = 0; k < l; k += 8) {
+      ar1 = zero;
+      if(i + bi + 0 + ari < n && k + 0 + ark < l) {
+        ar1 = float_to_tf32(a[n * (k + 0 + ark) + i + bi + 0 + ari]);
+      }
+      ar2 = zero;
+      if(i + bi + 8 + ari < n && k + 0 + ark < l) {
+        ar2 = float_to_tf32(a[n * (k + 0 + ark) + i + bi + 8 + ari]);
+      }
+      ar3 = zero;
+      if(i + bi + 0 + ari < n && k + 4 + ark < l) {
+        ar3 = float_to_tf32(a[n * (k + 4 + ark) + i + bi + 0 + ari]);
+      }
+      ar4 = zero;
+      if(i + bi + 8 + ari < n && k + 4 + ark < l) {
+        ar4 = float_to_tf32(a[n * (k + 4 + ark) + i + bi + 8 + ari]);
+      }
+      br1 = zero;
+      if(j + bj + brj < m && k + 0 + brk < l) {
+        br1 = float_to_tf32(b[m * (k + 0 + brk) + j + bj + brj]);
+      }
+      br2 = zero;
+      if(j + bj + brj < m && k + 4 + brk < l) {
+        br2 = float_to_tf32(b[m * (k + 4 + brk) + j + bj + brj]);
+      }
+      asm volatile("mma.sync.aligned.m16n8k8.row.col.f32.tf32.tf32.f32\n"
+        "{%0, %1, %2, %3}, {%4, %5, %6, %7}, {%8, %9}, {%0, %1, %2, %3};\n"
+        : "+f"(cr1), "+f"(cr2), "+f"(cr3), "+f"(cr4)
+        : "r"(ar1), "r"(ar2), "r"(ar3), "r"(ar4),
+        "r"(br1), "r"(br2));
+    }
+    if(i + bi + 0 + cri < n && j + bj + (crj << 1) + 0 < m) {
+      c[m * (i + bi + 0 + cri) + j + bj + (crj << 1) + 0] = cr1;
+    }
+    if(i + bi + 0 + cri < n && j + bj + (crj << 1) + 1 < m) {
+      c[m * (i + bi + 0 + cri) + j + bj + (crj << 1) + 1] = cr2;
+    }
+    if(i + bi + 8 + cri < n && j + bj + (crj << 1) + 0 < m) {
+      c[m * (i + bi + 8 + cri) + j + bj + (crj << 1) + 0] = cr3;
+    }
+    if(i + bi + 8 + cri < n && j + bj + (crj << 1) + 1) {
+      c[m * (i + bi + 8 + cri) + j + bj + (crj << 1) + 1] = cr4;
+    }
+  }
+
+  __global__ void mul_a_bt(const float *a, const float *b, float *c, size_t n, size_t m, size_t l)
+  {
+    size_t i = ((size_t) blockIdx.x) * MMA_TILE_WIDTH;
+    size_t j = ((size_t) blockIdx.y) * MMA_TILE_WIDTH;
+    size_t k;
+    size_t tx = threadIdx.x >> 5;
+    size_t stx = threadIdx.x & 31;
+    size_t bi = (tx >> 3) << 4;
+    size_t bj = (tx & 7) << 3;
+    size_t ari = stx >> 2;
+    size_t ark = stx & 3;
+    size_t brj = ari;
+    size_t brk = ark;
+    size_t cri = ari;
+    size_t crj = ark;
+    unsigned ar1;
+    unsigned ar2;
+    unsigned ar3;
+    unsigned ar4;
+    unsigned br1;
+    unsigned br2;
+    float cr1 = 0.0f;
+    float cr2 = 0.0f;
+    float cr3 = 0.0f;
+    float cr4 = 0.0f;
+    unsigned zero = float_to_tf32(0.0f);
+    for(k = 0; k < l; k += 8) {
+      ar1 = zero;
+      if(i + bi + 0 + ari < n && k + 0 + ark < l) {
+        ar1 = float_to_tf32(a[l * (i + bi + 0 + ari) + k + 0 + ark]);
+      }
+      ar2 = zero;
+      if(i + bi + 8 + ari < n && k + 0 + ark < l) {
+        ar2 = float_to_tf32(a[l * (i + bi + 8 + ari) + k + 0 + ark]);
+      }
+      ar3 = zero;
+      if(i + bi + 0 + ari < n && k + 4 + ark < l) {
+        ar3 = float_to_tf32(a[l * (i + bi + 0 + ari) + k + 4 + ark]);
+      }
+      ar4 = zero;
+      if(i + bi + 8 + ari < n && k + 4 + ark < l) {
+        ar4 = float_to_tf32(a[l * (i + bi + 8 + ari) + k + 4 + ark]);
+      }
+      br1 = zero;
+      if(j + bj + brj < m && k + 0 + brk < l) {
+        br1 = float_to_tf32(b[l * (j + bj + brj) + k + 0 + brk]);
+      }
+      br2 = zero;
+      if(j + bj + brj < m && k + 4 + brk < l) {
+        br2 = float_to_tf32(b[l * (j + bj + brj) + k + 4 + brk]);
+      }
+      asm volatile("mma.sync.aligned.m16n8k8.row.col.f32.tf32.tf32.f32\n"
+        "{%0, %1, %2, %3}, {%4, %5, %6, %7}, {%8, %9}, {%0, %1, %2, %3};\n"
+        : "+f"(cr1), "+f"(cr2), "+f"(cr3), "+f"(cr4)
+        : "r"(ar1), "r"(ar2), "r"(ar3), "r"(ar4),
+        "r"(br1), "r"(br2));
+    }
+    if(i + bi + 0 + cri < n && j + bj + (crj << 1) + 0 < m) {
+      c[m * (i + bi + 0 + cri) + j + bj + (crj << 1) + 0] = cr1;
+    }
+    if(i + bi + 0 + cri < n && j + bj + (crj << 1) + 1 < m) {
+      c[m * (i + bi + 0 + cri) + j + bj + (crj << 1) + 1] = cr2;
+    }
+    if(i + bi + 8 + cri < n && j + bj + (crj << 1) + 0 < m) {
+      c[m * (i + bi + 8 + cri) + j + bj + (crj << 1) + 0] = cr3;
+    }
+    if(i + bi + 8 + cri < n && j + bj + (crj << 1) + 1) {
+      c[m * (i + bi + 8 + cri) + j + bj + (crj << 1) + 1] = cr4;
+    }
+  }
+  
+  __global__ void mul_at_bt(const float *a, const float *b, float *c, size_t n, size_t m, size_t l)
+  {
+    size_t i = ((size_t) blockIdx.x) * MMA_TILE_WIDTH;
+    size_t j = ((size_t) blockIdx.y) * MMA_TILE_WIDTH;
+    size_t k;
+    size_t tx = threadIdx.x >> 5;
+    size_t stx = threadIdx.x & 31;
+    size_t bi = (tx >> 3) << 4;
+    size_t bj = (tx & 7) << 3;
+    size_t ari = stx >> 2;
+    size_t ark = stx & 3;
+    size_t brj = ari;
+    size_t brk = ark;
+    size_t cri = ari;
+    size_t crj = ark;
+    unsigned ar1;
+    unsigned ar2;
+    unsigned ar3;
+    unsigned ar4;
+    unsigned br1;
+    unsigned br2;
+    float cr1 = 0.0f;
+    float cr2 = 0.0f;
+    float cr3 = 0.0f;
+    float cr4 = 0.0f;
+    unsigned zero = float_to_tf32(0.0f);
+    for(k = 0; k < l; k += 8) {
+      ar1 = zero;
+      if(i + bi + 0 + ari < n && k + 0 + ark < l) {
+        ar1 = float_to_tf32(a[n * (k + 0 + ark) + i + bi + 0 + ari]);
+      }
+      ar2 = zero;
+      if(i + bi + 8 + ari < n && k + 0 + ark < l) {
+        ar2 = float_to_tf32(a[n * (k + 0 + ark) + i + bi + 8 + ari]);
+      }
+      ar3 = zero;
+      if(i + bi + 0 + ari < n && k + 4 + ark < l) {
+        ar3 = float_to_tf32(a[n * (k + 4 + ark) + i + bi + 0 + ari]);
+      }
+      ar4 = zero;
+      if(i + bi + 8 + ari < n && k + 4 + ark < l) {
+        ar4 = float_to_tf32(a[n * (k + 4 + ark) + i + bi + 8 + ari]);
+      }
+      br1 = zero;
+      if(j + bj + brj < m && k + 0 + brk < l) {
+        br1 = float_to_tf32(b[l * (j + bj + brj) + k + 0 + brk]);
+      }
+      br2 = zero;
+      if(j + bj + brj < m && k + 4 + brk < l) {
+        br2 = float_to_tf32(b[l * (j + bj + brj) + k + 4 + brk]);
+      }
+      asm volatile("mma.sync.aligned.m16n8k8.row.col.f32.tf32.tf32.f32\n"
+        "{%0, %1, %2, %3}, {%4, %5, %6, %7}, {%8, %9}, {%0, %1, %2, %3};\n"
+        : "+f"(cr1), "+f"(cr2), "+f"(cr3), "+f"(cr4)
+        : "r"(ar1), "r"(ar2), "r"(ar3), "r"(ar4),
+        "r"(br1), "r"(br2));
+    }
+    if(i + bi + 0 + cri < n && j + bj + (crj << 1) + 0 < m) {
+      c[m * (i + bi + 0 + cri) + j + bj + (crj << 1) + 0] = cr1;
+    }
+    if(i + bi + 0 + cri < n && j + bj + (crj << 1) + 1 < m) {
+      c[m * (i + bi + 0 + cri) + j + bj + (crj << 1) + 1] = cr2;
+    }
+    if(i + bi + 8 + cri < n && j + bj + (crj << 1) + 0 < m) {
+      c[m * (i + bi + 8 + cri) + j + bj + (crj << 1) + 0] = cr3;
+    }
+    if(i + bi + 8 + cri < n && j + bj + (crj << 1) + 1) {
+      c[m * (i + bi + 8 + cri) + j + bj + (crj << 1) + 1] = cr4;
+    }
+  }
+  
+#else
 
   __global__ void mul_a_b(const float *a, const float *b, float *c, size_t n, size_t m, size_t l)
   {
@@ -239,7 +536,7 @@ extern "C" {
       c[m * (i + 3) + j + 3] = cr44;
     }
   }
-
+  
   __global__ void mul_at_b(const float *a, const float *b, float *c, size_t n, size_t m, size_t l)
   {
     __shared__ float as[MTILE_WIDTH][MTHREAD_SIZE];
@@ -683,6 +980,8 @@ extern "C" {
       c[m * (i + 3) + j + 3] = cr44;
     }
   }
+
+#endif
 
   __global__ void mul_a_b_for_elems(const float *a, const float *b, float *c, size_t n, size_t m)
   {

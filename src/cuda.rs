@@ -5,6 +5,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
+use std::default::Default;
 use std::ffi::c_int;
 use std::ffi::c_void;
 use std::sync::Arc;
@@ -31,7 +32,8 @@ use cudarc::driver::DevicePtrMut;
 use cudarc::driver::LaunchAsync;
 use cudarc::driver::LaunchConfig;
 use cudarc::nvrtc::CompileError;
-use cudarc::nvrtc::compile_ptx;
+use cudarc::nvrtc::CompileOptions;
+use cudarc::nvrtc::compile_ptx_with_opts;
 
 const SOURCE: &'static str = include_str!("cuda.cu");
 
@@ -96,9 +98,10 @@ pub struct CudaBackend
 {
     inner: Mutex<CudaInnerBackend>,
     has_cublas: bool,
+    has_mma: bool,
 }
 
-fn preferred_launch_config(n: usize, m: usize, is_mul: bool) -> LaunchConfig
+fn preferred_launch_config(n: usize, m: usize, is_mul: bool, is_mma: bool) -> LaunchConfig
 {
     if m == 1 && !is_mul {
         let n2 = ((n + 1023) / 1024) as u32;
@@ -115,12 +118,22 @@ fn preferred_launch_config(n: usize, m: usize, is_mul: bool) -> LaunchConfig
             shared_mem_bytes: 0,
         }
     } else if is_mul {
-        let n2 = (((n + 3) / 4 + 15) / 16) as u32;
-        let m2 = (((m + 3) / 4 + 15) / 16) as u32;
-        LaunchConfig {
-            grid_dim: (n2, m2, 1),
-            block_dim: (16, 16, 1),
-            shared_mem_bytes: 0,
+        if is_mma {
+            let n2 = ((n + 63) / 64) as u32;
+            let m2 = ((m + 63) / 64) as u32;
+            LaunchConfig {
+                grid_dim: (n2, m2, 1),
+                block_dim: (1024, 1, 1),
+                shared_mem_bytes: 0,
+            }
+        } else {
+            let n2 = (((n + 3) / 4 + 15) / 16) as u32;
+            let m2 = (((m + 3) / 4 + 15) / 16) as u32;
+            LaunchConfig {
+                grid_dim: (n2, m2, 1),
+                block_dim: (16, 16, 1),
+                shared_mem_bytes: 0,
+            }
         }
     } else {
         let n2 = ((n + 31) / 32) as u32;
@@ -138,19 +151,26 @@ impl CudaBackend
     pub fn new() -> Result<CudaBackend>
     {
         if cfg!(feature = "default_cublas") {
-            Self::new_with_ordinal_and_cublas_flag(0, true)
+            Self::new_with_ordinal_and_flags(0, true, false)
+        } else if cfg!(feature = "default_mma") {
+            Self::new_with_ordinal_and_flags(0, false, true)
         } else {
-            Self::new_with_ordinal_and_cublas_flag(0, false)
+            Self::new_with_ordinal_and_flags(0, false, false)
         }
     }
 
-    pub fn new_with_ordinal_and_cublas_flag(ordinal: usize, is_cublas: bool) -> Result<CudaBackend>
+    pub fn new_with_ordinal_and_flags(ordinal: usize, is_cublas: bool, is_mma: bool) -> Result<CudaBackend>
     {
         let device = match CudaDevice::new(ordinal) {
             Ok(tmp_device) => tmp_device,
             Err(err) => return Err(Error::Cuda(err)),
         };
-        let ptx = match compile_ptx(SOURCE) {
+        let mut options: CompileOptions = Default::default();
+        if is_mma {
+            options.options = vec![String::from("-DUNMTX_GPU_MMA=1")];
+            options.arch = Some("sm_80");
+        }
+        let ptx = match compile_ptx_with_opts(SOURCE, options) {
             Ok(tmp_ptx) => tmp_ptx,
             Err(CompileError::CompileError { log, .. }) => return Err(Error::Compilation(log.as_c_str().to_string_lossy().into_owned())),
             Err(err) => return Err(Error::Compilation(format!("{}", err))),
@@ -159,7 +179,6 @@ impl CudaBackend
             Ok(()) => (),
             Err(err) => return Err(Error::Cuda(err)),
         }
-        
         let cublas = if is_cublas {
             match CudaBlas::new(device.clone()) {
                 Ok(tmp_cublas) => Some(tmp_cublas),
@@ -168,7 +187,7 @@ impl CudaBackend
         } else {
             None
         };
-        Ok(CudaBackend { inner: Mutex::new(CudaInnerBackend { device, cublas, }), has_cublas: is_cublas, })
+        Ok(CudaBackend { inner: Mutex::new(CudaInnerBackend { device, cublas, }), has_cublas: is_cublas, has_mma: is_mma, })
     }
     
     pub fn has_cublas(&self) -> bool
@@ -313,6 +332,7 @@ impl CudaBackend
     
     fn check_and_launch_for_fun(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
     {
+        let is_mma = self.has_mma;
         self.check_and_launch2(kernel_name, a, b, |a2, b2| {
                 if a2.len != n * m {
                     return Err(Error::BackendArrayElemCount(a2.len, n * m));
@@ -322,7 +342,7 @@ impl CudaBackend
                 }
                 Ok(())
         }, |_, kernel, a_param, b_param| {
-                let config = preferred_launch_config(n, m, false);
+                let config = preferred_launch_config(n, m, false, is_mma);
                 let mut params = vec![
                     a_param,
                     b_param,
@@ -340,6 +360,7 @@ impl CudaBackend
 
     fn check_and_launch_for_op(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
     {
+        let is_mma = self.has_mma;
         self.check_and_launch3(kernel_name, a, b, c, |a2, b2, c2| {
                 if a2.len != n * m {
                     return Err(Error::BackendArrayElemCount(a2.len, n * m));
@@ -352,7 +373,7 @@ impl CudaBackend
                 }
                 Ok(())
         }, |_, kernel, a_param, b_param, c_param| {
-                let config = preferred_launch_config(n, m, false);
+                let config = preferred_launch_config(n, m, false, is_mma);
                 let mut params = vec![
                     a_param,
                     b_param,
@@ -371,6 +392,7 @@ impl CudaBackend
 
     fn check_and_launch_for_mul(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize) -> Result<()>
     {
+        let is_mma = self.has_mma;
         self.check_and_launch3(kernel_name, a, b, c, |a2, b2, c2| {
                 if a2.len != n * l {
                     return Err(Error::BackendArrayElemCount(a2.len, n * l));
@@ -383,7 +405,7 @@ impl CudaBackend
                 }
                 Ok(())
         }, |_, kernel, a_param, b_param, c_param| {
-                let config = preferred_launch_config(n, m, true);
+                let config = preferred_launch_config(n, m, true, is_mma);
                 let mut params = vec![
                     a_param,
                     b_param,
@@ -403,6 +425,7 @@ impl CudaBackend
 
     fn check_and_launch_for_scalar(&self, kernel_name: &str, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
     {
+        let is_mma = self.has_mma;
         self.check_and_launch2(kernel_name, a, c, |a2, c2| {
                 if a2.len != n * m  {
                     return Err(Error::BackendArrayElemCount(a2.len, n * m));
@@ -412,7 +435,7 @@ impl CudaBackend
                 }
                 Ok(())
         }, |_, kernel, a_param, c_param| {
-                let config = preferred_launch_config(n, m, false);
+                let config = preferred_launch_config(n, m, false, is_mma);
                 let mut params = vec![
                     a_param,
                     b.as_kernel_param(),
@@ -431,6 +454,7 @@ impl CudaBackend
 
     fn check_and_launch_for_fun_and_tiles(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
     {
+        let is_mma = self.has_mma;
         self.check_and_launch2(kernel_name, a, b, |a2, b2| {
                 if a2.len != n * m {
                     return Err(Error::BackendArrayElemCount(a2.len, n * m));
@@ -440,7 +464,7 @@ impl CudaBackend
                 }
                 Ok(())
         }, |_, kernel, a_param, b_param| {
-                let config = preferred_launch_config(n, m, false);
+                let config = preferred_launch_config(n, m, false, is_mma);
                 let mut params = vec![
                     a_param,
                     b_param,
@@ -460,6 +484,7 @@ impl CudaBackend
 
     fn check_and_launch_for_repeat_col(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
     {
+        let is_mma = self.has_mma;
         self.check_and_launch2(kernel_name, a, b, |a2, b2| {
                 if a2.len != n {
                     return Err(Error::BackendArrayElemCount(a2.len, n));
@@ -469,7 +494,7 @@ impl CudaBackend
                 }
                 Ok(())
         }, |_, kernel, a_param, b_param| {
-                let config = preferred_launch_config(n, m, false);
+                let config = preferred_launch_config(n, m, false, is_mma);
                 let mut params = vec![
                     a_param,
                     b_param,
@@ -487,6 +512,7 @@ impl CudaBackend
 
     fn check_and_launch_for_repeat_row(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
     {
+        let is_mma = self.has_mma;
         self.check_and_launch2(kernel_name, a, b, |a2, b2| {
                 if a2.len != m {
                     return Err(Error::BackendArrayElemCount(a2.len, m));
@@ -496,7 +522,7 @@ impl CudaBackend
                 }
                 Ok(())
         }, |_, kernel, a_param, b_param| {
-                let config = preferred_launch_config(n, m, false);
+                let config = preferred_launch_config(n, m, false, is_mma);
                 let mut params = vec![
                     a_param,
                     b_param,
@@ -567,6 +593,8 @@ impl Backend for CudaBackend
     {
         if self.has_cublas {
             "CUDA(cuBLAS)"
+        } else if self.has_mma {
+            "CUDA(mma)"
         } else {
             "CUDA"
         }
