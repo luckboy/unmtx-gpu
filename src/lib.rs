@@ -285,8 +285,8 @@ pub trait Backend
 #[derive(Debug)]
 pub enum Error
 {
-    /// A default backend is uninitialized.
-    UninitializedDefaultBackend,
+    /// Can't initialize a default backend.
+    DefaultBackendInitialization,
     /// Mismatched sizes of matrices for a matrix operation.
     OpSize(usize, usize, usize, usize),
     /// Mismatched sizes of matrices for a matrix multiplication.
@@ -341,7 +341,7 @@ impl fmt::Display for Error
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result
     {
         match self {
-            Error::UninitializedDefaultBackend => write!(f, "uninitialized default backend"),
+            Error::DefaultBackendInitialization => write!(f, "can't initialize default backend"),
             Error::OpSize(n1, m1, n2, m2) => write!(f, "mismatched sizes of matrices ({}x{}, {}x{})", n1, m1, n2, m2),
             Error::MulSize(n1, m1, n2, m2, n3, m3) => write!(f, "mismatched sizes of matrices for multiplication ({}x{}, {}x{}, {}x{})", n1, m1, n2, m2, n3, m3),
             Error::TransposeSize(n1, m1, n2, m2) => write!(f, "mismatched sizes of matrices for transposition ({}x{}, {}x{})", n1, m1, n2, m2),
@@ -427,32 +427,37 @@ pub fn unset_default_backend() -> Result<()>
     Ok(())
 }
 
-/// Sets a default backend if the default backend is uninitialized.
+/// Sets a default backend if the default backend is uninitialized and returns the default backend.
 ///
 /// This method takes a closure that returns the backend and then the backend is set as the default
 /// backend if the default backend is uninitialized. The closure is only called if the backend is
 /// to be set.
-pub fn set_default_backend_for_uninitialized<F>(f: F) -> Result<()>
+pub fn set_default_backend_for_uninitialized<F>(f: F) -> Result<Arc<dyn Backend>>
     where F: FnOnce() -> Result<Arc<dyn Backend>>
 {
     unsafe {
         let mut default_backend_g = mutex_lock(&DEFAULT_BACKEND)?;
-        match *default_backend_g {
-            Some(_) => (),
-            None => *default_backend_g = Some(f()?),
+        match &*default_backend_g {
+            Some(default_backend) => Ok(default_backend.clone()),
+            None => {
+                let backend = f()?;
+                *default_backend_g = Some(backend.clone());
+                Ok(backend)
+            },
         }
     }
-    Ok(())
 }
 
-/// Initializes a default backend if the backend is uninitialized.
-pub fn initialize_default_backend_for_uninitialized() -> Result<()>
+/// Initializes a default backend if the backend is uninitialized and returns the default backend.
+pub fn initialize_default_backend_for_uninitialized() -> Result<Arc<dyn Backend>>
 {
     #[cfg(feature = "opencl")]
-    set_default_backend_for_uninitialized(|| Ok(Arc::new(opencl::ClBackend::new()?)))?;
+    let res = set_default_backend_for_uninitialized(|| Ok(Arc::new(opencl::ClBackend::new()?)));
     #[cfg(all(not(feature = "opencl"), feature = "cuda"))]
-    set_default_backend_for_uninitialized(|| Ok(Arc::new(cuda::CudaBackend::new()?)))?;
-    Ok(())
+    let res = set_default_backend_for_uninitialized(|| Ok(Arc::new(cuda::CudaBackend::new()?)));
+    #[cfg(all(not(feature = "opencl"), not(feature = "cuda")))]
+    let res: Result<Arc<dyn Backend>> = Err(Error::DefaultBackendInitialization);
+    res
 }
 
 /// Finalizes a default backend.
@@ -1369,13 +1374,7 @@ impl Frontend
     /// This method also automatically initializes a default backend if the default backend is
     /// uninitialized.
     pub fn new() -> Result<Frontend>
-    {
-        initialize_default_backend_for_uninitialized()?;
-        match get_default_backend()? {
-            Some(backend) => Ok(Frontend { backend, }),
-            None => Err(Error::UninitializedDefaultBackend),
-        }
-    }
+    { Ok(Frontend { backend: initialize_default_backend_for_uninitialized()?, }) }
 
     /// Creates a frotend with the backend.
     pub fn new_with_backend(backend: Arc<dyn Backend>) -> Frontend
