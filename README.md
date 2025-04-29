@@ -1,7 +1,7 @@
 # Unmtx-gpu
 
 Micro neural matrix library for GPU is small library that operates on matrices. This library provides
-an interfece to operations of matrices on GPU.
+an interfece to operations of matrices on GPU for neural networks.
 
 ## Computing platforms
 
@@ -14,9 +14,9 @@ If this library uses CUDA, this library can use the cuBLAS library to multiplica
 
 ## Usage
 
-You can use this library by add the following lines in the Cargo.toml file:
+You can use this library by add the following lines in the `Cargo.toml` file:
 
-```
+```toml
 [dependencies]
 unmtx-gpu = "0.1.0"
 ```
