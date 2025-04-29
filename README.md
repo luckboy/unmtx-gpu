@@ -7,7 +7,7 @@ an interfece to operations of matrices on GPU.
 
 This library uses GPU by the following computing platforms:
 
-- OpenCl
+- OpenCL
 - CUDA
 
 If this library uses CUDA, this library can use the cuBLAS library to multiplication of matrices.
