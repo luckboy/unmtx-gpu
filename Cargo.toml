@@ -8,7 +8,7 @@ description = "Micro matrix library for neural networks that uses GPU."
 repository = "https://github.com/luckboy/unmtx-gpu"
 documentation = "https://docs.rs/unmtx-gpu"
 categories = ["mathematics", "science"]
-keywords = ["matrix", "opencl", "cuda", "cublas", "nvidia", "gpu", "neural-network"]
+keywords = ["matrix", "opencl", "cuda", "gpu", "neural-network"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
