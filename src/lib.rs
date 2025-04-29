@@ -7,7 +7,7 @@
 //
 //! Micro neural matrix library for GPU is small library that operates on matrices.
 //!
-//! This library uses GPUs by the following computing platforms:
+//! This library uses GPU by the following computing platforms:
 //!
 //! - OpenCL
 //! - CUDA
