@@ -596,6 +596,10 @@ impl Matrix
         }
     }
     
+    /// See [`transpose`](Self::transpose).
+    pub fn t(&self) -> Self
+    { self.transpose() }
+    
     /// Indeed transposes the matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup></mrow></math>).
     ///
@@ -622,6 +626,10 @@ impl Matrix
         frontend.really_transpose(self, &res).unwrap();
         res
     }
+    
+    /// See [`really_transpose`](Self::really_transpose).
+    pub fn rt(&self) -> Self
+    { self.really_transpose() }
     
     /// Multiplies the matrix elements by the `b` matrix elements
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>a</mi><mi mathvariant="italic">ij</mi></msub><mo>·</mo><msub><mi>b</mi><mi mathvariant="italic">ij</mi></msub></mrow></math>).    
