@@ -153,42 +153,42 @@ pub trait Backend
 
     /// Multiplies the `a` matrix elements by the `b` matrix elements and then the result is in the
     /// `c` matrix
-    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mi mathvariant="italic">ij</mi></msub><mo>=</mo><msub><mi>a</mi><mi mathvariant="italic">ij</mi></msub><mo>·</mo><msub><mi>b</mi><mi mathvariant="italic">ij</mi></msub></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>·</mo><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     fn mul_a_b_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Multiplies the transposed `a` matrix elements by the `b` matrix elements and saves the
     /// result to the `c` matrix
-    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mi mathvariant="italic">ij</mi></msub><mo>=</mo><msub><mi>a</mi><mi mathvariant="italic">ji</mi></msub><mo>·</mo><msub><mi>b</mi><mi mathvariant="italic">ij</mi></msub></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>a</mi><mi mathvariant="italic">ji</mi></msub><mo>·</mo><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     fn mul_at_b_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Multiplies the `a` matrix elements by the transposed `b` matrix elements and then the
     /// result is in the `c` matrix
-    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mi mathvariant="italic">ij</mi></msub><mo>=</mo><msub><mi>a</mi><mi mathvariant="italic">ij</mi></msub><mo>·</mo><msub><mi>b</mi><mi mathvariant="italic">ji</mi></msub></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>·</mo><msub><mi>b</mi><mi mathvariant="italic">ji</mi></msub></mrow></math>).
     fn mul_a_bt_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
     
     /// Multiplies the transposed `a` matrix elements by the transposed `b` matrix elements and
     /// then the result is in the `c` matrix.
-    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mi mathvariant="italic">ij</mi></msub><mo>=</mo><msub><mi>a</mi><mi mathvariant="italic">ji</mi></msub><mo>·</mo><msub><mi>b</mi><mi mathvariant="italic">ji</mi></msub></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>a</mi><mi mathvariant="italic">ji</mi></msub><mo>·</mo><msub><mi>b</mi><mi mathvariant="italic">ji</mi></msub></mrow></math>).
     fn mul_at_bt_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Divides the `a` matrix elements by the `b` matrix elements and then the result is in the
     /// `c` matrix
-    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mi mathvariant="italic">ij</mi></msub><mo>=</mo><mfrac><msub><mi>a</mi><mi mathvariant="italic">ij</mi></msub><msub><mi>b</mi><mi mathvariant="italic">ij</mi></msub></mfrac></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mfrac><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mfrac></mrow></math>).
     fn div_a_b_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Divides the transposed `a` matrix elements by the `b` matrix elements and then the result
     /// is in the `c` matrix
-    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mi mathvariant="italic">ij</mi></msub><mo>=</mo><mfrac><msub><mi>a</mi><mi mathvariant="italic">ji</mi></msub><msub><mi>b</mi><mi mathvariant="italic">ij</mi></msub></mfrac></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mfrac><msub><mi>a</mi><mi mathvariant="italic">ji</mi></msub><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mfrac></mrow></math>).
     fn div_at_b_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
     
     /// Divides the transposed `a` matrix elements by the `b` matrix elements and then the result
     /// is in the `c` matrix
-    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mi mathvariant="italic">ij</mi></msub><mo>=</mo><mfrac><msub><mi>a</mi><mi mathvariant="italic">ij</mi></msub><msub><mi>b</mi><mi mathvariant="italic">ji</mi></msub></mfrac></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mfrac><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><msub><mi>b</mi><mi mathvariant="italic">ji</mi></msub></mfrac></mrow></math>).
     fn div_a_bt_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
     
     /// Divides the transposed `a` matrix elements by the transposed `b` matrix elements and then
     /// the result is in the `c` matrix
-    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mi mathvariant="italic">ij</mi></msub><mo>=</mo><mfrac><msub><mi>a</mi><mi mathvariant="italic">ji</mi></msub><msub><mi>b</mi><mi mathvariant="italic">ji</mi></msub></mfrac></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mfrac><msub><mi>a</mi><mi mathvariant="italic">ji</mi></msub><msub><mi>b</mi><mi mathvariant="italic">ji</mi></msub></mfrac></mrow></math>).
     fn div_at_bt_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Adds the `a` matrix onto the `b` scalar and then the result is in the `c` matrix
@@ -236,12 +236,12 @@ pub trait Backend
     fn div_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Divides the `b` scalar by the `a` matrix elements and then the result is in the `c` matrix
-    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mi mathvariant="italic">ij</mi></msub><mo>=</mo><mfrac><mi>b</mi><msub><mi>a</mi><mi mathvariant="italic">ij</mi></msub></mfrac></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mfrac><mi>b</mi><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mfrac></mrow></math>).
     fn rdiv_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Divides the `b` scalar by the transposed `a` matrix elements and then the result is in the
     /// `c` matrix
-    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mi mathvariant="italic">ij</mi></msub><mo>=</mo><mfrac><mi>b</mi><msub><mi>a</mi><mi mathvariant="italic">ji</mi></msub></mfrac></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mfrac><mi>b</mi><msub><mi>a</mi><mi mathvariant="italic">ji</mi></msub></mfrac></mrow></math>).
     fn rdiv_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Calculates sigmoid function for the `a` matrix adn the result is the `b` matrix
@@ -282,11 +282,11 @@ pub trait Backend
     fn softmax_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Repeats the `a` vector as column
-    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mi mathvariant="italic">ij</mi></msub><mo>=</mo><msub><mi>a</mi><mi>i</mi></msub></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>a</mi><mi>i</mi></msub></mrow></math>).
     fn repeat_col_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
     /// Repeats the `a` vector as row
-    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mi mathvariant="italic">ij</mi></msub><mo>=</mo><msub><mi>a</mi><mi>j</mi></msub></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>a</mi><mi>j</mi></msub></mrow></math>).
     fn repeat_row_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 }
 
@@ -641,7 +641,7 @@ impl Matrix
     { self.really_transpose() }
     
     /// Multiplies the matrix elements by the `b` matrix elements
-    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>a</mi><mi mathvariant="italic">ij</mi></msub><mo>·</mo><msub><mi>b</mi><mi mathvariant="italic">ij</mi></msub></mrow></math>).    
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>·</mo><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).    
     ///
     /// # Examples
     ///
@@ -667,7 +667,7 @@ impl Matrix
     }
 
     /// Divides the matrix elements by the `b` matrix elements
-    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mfrac><msub><mi>a</mi><mi mathvariant="italic">ij</mi></msub><msub><mi>b</mi><mi mathvariant="italic">ij</mi></msub></mfrac></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mfrac><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mfrac></mrow></math>).
     ///
     /// # Examples
     ///
@@ -719,7 +719,7 @@ impl Matrix
     }
 
     /// Divides the scalar by the matrix elements
-    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mfrac><mi>b</mi><msub><mi>a</mi><mi mathvariant="italic">ij</mi></msub></mfrac></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mfrac><mi>b</mi><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mfrac></mrow></math>).
     ///
     /// # Examples
     ///
@@ -1635,7 +1635,7 @@ impl Frontend
 
     /// Multiplies the `a` matrix elements by the `b` matrix elements and then the result is in the
     /// `c` matrix
-    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mi mathvariant="italic">ij</mi></msub><mo>=</mo><msub><mi>a</mi><mi mathvariant="italic">ij</mi></msub><mo>·</mo><msub><mi>b</mi><mi mathvariant="italic">ij</mi></msub></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>·</mo><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     ///
     /// # Examples
     ///
@@ -1675,7 +1675,7 @@ impl Frontend
 
     /// Divides the `a` matrix elements by the `b` matrix elements and then the result is in the `c`
     /// matrix
-    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mi mathvariant="italic">ij</mi></msub><mo>=</mo><mfrac><msub><mi>a</mi><mi mathvariant="italic">ij</mi></msub><msub><mi>b</mi><mi mathvariant="italic">ij</mi></msub></mfrac></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mfrac><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mfrac></mrow></math>).
     ///
     /// # Examples
     ///
@@ -1877,7 +1877,7 @@ impl Frontend
     }
 
     /// Divides the `b` scalar by the `a` matrix elements and then the result is in the `c` matrix
-    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mi mathvariant="italic">ij</mi></msub><mo>=</mo><mfrac><mi>b</mi><msub><mi>a</mi><mi mathvariant="italic">ij</mi></msub></mfrac></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mfrac><mi>b</mi><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mfrac></mrow></math>).
     ///
     /// # Examples
     ///
@@ -2086,8 +2086,8 @@ impl Frontend
     }
 
     /// Repeats the `a` vector as column or a row
-    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mi mathvariant="italic">ij</mi></msub><mo>=</mo><msub><mi>a</mi><mi>i</mi></msub></mrow></math> or 
-    /// <math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mi mathvariant="italic">ij</mi></msub><mo>=</mo><msub><mi>a</mi><mi>j</mi></msub></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>a</mi><mi>i</mi></msub></mrow></math> or 
+    /// <math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>a</mi><mi>j</mi></msub></mrow></math>).
     ///
     /// # Examples
     ///
