@@ -16,7 +16,7 @@
 //! matrices.
 //!
 //! A frontend-backend architecture is used by this library. The frontend of this library can use
-//! one of two backends (OpenCL or CUDA). These backend allows to use GPUs by the computing
+//! one of two backends (OpenCL or CUDA). These backends allow to use GPU by the computing
 //! platforms. The frontend and the backend can have many instances. This library provides a
 //! high-level interfece to operations of matrices by the frontend and methods of a [`Matrix`]
 //! structure.
