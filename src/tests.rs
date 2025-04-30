@@ -502,6 +502,38 @@ fn test_frontend_tanh_calculates_tanh_for_matrix()
 }
 
 #[test]
+fn test_frontend_swish_calculates_swish_for_matrix()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let a1 = fixture_a_for_activation_fun(2, 3);
+            match frontend_swish_for_a(&frontend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_swish_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_activation_fun(3, 2);
+            match frontend_swish_for_at(&frontend, a2.as_slice(), 2, 3) {
+                Ok(b2) => {
+                    let expected_b2 = expected_swish_at(a2.as_slice(), 2, 3);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
 fn test_frontend_softmax_calculates_sigmoid_for_matrix()
 {
     match Frontend::new() {
@@ -851,6 +883,20 @@ fn test_matrix_tanh_calculates_tanh_for_matrix()
     let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
     let expected_b_elems = expected_tanh_a(a_elems.as_slice(), 2, 3);
     let b = a.tanh();
+    let b_elems = b.elems();
+    assert_eq!(expected_b_elems.len(), b_elems.len());
+    for i in 0usize..(2usize * 3usize) {
+        assert!((expected_b_elems[i] - b_elems[i]).abs() < 0.001);
+    }
+}
+
+#[test]
+fn test_matrix_swish_calculates_swish_for_matrix()
+{
+    let a_elems = fixture_a_for_activation_fun(2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let expected_b_elems = expected_swish_a(a_elems.as_slice(), 2, 3);
+    let b = a.swish();
     let b_elems = b.elems();
     assert_eq!(expected_b_elems.len(), b_elems.len());
     for i in 0usize..(2usize * 3usize) {

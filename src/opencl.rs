@@ -703,6 +703,12 @@ impl Backend for ClBackend
     fn tanh_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
     { self.check_and_enqueue_nd_range_for_fun("tanh_at", a, b, n, m) }
 
+    fn swish_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_enqueue_nd_range_for_fun("swish_a", a, b, n, m) }
+
+    fn swish_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_enqueue_nd_range_for_fun("swish_at", a, b, n, m) }
+
     fn softmax_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
     { self.check_and_enqueue_nd_range_for_fun_and_tiles("softmax_a", a, b, n, m) }
 

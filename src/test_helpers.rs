@@ -472,6 +472,26 @@ pub(crate) fn backend_tanh_at(backend: &dyn Backend, a_elems: &[f32], n: usize, 
     Ok(b_elems)
 }
 
+pub(crate) fn backend_swish_a(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.swish_a(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_swish_at(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.swish_at(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
 pub(crate) fn backend_softmax_a(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
 {
     let a = backend.alloc_and_store(a_elems)?;
@@ -957,6 +977,24 @@ pub(crate) fn frontend_tanh_for_at(frontend: &Frontend, a_elems: &[f32], n: usiz
 }
 
 #[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_swish_for_a(frontend: &Frontend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(n, m, a_elems)?;
+    let b = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.swish(&a, &b)?;
+    Ok(frontend.elems_and_transpose_flag(&b)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
+pub(crate) fn frontend_swish_for_at(frontend: &Frontend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = frontend.create_matrix_and_set_elems(m, n, a_elems)?.transpose();
+    let b = frontend.create_matrix_and_set_zeros(n, m)?;
+    frontend.swish(&a, &b)?;
+    Ok(frontend.elems_and_transpose_flag(&b)?.0)
+}
+
+#[cfg(not(feature = "test_only_backend"))]
 pub(crate) fn frontend_softmax_for_a(frontend: &Frontend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
 {
     let a = frontend.create_matrix_and_set_elems(n, m, a_elems)?;
@@ -1406,6 +1444,28 @@ pub(crate) fn expected_tanh_at(a: &[f32], n: usize, m: usize) -> Vec<f32>
     for i in 0..n {
         for j in 0..m {
             b[m * i + j] = a[n * j + i].tanh();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_swish_a(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[m * i + j] / (1.0f32 + (-a[m * i + j]).exp());
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_swish_at(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[n * j + i] / (1.0f32 + (-a[n * j + i]).exp());
         }
     }
     b

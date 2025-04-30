@@ -263,6 +263,15 @@ pub trait Backend
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>tanh</mi><mo fence="true">(</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup><mo fence="true">)</mo></mrow></math>).
     fn tanh_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
+    /// Calculates swish function for the `a` matrix adn the result is the `b` matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>swish</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    fn swish_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
+
+    /// Calculates swish function for the transposed `a` matrix and then the result is in the `b`
+    /// matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>swish</mi><mo fence="true">(</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup><mo fence="true">)</mo></mrow></math>).
+    fn swish_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
+    
     /// Calculates softmax function for the `a` matrix and then the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>softmax</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     fn softmax_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
@@ -784,6 +793,32 @@ impl Matrix
         let frontend = Frontend::new().unwrap();
         let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
         frontend.tanh(self, &res).unwrap();
+        res
+    }
+
+    /// Calculates swish function for the matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>swish</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = a.swish();
+    /// let elems = b.elems();
+    /// assert!((1.0 / (1.0 + (-1.0f32).exp()) - elems[0]).abs() < 0.001);
+    /// assert!((2.0 / (1.0 + (-2.0f32).exp()) - elems[1]).abs() < 0.001);
+    /// assert!((3.0 / (1.0 + (-3.0f32).exp()) - elems[2]).abs() < 0.001);
+    /// assert!((4.0 / (1.0 + (-4.0f32).exp()) - elems[3]).abs() < 0.001);
+    /// ```
+    pub fn swish(&self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.swish(self, &res).unwrap();
         res
     }
 
@@ -1946,6 +1981,41 @@ impl Frontend
         }
     }    
 
+    /// Calculates swish function for the `a` matrix and then the result is in the `b` matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>swish</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.swish(&a, &b).unwrap();
+    /// let elems = b.elems();
+    /// assert!((1.0 / (1.0 + (-1.0f32).exp()) - elems[0]).abs() < 0.001);
+    /// assert!((2.0 / (1.0 + (-2.0f32).exp()) - elems[1]).abs() < 0.001);
+    /// assert!((3.0 / (1.0 + (-3.0f32).exp()) - elems[2]).abs() < 0.001);
+    /// assert!((4.0 / (1.0 + (-4.0f32).exp()) - elems[3]).abs() < 0.001);
+    /// ```
+    pub fn swish(&self, a: &Matrix, b: &Matrix) -> Result<()>
+    {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+        }
+        if b.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.swish_a(&*a.array, &*b.array, a.row_count, a.col_count)
+        } else {
+            self.backend.swish_at(&*a.array, &*b.array, a.row_count, a.col_count)
+        }
+    }
+    
     /// Calculates softmax function for the `a` matrix and then the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>softmax</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     ///

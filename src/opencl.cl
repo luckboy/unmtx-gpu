@@ -970,6 +970,28 @@ __kernel void tanh_at(__global const float *a, __global float *b, ulong n, ulong
   }
 }
 
+__kernel void swish_a(__global const float *a, __global float *b, ulong n, ulong m)
+{
+  size_t n2 = (size_t) n;
+  size_t m2 = (size_t) m;
+  size_t i = get_global_id(0);
+  size_t j = get_global_id(1);
+  if(i < n2 && j < m2) {
+    b[m2 * i + j] = a[m2 * i + j] / (1.0f + exp(-a[m2 * i + j]));
+  }
+}
+
+__kernel void swish_at(__global const float *a, __global float *b, ulong n, ulong m)
+{
+  size_t n2 = (size_t) n;
+  size_t m2 = (size_t) m;
+  size_t i = get_global_id(0);
+  size_t j = get_global_id(1);
+  if(i < n2 && j < m2) {
+    b[m2 * i + j] = a[n2 * j + i] / (1.0f + exp(-a[n2 * j + i]));
+  }
+}
+
 __kernel void softmax_a(__global const float *a, __global float *b, __local float *es, ulong n, ulong m)
 {
   size_t n2 = (size_t) n;

@@ -76,6 +76,8 @@ const KERNELS: &'static [&'static str] = &[
     "sigmoid_at",
     "tanh_a",
     "tanh_at",
+    "swish_a",
+    "swish_at",
     "softmax_a",
     "softmax_at",
     "repeat_col_a",
@@ -850,6 +852,12 @@ impl Backend for CudaBackend
 
     fn tanh_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
     { self.check_and_launch_for_fun("tanh_at", a, b, n, m) }
+
+    fn swish_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("swish_a", a, b, n, m) }
+
+    fn swish_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("swish_at", a, b, n, m) }
 
     fn softmax_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
     { self.check_and_launch_for_fun_and_tiles("softmax_a", a, b, n, m) }

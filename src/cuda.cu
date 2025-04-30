@@ -1199,6 +1199,24 @@ extern "C" {
     }
   }
 
+  __global__ void swish_a(const float *a, float *b, size_t n, size_t m)
+  {
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
+    if(i < n && j < m) {
+      b[m * i + j] = a[m * i + j] / (1.0f + expf(-a[m * i + j]));
+    }
+  }
+
+  __global__ void swish_at(const float *a, float *b, size_t n, size_t m)
+  {
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
+    if(i < n && j < m) {
+      b[m * i + j] = a[n * j + i] / (1.0f + expf(-a[n * j + i]));
+    }
+  }
+
   __global__ void softmax_a(const float *a, float *b, size_t n, size_t m)
   {
     __shared__ float es[TILE_SIZE];

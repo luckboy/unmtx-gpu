@@ -822,6 +822,48 @@ fn test_cuda_backend_tanh_at_calculates_tanh_for_backend_array()
 }
 
 #[test]
+fn test_cuda_backend_swish_a_calculates_swish_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_activation_fun(2, 3);
+            match backend_swish_a(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_swish_a(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_swish_at_calculates_swish_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_activation_fun(3, 2);
+            match backend_swish_at(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_swish_at(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
 fn test_cuda_backend_softmax_a_calculates_softmax_for_backend_array()
 {
     match CudaBackend::new() {
