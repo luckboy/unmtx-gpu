@@ -1232,7 +1232,7 @@ extern "C" {
       size_t tk;
       es[tile_width * ti + tj] = 0.0f;
       if(j < m && k + ti < n) {
-        es[tile_width * ti + tj] = exp(a[m * (k + ti) + j]);
+        es[tile_width * ti + tj] = expf(a[m * (k + ti) + j]);
       }
       __syncthreads();
       for(tk = 0; tk < tile_height; tk++) {
@@ -1241,7 +1241,7 @@ extern "C" {
       __syncthreads();
     }
     if(i < n && j < m) {
-      b[m * i + j] = exp(a[m * i + j]) / sum;
+      b[m * i + j] = expf(a[m * i + j]) / sum;
     }
   }
 
@@ -1260,7 +1260,7 @@ extern "C" {
       size_t tk;
       es[tile_width * ti + tj] = 0.0f;
       if(j < m && k + ti < n) {
-        es[tile_width * ti + tj] = exp(a[n * j + k + ti]);
+        es[tile_width * ti + tj] = expf(a[n * j + k + ti]);
       }
       __syncthreads();
       for(tk = 0; tk < tile_height; tk++) {
@@ -1269,7 +1269,7 @@ extern "C" {
       __syncthreads();
     }
     if(i < n && j < m) {
-      b[m * i + j] = exp(a[n * j + i]) / sum;
+      b[m * i + j] = expf(a[n * j + i]) / sum;
     }
   }
 
