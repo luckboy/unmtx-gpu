@@ -534,7 +534,7 @@ fn test_frontend_swish_calculates_swish_for_matrix()
 }
 
 #[test]
-fn test_frontend_softmax_calculates_sigmoid_for_matrix()
+fn test_frontend_softmax_calculates_softmax_for_matrix()
 {
     match Frontend::new() {
         Ok(frontend) => {
