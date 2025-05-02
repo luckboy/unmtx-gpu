@@ -96,19 +96,19 @@ pub trait Backend
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">C</mi><mo>=</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup></mrow></math>).
     fn transpose_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Adds the `a` matrix onto the `b` matrix and then the result is in the `c` matrix
+    /// Adds the `b` matrix to the `a` matrix and then the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">C</mi><mo>=</mo><mi mathvariant="bold">A</mi><mo>+</mo><mi mathvariant="bold">B</mi></mrow></math>).
     fn add_a_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Adds the transposed `a` matrix onto the `b` matrix and then the result is in the `c` matrix
+    /// Adds the `b` matrix to the transposed `a` matrix and then the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">C</mi><mo>=</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup><mo>+</mo><mi mathvariant="bold">B</mi></mrow></math>).
     fn add_at_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
     
-    /// Adds the `a` matrix onto the transposed `b` matrix and then the result is in the `c` matrix
+    /// Adds the transposed `b` matrix to the `a` matrix and then the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">C</mi><mo>=</mo><mi mathvariant="bold">A</mi><mo>+</mo><msup><mi mathvariant="bold">B</mi><mi mathvariant="normal">T</mi></msup></mrow></math>).
     fn add_a_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Adds the transposed `a` matrix onto the transposed `b` matrix and then the result is in the
+    /// Adds the transposed `b` matrix to the transposed `a` matrix and then the result is in the
     /// `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">C</mi><mo>=</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup><mo>+</mo><msup><mi mathvariant="bold">B</mi><mi mathvariant="normal">T</mi></msup></mrow></math>).
     fn add_at_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
@@ -191,11 +191,11 @@ pub trait Backend
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mfrac><msub><mi>a</mi><mi mathvariant="italic">ji</mi></msub><msub><mi>b</mi><mi mathvariant="italic">ji</mi></msub></mfrac></mrow></math>).
     fn div_at_bt_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Adds the `a` matrix onto the `b` scalar and then the result is in the `c` matrix
+    /// Adds the `b` scalar to the `a` matrix and then the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">C</mi><mo>=</mo><mi mathvariant="bold">A</mi><mo>+</mo><mi>b</mi></mrow></math>).
     fn add_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Adds the transposed `a` matrix onto the `b` scalar and then the result is in the `c` matrix
+    /// Adds the `b` scalar to the transposed `a` matrix and then the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">C</mi><mo>=</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup><mo>+</mo><mi>b</mi></mrow></math>).
     fn add_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
@@ -1543,7 +1543,7 @@ impl Frontend
         Ok((elems, is_transposed))
     }
     
-    /// Adds the `a` matrix onto the `b` matrix and then the result is in the `c` matrix
+    /// Adds the `b` matrix to the `a` matrix and then the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">C</mi><mo>=</mo><mi mathvariant="bold">A</mi><mo>+</mo><mi mathvariant="bold">B</mi></mrow></math>).
     ///
     /// # Examples
@@ -1752,7 +1752,7 @@ impl Frontend
         }
     }
 
-    /// Adds the `a` matrix onto the `b` scalar and then the result is in the `c` matrix
+    /// Adds the `b` scalar to the `a` matrix and then the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">C</mi><mo>=</mo><mi mathvariant="bold">A</mi><mo>+</mo><mi>b</mi></mrow></math>).
     ///
     /// # Examples
