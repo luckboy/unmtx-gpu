@@ -1982,6 +1982,7 @@ impl Frontend
     }
 
     /// Calculates hyperbolic tangent function for the `a` matrix and then the result is in the `b`
+    /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>tanh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     ///
     /// # Examples
