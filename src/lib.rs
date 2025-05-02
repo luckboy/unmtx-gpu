@@ -281,6 +281,15 @@ pub trait Backend
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>softmax</mi><mo fence="true">(</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup><mo fence="true">)</mo></mrow></math>).
     fn softmax_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
+    /// Calculates square root of the `a` matrix adn the result is the `b` matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><msqrt><mi mathvariant="bold">A</mi></msqrt></mrow></math>).
+    fn sqrt_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
+
+    /// Calculates square root of the transposed `a` matrix and then the result is in the `b`
+    /// matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><msqrt><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup></msqrt></mrow></math>).
+    fn sqrt_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
+    
     /// Repeats the `a` vector as column
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>a</mi><mi>i</mi></msub></mrow></math>).
     fn repeat_col_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
@@ -847,6 +856,32 @@ impl Matrix
         let frontend = Frontend::new().unwrap();
         let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
         frontend.softmax(self, &res).unwrap();
+        res
+    }
+    
+    /// Calculates square root of the matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msqrt><mi mathvariant="bold">A</mi></msqrt></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = a.sqrt();
+    /// let elems = b.elems();
+    /// assert!((1.0f32.sqrt() - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.sqrt() - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.sqrt() - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.sqrt() - elems[3]).abs() < 0.001);
+    /// ```
+    pub fn sqrt(&self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.sqrt(self, &res).unwrap();
         res
     }
     
@@ -2052,6 +2087,41 @@ impl Frontend
             self.backend.softmax_at(&*a.array, &*b.array, a.row_count, a.col_count)
         }
     }    
+
+    /// Calculates square root of the `a` matrix and then the result is in the `b` matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><msqrt><mi mathvariant="bold">A</mi></msqrt></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.sqrt(&a, &b).unwrap();
+    /// let elems = b.elems();
+    /// assert!((1.0f32.sqrt() - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.sqrt() - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.sqrt() - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.sqrt() - elems[3]).abs() < 0.001);
+    /// ```
+    pub fn sqrt(&self, a: &Matrix, b: &Matrix) -> Result<()>
+    {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+        }
+        if b.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.sqrt_a(&*a.array, &*b.array, a.row_count, a.col_count)
+        } else {
+            self.backend.sqrt_at(&*a.array, &*b.array, a.row_count, a.col_count)
+        }
+    }
     
     /// Indeed transposes the `a` matrix and then the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup></mrow></math>).

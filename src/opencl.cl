@@ -1050,6 +1050,28 @@ __kernel void softmax_at(__global const float *a, __global float *b, __local flo
   }
 }
 
+__kernel void sqrt_a(__global const float *a, __global float *b, ulong n, ulong m)
+{
+  size_t n2 = (size_t) n;
+  size_t m2 = (size_t) m;
+  size_t i = get_global_id(0);
+  size_t j = get_global_id(1);
+  if(i < n2 && j < m2) {
+    b[m2 * i + j] = sqrt(a[m2 * i + j]);
+  }
+}
+
+__kernel void sqrt_at(__global const float *a, __global float *b, ulong n, ulong m)
+{
+  size_t n2 = (size_t) n;
+  size_t m2 = (size_t) m;
+  size_t i = get_global_id(0);
+  size_t j = get_global_id(1);
+  if(i < n2 && j < m2) {
+    b[m2 * i + j] = sqrt(a[n2 * j + i]);
+  }
+}
+
 __kernel void repeat_col_a(__global const float *a, __global float *b, ulong n, ulong m)
 {
   size_t n2 = (size_t) n;

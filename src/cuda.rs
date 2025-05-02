@@ -80,6 +80,8 @@ const KERNELS: &'static [&'static str] = &[
     "swish_at",
     "softmax_a",
     "softmax_at",
+    "sqrt_a",
+    "sqrt_at",
     "repeat_col_a",
     "repeat_row_a"
 ];
@@ -864,6 +866,12 @@ impl Backend for CudaBackend
 
     fn softmax_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
     { self.check_and_launch_for_fun_and_tiles("softmax_at", a, b, n, m) }
+
+    fn sqrt_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("sqrt_a", a, b, n, m) }
+
+    fn sqrt_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("sqrt_at", a, b, n, m) }
 
     fn repeat_col_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
     { self.check_and_launch_for_repeat_col("repeat_col_a", a, b, n, m) }

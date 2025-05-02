@@ -715,6 +715,12 @@ impl Backend for ClBackend
     fn softmax_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
     { self.check_and_enqueue_nd_range_for_fun_and_tiles("softmax_at", a, b, n, m) }
 
+    fn sqrt_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_enqueue_nd_range_for_fun("sqrt_a", a, b, n, m) }
+
+    fn sqrt_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_enqueue_nd_range_for_fun("sqrt_at", a, b, n, m) }
+    
     fn repeat_col_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
     { self.check_and_enqueue_nd_range_for_repeat_col("repeat_col_a", a, b, n, m) }
 

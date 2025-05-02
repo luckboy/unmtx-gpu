@@ -1038,6 +1038,48 @@ fn test_cl_backend_softmax_at_calculates_softmax_for_backend_array()
 }
 
 #[test]
+fn test_cl_backend_sqrt_a_calculates_sqrt_for_backend_array()
+{
+    match ClBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a(2, 3);
+            match backend_sqrt_a(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_sqrt_a(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cl_backend_sqrt_at_calculates_sqrt_for_backend_array()
+{
+    match ClBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a(3, 2);
+            match backend_sqrt_at(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_sqrt_at(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
 fn test_cl_backend_repeat_col_a_repeats_column_for_backend_array()
 {
     match ClBackend::new() {
