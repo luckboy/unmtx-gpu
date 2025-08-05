@@ -685,6 +685,16 @@ fn test_matrix_really_transpose_transposes_matrix()
 }
 
 #[test]
+fn test_matrix_neg_negates_matrix()
+{
+    let a_elems = fixture_a(2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let expected_b_elems = expected_rsub_a_b_for_scalar(a_elems.as_slice(), 0.0, 2, 3);
+    assert_eq!(expected_b_elems, (-(a.clone())).elems());
+    assert_eq!(expected_b_elems, (-(&a)).elems());
+}
+
+#[test]
 fn test_matrix_add_adds_matrices_or_matrix_and_scalar()
 {
     // matrix

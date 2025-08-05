@@ -40,6 +40,7 @@
 //! let c = a * x + b;
 //! assert_eq!(vec![1.0 * 5.0 + 2.0 * 6.0 + 7.0, 3.0 * 5.0 + 4.0 * 6.0 + 8.0], c.elems());
 //! ```
+use std::ops::Neg;
 use std::ops::Add;
 use std::ops::AddAssign;
 use std::ops::Sub;
@@ -911,6 +912,32 @@ impl Matrix
             unsafe { frontend.create_matrix(n, self.col_count) }.unwrap()
         };
         frontend.repeat(self, &res).unwrap();
+        res
+    }
+}
+
+impl Neg for Matrix
+{
+    type Output = Self;
+
+    fn neg(self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.rsub_for_scalar(&self, 0.0, &res).unwrap();
+        res
+    }
+}
+
+impl Neg for &Matrix
+{
+    type Output = Matrix;
+
+    fn neg(self) -> Matrix
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.rsub_for_scalar(self, 0.0, &res).unwrap();
         res
     }
 }
