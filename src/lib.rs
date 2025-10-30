@@ -1552,12 +1552,8 @@ impl Frontend
         if a.row_count * a.col_count != elems.len() {
             return Err(Error::MatrixElemCount(a.row_count * a.col_count, elems.len())); 
         }
-        if !a.is_transposed {
-            self.backend.load(&*a.array, elems)?;
-        } else {
-            self.backend.load(&*a.array, elems)?;
-        }
-        *is_transposed = true;
+        self.backend.load(&*a.array, elems)?;
+        *is_transposed = a.is_transposed;
         Ok(())
     }
     
