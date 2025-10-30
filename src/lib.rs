@@ -920,7 +920,7 @@ impl Neg for Matrix
 {
     type Output = Self;
 
-    fn neg(self) -> Self
+    fn neg(self) -> Self::Output
     {
         let frontend = Frontend::new().unwrap();
         let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
@@ -933,7 +933,7 @@ impl Neg for &Matrix
 {
     type Output = Matrix;
 
-    fn neg(self) -> Matrix
+    fn neg(self) -> Self::Output
     {
         let frontend = Frontend::new().unwrap();
         let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
