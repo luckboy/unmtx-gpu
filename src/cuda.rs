@@ -94,6 +94,8 @@ const KERNELS: &'static [&'static str] = &[
     "pow_at_b_for_scalar",
     "rpow_a_b_for_scalar",
     "rpow_at_b_for_scalar",
+    "exp_a",
+    "exp_at",
     "ln_a",
     "ln_at",
     "log2_a",

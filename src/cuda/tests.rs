@@ -1204,3 +1204,1221 @@ fn test_cuda_backend_mul_a_b_uses_two_backend_arrays_for_a_a_c()
         Err(_) => assert!(false),
     }
 }
+
+#[test]
+fn test_cuda_backend_abs_a_calculates_abs_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_common_math_fun(2, 3);
+            match backend_abs_a(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_abs_a(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_abs_at_calculates_abs_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_common_math_fun(3, 2);
+            match backend_abs_at(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_abs_at(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_pow_a_b_calculates_pow_for_backend_arrays()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let (a, b) = fixture_a_b_for_pow(2, 3, 2, 3);
+            match backend_pow_a_b(&backend, a.as_slice(), b.as_slice(), 2, 3) {
+                Ok(c) => {
+                    let expected_c = expected_pow_a_b(a.as_slice(), b.as_slice(), 2, 3);
+                    assert_eq!(expected_c.len(), c.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_pow_at_b_calculates_pow_for_backend_arrays()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let (a, b) = fixture_a_b_for_pow(3, 2, 2, 3);
+            match backend_pow_at_b(&backend, a.as_slice(), b.as_slice(), 2, 3) {
+                Ok(c) => {
+                    let expected_c = expected_pow_at_b(a.as_slice(), b.as_slice(), 2, 3);
+                    assert_eq!(expected_c.len(), c.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_pow_a_bt_calculates_pow_for_backend_arrays()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let (a, b) = fixture_a_b_for_pow(2, 3, 3, 2);
+            match backend_pow_a_bt(&backend, a.as_slice(), b.as_slice(), 2, 3) {
+                Ok(c) => {
+                    let expected_c = expected_pow_a_bt(a.as_slice(), b.as_slice(), 2, 3);
+                    assert_eq!(expected_c.len(), c.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_pow_at_bt_calculates_pow_for_backend_arrays()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let (a, b) = fixture_a_b_for_pow(3, 2, 2, 3);
+            match backend_pow_at_bt(&backend, a.as_slice(), b.as_slice(), 2, 3) {
+                Ok(c) => {
+                    let expected_c = expected_pow_at_bt(a.as_slice(), b.as_slice(), 2, 3);
+                    assert_eq!(expected_c.len(), c.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_pow_a_b_for_scalar_calculates_pow_for_backend_array_and_scalar()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_log(2, 3);
+            match backend_pow_a_b_for_scalar(&backend, a.as_slice(), 2.5, 2, 3) {
+                Ok(c) => {
+                    let expected_c = expected_pow_a_b_for_scalar(a.as_slice(), 2.5, 2, 3);
+                    assert_eq!(expected_c.len(), c.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_pow_at_b_for_scalar_calculates_pow_for_backend_array_and_scalar()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_log(3, 2);
+            match backend_pow_at_b_for_scalar(&backend, a.as_slice(), 2.5, 2, 3) {
+                Ok(c) => {
+                    let expected_c = expected_pow_at_b_for_scalar(a.as_slice(), 2.5, 2, 3);
+                    assert_eq!(expected_c.len(), c.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_rpow_a_b_for_scalar_calculates_pow_for_backend_array_and_scalar()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_common_math_fun(2, 3);
+            match backend_rpow_a_b_for_scalar(&backend, a.as_slice(), 10.5, 2, 3) {
+                Ok(c) => {
+                    let expected_c = expected_rpow_a_b_for_scalar(a.as_slice(), 10.5, 2, 3);
+                    assert_eq!(expected_c.len(), c.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_rpow_at_b_for_scalar_calculates_pow_backend_array_and_scalar()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_common_math_fun(3, 2);
+            match backend_rpow_at_b_for_scalar(&backend, a.as_slice(), 10.5, 2, 3) {
+                Ok(c) => {
+                    let expected_c = expected_rpow_at_b_for_scalar(a.as_slice(), 10.5, 2, 3);
+                    assert_eq!(expected_c.len(), c.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_exp_a_calculates_exp_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_common_math_fun(2, 3);
+            match backend_exp_a(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_exp_a(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_exp_at_calculates_exp_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_common_math_fun(3, 2);
+            match backend_exp_at(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_exp_at(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_ln_a_calculates_ln_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_log(2, 3);
+            match backend_ln_a(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_ln_a(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_ln_at_calculates_ln_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_log(3, 2);
+            match backend_ln_at(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_ln_at(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_log2_a_calculates_log2_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_log(2, 3);
+            match backend_log2_a(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_log2_a(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_log2_at_calculates_log2_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_log(3, 2);
+            match backend_log2_at(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_log2_at(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_log10_a_calculates_log10_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_log(2, 3);
+            match backend_log10_a(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_log10_a(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_log10_at_calculates_log10_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_log(3, 2);
+            match backend_log10_at(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_log10_at(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_sin_a_calculates_sin_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_common_math_fun(2, 3);
+            match backend_sin_a(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_sin_a(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_sin_at_calculates_sin_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_common_math_fun(3, 2);
+            match backend_sin_at(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_sin_at(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_cos_a_calculates_cos_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_common_math_fun(2, 3);
+            match backend_cos_a(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_cos_a(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_cos_at_calculates_cos_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_common_math_fun(3, 2);
+            match backend_cos_at(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_cos_at(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_tan_a_calculates_tan_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_common_math_fun(2, 3);
+            match backend_tan_a(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_tan_a(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_tan_at_calculates_tan_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_common_math_fun(3, 2);
+            match backend_tan_at(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_tan_at(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_asin_a_calculates_asin_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_asin_or_acos(2, 3);
+            match backend_asin_a(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_asin_a(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_asin_at_calculates_asin_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_asin_or_acos(3, 2);
+            match backend_asin_at(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_asin_at(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_acos_a_calculates_acos_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_asin_or_acos(2, 3);
+            match backend_acos_a(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_acos_a(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_acos_at_calculates_acos_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_asin_or_acos(3, 2);
+            match backend_acos_at(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_acos_at(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_atan_a_calculates_atan_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_common_math_fun(2, 3);
+            match backend_atan_a(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_atan_a(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_atan_at_calculates_atan_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_common_math_fun(3, 2);
+            match backend_atan_at(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_atan_at(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_atan2_a_b_calculates_atan2_for_backend_arrays()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let (a, b) = fixture_a_b_for_common_math_fun(2, 3, 2, 3);
+            match backend_atan2_a_b(&backend, a.as_slice(), b.as_slice(), 2, 3) {
+                Ok(c) => {
+                    let expected_c = expected_atan2_a_b(a.as_slice(), b.as_slice(), 2, 3);
+                    assert_eq!(expected_c.len(), c.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_atan2_at_b_calculates_atan2_for_backend_arrays()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let (a, b) = fixture_a_b_for_common_math_fun(3, 2, 2, 3);
+            match backend_atan2_at_b(&backend, a.as_slice(), b.as_slice(), 2, 3) {
+                Ok(c) => {
+                    let expected_c = expected_atan2_at_b(a.as_slice(), b.as_slice(), 2, 3);
+                    assert_eq!(expected_c.len(), c.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_atan2_a_bt_calculates_atan2_for_backend_arrays()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let (a, b) = fixture_a_b_for_common_math_fun(2, 3, 3, 2);
+            match backend_atan2_a_bt(&backend, a.as_slice(), b.as_slice(), 2, 3) {
+                Ok(c) => {
+                    let expected_c = expected_atan2_a_bt(a.as_slice(), b.as_slice(), 2, 3);
+                    assert_eq!(expected_c.len(), c.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_atan2_at_bt_calculates_atan2_for_backend_arrays()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let (a, b) = fixture_a_b_for_common_math_fun(3, 2, 2, 3);
+            match backend_atan2_at_bt(&backend, a.as_slice(), b.as_slice(), 2, 3) {
+                Ok(c) => {
+                    let expected_c = expected_atan2_at_bt(a.as_slice(), b.as_slice(), 2, 3);
+                    assert_eq!(expected_c.len(), c.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_atan2_a_b_for_scalar_calculates_atan2_for_backend_array_and_scalar()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_log(2, 3);
+            match backend_atan2_a_b_for_scalar(&backend, a.as_slice(), 10.5, 2, 3) {
+                Ok(c) => {
+                    let expected_c = expected_atan2_a_b_for_scalar(a.as_slice(), 10.5, 2, 3);
+                    assert_eq!(expected_c.len(), c.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_atan2_at_b_for_scalar_calculates_atan2_for_backend_array_and_scalar()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_log(3, 2);
+            match backend_atan2_at_b_for_scalar(&backend, a.as_slice(), 10.5, 2, 3) {
+                Ok(c) => {
+                    let expected_c = expected_atan2_at_b_for_scalar(a.as_slice(), 10.5, 2, 3);
+                    assert_eq!(expected_c.len(), c.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_ratan2_a_b_for_scalar_calculates_atan2_for_backend_array_and_scalar()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_common_math_fun(2, 3);
+            match backend_ratan2_a_b_for_scalar(&backend, a.as_slice(), 10.5, 2, 3) {
+                Ok(c) => {
+                    let expected_c = expected_ratan2_a_b_for_scalar(a.as_slice(), 10.5, 2, 3);
+                    assert_eq!(expected_c.len(), c.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_ratan2_at_b_for_scalar_calculates_atan2_backend_array_and_scalar()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_common_math_fun(3, 2);
+            match backend_ratan2_at_b_for_scalar(&backend, a.as_slice(), 10.5, 2, 3) {
+                Ok(c) => {
+                    let expected_c = expected_ratan2_at_b_for_scalar(a.as_slice(), 10.5, 2, 3);
+                    assert_eq!(expected_c.len(), c.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_sinh_a_calculates_sinh_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_common_math_fun(2, 3);
+            match backend_sinh_a(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_sinh_a(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_sinh_at_calculates_sinh_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_common_math_fun(3, 2);
+            match backend_sinh_at(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_sinh_at(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_cosh_a_calculates_cosh_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_common_math_fun(2, 3);
+            match backend_cosh_a(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_cosh_a(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_cosh_at_calculates_cosh_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_common_math_fun(3, 2);
+            match backend_cosh_at(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_cosh_at(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_asinh_a_calculates_asinh_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_common_math_fun(2, 3);
+            match backend_asinh_a(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_asinh_a(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_asinh_at_calculates_asinh_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_common_math_fun(3, 2);
+            match backend_asinh_at(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_asinh_at(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_acosh_a_calculates_acosh_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_log(2, 3);
+            match backend_acosh_a(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_acosh_a(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_acosh_at_calculates_acosh_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_log(3, 2);
+            match backend_acosh_at(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_acosh_at(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_atanh_a_calculates_atanh_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_asin_or_acos(2, 3);
+            match backend_atanh_a(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_atanh_a(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_atanh_at_calculates_atanh_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_asin_or_acos(3, 2);
+            match backend_atanh_at(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_atanh_at(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_signum_a_calculates_signum_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_common_math_fun(2, 3);
+            match backend_signum_a(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_signum_a(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_signum_at_calculates_signum_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_common_math_fun(3, 2);
+            match backend_signum_at(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_signum_at(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_ceil_a_calculates_ceil_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_rounding(2, 3);
+            match backend_ceil_a(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_ceil_a(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_ceil_at_calculates_ceil_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_rounding(3, 2);
+            match backend_ceil_at(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_ceil_at(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_floor_a_calculates_floor_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_rounding(2, 3);
+            match backend_floor_a(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_floor_a(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_floor_at_calculates_floor_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_rounding(3, 2);
+            match backend_floor_at(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_floor_at(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_round_a_calculates_round_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_rounding(2, 3);
+            match backend_round_a(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_round_a(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_round_at_calculates_round_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_rounding(3, 2);
+            match backend_round_at(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_round_at(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_trunc_a_calculates_trunc_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_rounding(2, 3);
+            match backend_trunc_a(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_trunc_a(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_trunc_at_calculates_trunc_for_backend_array()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_rounding(3, 2);
+            match backend_trunc_at(&backend, a.as_slice(), 2, 3) {
+                Ok(b) => {
+                    let expected_b = expected_trunc_at(a.as_slice(), 2, 3);
+                    assert_eq!(expected_b.len(), b.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}

@@ -1563,7 +1563,7 @@ __kernel void asinh_a(__global const float *a, __global float *b, ulong n, ulong
   size_t i = get_global_id(0);
   size_t j = get_global_id(1);
   if(i < n2 && j < m2) {
-    b[m2 * i + j] = asin(a[m2 * i + j]);
+    b[m2 * i + j] = asinh(a[m2 * i + j]);
   }
 }
 
@@ -1574,7 +1574,7 @@ __kernel void asinh_at(__global const float *a, __global float *b, ulong n, ulon
   size_t i = get_global_id(0);
   size_t j = get_global_id(1);
   if(i < n2 && j < m2) {
-    b[m2 * i + j] = asin(a[n2 * j + i]);
+    b[m2 * i + j] = asinh(a[n2 * j + i]);
   }
 }
 
@@ -1585,7 +1585,7 @@ __kernel void acosh_a(__global const float *a, __global float *b, ulong n, ulong
   size_t i = get_global_id(0);
   size_t j = get_global_id(1);
   if(i < n2 && j < m2) {
-    b[m2 * i + j] = acos(a[m2 * i + j]);
+    b[m2 * i + j] = acosh(a[m2 * i + j]);
   }
 }
 

@@ -1737,7 +1737,7 @@ extern "C" {
     size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
     size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
     if(i < n && j < m) {
-      b[m * i + j] = atanf(a[n * j + i]);
+      b[m * i + j] = atanhf(a[n * j + i]);
     }
   }
 

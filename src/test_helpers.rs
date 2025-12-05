@@ -47,6 +47,84 @@ pub(crate) fn fixture_a_for_activation_fun(n: usize, m: usize) -> Vec<f32>
     a
 }
 
+pub(crate) fn fixture_a_for_common_math_fun(n: usize, m: usize) -> Vec<f32>
+{
+    let mut a = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            a[m * i + j] = ((i as f32) - ((n as f32) / 2.0)) * 2.0 + (j as f32) - ((m as f32) / 2.0);
+        }
+    }
+    a
+}
+
+pub(crate) fn fixture_a_b_for_common_math_fun(n1: usize, m1: usize, n2: usize, m2: usize) -> (Vec<f32>, Vec<f32>)
+{
+    let mut a = vec![0.0f32; n1 * m1];
+    for i in 0..n1 {
+        for j in 0..m1 {
+            a[m1 * i + j] = ((i as f32) - ((n1 as f32) / 2.0)) * 2.0 + (j as f32) - ((m1 as f32) / 2.0);
+        }
+    }
+    let mut b = vec![0.0f32; n2 * m2];
+    for i in 0..n2 {
+        for j in 0..m2 {
+            b[m2 * i + j] = (i as f32) - ((n2 as f32) / 2.0) + ((j as f32) - ((m2 as f32) / 2.0)) * 2.0;
+        }
+    }
+    (a, b)
+}
+
+pub(crate) fn fixture_a_b_for_pow(n1: usize, m1: usize, n2: usize, m2: usize) -> (Vec<f32>, Vec<f32>)
+{
+    let mut a = vec![0.0f32; n1 * m1];
+    for i in 0..n1 {
+        for j in 0..m1 {
+            a[m1 * i + j] = ((i as f32) - ((n1 as f32) / 2.0)) * 2.0 + (j as f32) - ((m1 as f32) / 2.0);
+        }
+    }
+    let mut b = vec![0.0f32; n2 * m2];
+    for i in 0..n2 {
+        for j in 0..m2 {
+            b[m2 * i + j] = (i as f32) + (j as f32) * 2.0 + 1.0;
+        }
+    }
+    (a, b)
+}
+
+pub(crate) fn fixture_a_for_log(n: usize, m: usize) -> Vec<f32>
+{
+    let mut a = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            a[m * i + j] = (i as f32) * 2.0 + (j as f32) + 1.0;
+        }
+    }
+    a
+}
+
+pub(crate) fn fixture_a_for_asin_or_acos(n: usize, m: usize) -> Vec<f32>
+{
+    let mut a = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            a[m * i + j] = (((i as f32) - ((n as f32) / 2.0)) * 2.0 + (j as f32) - ((m as f32) / 2.0)) / ((n as f32) * 2.0 + (m as f32));
+        }
+    }
+    a
+}
+
+pub(crate) fn fixture_a_for_rounding(n: usize, m: usize) -> Vec<f32>
+{
+    let mut a = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            a[m * i + j] = (((i as f32) - ((n as f32) / 2.0)) * 2.0 + (j as f32) - ((m as f32) / 2.0)) / 3.0;
+        }
+    }
+    a
+}
+
 pub(crate) fn backend_alloc_and_store_zeros(backend: &dyn Backend, n: usize) -> Result<Vec<f32>>
 {
     let a = backend.alloc_and_store_zeros(n)?;
@@ -608,6 +686,595 @@ pub(crate) fn backend_mul_a_a_c(backend: &dyn Backend, a_elems: &[f32], n: usize
     let mut c_elems = vec![0.0f32; n * n];
     backend.load(&c, &mut c_elems)?;
     Ok(c_elems)
+}
+
+pub(crate) fn backend_abs_a(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.abs_a(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_abs_at(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.abs_at(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_pow_a_b(backend: &dyn Backend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store(b_elems)?;
+    let c = backend.alloc_and_store_zeros(n * m)?;
+    backend.pow_a_b(&a, &b, &c, n, m)?;
+    let mut c_elems = vec![0.0f32; n * m];
+    backend.load(&c, &mut c_elems)?;
+    Ok(c_elems)
+}
+
+pub(crate) fn backend_pow_at_b(backend: &dyn Backend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store(b_elems)?;
+    let c = backend.alloc_and_store_zeros(n * m)?;
+    backend.pow_at_b(&a, &b, &c, n, m)?;
+    let mut c_elems = vec![0.0f32; n * m];
+    backend.load(&c, &mut c_elems)?;
+    Ok(c_elems)
+}
+
+pub(crate) fn backend_pow_a_bt(backend: &dyn Backend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store(b_elems)?;
+    let c = backend.alloc_and_store_zeros(n * m)?;
+    backend.pow_a_bt(&a, &b, &c, n, m)?;
+    let mut c_elems = vec![0.0f32; n * m];
+    backend.load(&c, &mut c_elems)?;
+    Ok(c_elems)
+}
+
+pub(crate) fn backend_pow_at_bt(backend: &dyn Backend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store(b_elems)?;
+    let c = backend.alloc_and_store_zeros(n * m)?;
+    backend.pow_at_bt(&a, &b, &c, n, m)?;
+    let mut c_elems = vec![0.0f32; n * m];
+    backend.load(&c, &mut c_elems)?;
+    Ok(c_elems)
+}
+
+pub(crate) fn backend_pow_a_b_for_scalar(backend: &dyn Backend, a_elems: &[f32], b: f32, n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let c = backend.alloc_and_store_zeros(n * m)?;
+    backend.pow_a_b_for_scalar(&a, b, &c, n, m)?;
+    let mut c_elems = vec![0.0f32; n * m];
+    backend.load(&c, &mut c_elems)?;
+    Ok(c_elems)
+}
+
+pub(crate) fn backend_pow_at_b_for_scalar(backend: &dyn Backend, a_elems: &[f32], b: f32, n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let c = backend.alloc_and_store_zeros(n * m)?;
+    backend.pow_at_b_for_scalar(&a, b, &c, n, m)?;
+    let mut c_elems = vec![0.0f32; n * m];
+    backend.load(&c, &mut c_elems)?;
+    Ok(c_elems)
+}
+
+pub(crate) fn backend_rpow_a_b_for_scalar(backend: &dyn Backend, a_elems: &[f32], b: f32, n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let c = backend.alloc_and_store_zeros(n * m)?;
+    backend.rpow_a_b_for_scalar(&a, b, &c, n, m)?;
+    let mut c_elems = vec![0.0f32; n * m];
+    backend.load(&c, &mut c_elems)?;
+    Ok(c_elems)
+}
+
+pub(crate) fn backend_rpow_at_b_for_scalar(backend: &dyn Backend, a_elems: &[f32], b: f32, n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let c = backend.alloc_and_store_zeros(n * m)?;
+    backend.rpow_at_b_for_scalar(&a, b, &c, n, m)?;
+    let mut c_elems = vec![0.0f32; n * m];
+    backend.load(&c, &mut c_elems)?;
+    Ok(c_elems)
+}
+
+pub(crate) fn backend_exp_a(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.exp_a(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_exp_at(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.exp_at(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_ln_a(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.ln_a(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_ln_at(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.ln_at(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_log2_a(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.log2_a(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_log2_at(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.log2_at(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_log10_a(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.log10_a(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_log10_at(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.log10_at(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_sin_a(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.sin_a(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_sin_at(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.sin_at(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_cos_a(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.cos_a(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_cos_at(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.cos_at(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_tan_a(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.tan_a(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_tan_at(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.tan_at(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_asin_a(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.asin_a(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_asin_at(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.asin_at(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_acos_a(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.acos_a(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_acos_at(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.acos_at(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_atan_a(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.atan_a(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_atan_at(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.atan_at(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_atan2_a_b(backend: &dyn Backend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store(b_elems)?;
+    let c = backend.alloc_and_store_zeros(n * m)?;
+    backend.atan2_a_b(&a, &b, &c, n, m)?;
+    let mut c_elems = vec![0.0f32; n * m];
+    backend.load(&c, &mut c_elems)?;
+    Ok(c_elems)
+}
+
+pub(crate) fn backend_atan2_at_b(backend: &dyn Backend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store(b_elems)?;
+    let c = backend.alloc_and_store_zeros(n * m)?;
+    backend.atan2_at_b(&a, &b, &c, n, m)?;
+    let mut c_elems = vec![0.0f32; n * m];
+    backend.load(&c, &mut c_elems)?;
+    Ok(c_elems)
+}
+
+pub(crate) fn backend_atan2_a_bt(backend: &dyn Backend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store(b_elems)?;
+    let c = backend.alloc_and_store_zeros(n * m)?;
+    backend.atan2_a_bt(&a, &b, &c, n, m)?;
+    let mut c_elems = vec![0.0f32; n * m];
+    backend.load(&c, &mut c_elems)?;
+    Ok(c_elems)
+}
+
+pub(crate) fn backend_atan2_at_bt(backend: &dyn Backend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store(b_elems)?;
+    let c = backend.alloc_and_store_zeros(n * m)?;
+    backend.atan2_at_bt(&a, &b, &c, n, m)?;
+    let mut c_elems = vec![0.0f32; n * m];
+    backend.load(&c, &mut c_elems)?;
+    Ok(c_elems)
+}
+
+pub(crate) fn backend_atan2_a_b_for_scalar(backend: &dyn Backend, a_elems: &[f32], b: f32, n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let c = backend.alloc_and_store_zeros(n * m)?;
+    backend.atan2_a_b_for_scalar(&a, b, &c, n, m)?;
+    let mut c_elems = vec![0.0f32; n * m];
+    backend.load(&c, &mut c_elems)?;
+    Ok(c_elems)
+}
+
+pub(crate) fn backend_atan2_at_b_for_scalar(backend: &dyn Backend, a_elems: &[f32], b: f32, n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let c = backend.alloc_and_store_zeros(n * m)?;
+    backend.atan2_at_b_for_scalar(&a, b, &c, n, m)?;
+    let mut c_elems = vec![0.0f32; n * m];
+    backend.load(&c, &mut c_elems)?;
+    Ok(c_elems)
+}
+
+pub(crate) fn backend_ratan2_a_b_for_scalar(backend: &dyn Backend, a_elems: &[f32], b: f32, n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let c = backend.alloc_and_store_zeros(n * m)?;
+    backend.ratan2_a_b_for_scalar(&a, b, &c, n, m)?;
+    let mut c_elems = vec![0.0f32; n * m];
+    backend.load(&c, &mut c_elems)?;
+    Ok(c_elems)
+}
+
+pub(crate) fn backend_ratan2_at_b_for_scalar(backend: &dyn Backend, a_elems: &[f32], b: f32, n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let c = backend.alloc_and_store_zeros(n * m)?;
+    backend.ratan2_at_b_for_scalar(&a, b, &c, n, m)?;
+    let mut c_elems = vec![0.0f32; n * m];
+    backend.load(&c, &mut c_elems)?;
+    Ok(c_elems)
+}
+
+pub(crate) fn backend_sinh_a(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.sinh_a(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_sinh_at(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.sinh_at(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_cosh_a(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.cosh_a(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_cosh_at(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.cosh_at(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+
+pub(crate) fn backend_asinh_a(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.asinh_a(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_asinh_at(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.asinh_at(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_acosh_a(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.acosh_a(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_acosh_at(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.acosh_at(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_atanh_a(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.atanh_a(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_atanh_at(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.atanh_at(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_signum_a(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.signum_a(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_signum_at(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.signum_at(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_ceil_a(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.ceil_a(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_ceil_at(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.ceil_at(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_floor_a(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.floor_a(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_floor_at(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.floor_at(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_round_a(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.round_a(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_round_at(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.round_at(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_trunc_a(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.trunc_a(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
+}
+
+pub(crate) fn backend_trunc_at(backend: &dyn Backend, a_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store_zeros(n * m)?;
+    backend.trunc_at(&a, &b, n, m)?;
+    let mut b_elems = vec![0.0f32; n * m];
+    backend.load(&b, &mut b_elems)?;
+    Ok(b_elems)
 }
 
 #[cfg(not(feature = "test_only_backend"))]
@@ -1578,6 +2245,644 @@ pub(crate) fn expected_repeat_row_a(a: &[f32], n: usize, m: usize) -> Vec<f32>
     for i in 0..n {
         for j in 0..m {
             b[m * i + j] = a[j];
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_abs_a(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[m * i + j].abs();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_abs_at(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[n * j + i].abs();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_pow_a_b(a: &[f32], b: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut c = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            c[m * i + j] = a[m * i + j].powf(b[m * i + j]);
+        }
+    }
+    c
+}
+
+pub(crate) fn expected_pow_at_b(a: &[f32], b: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut c = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            c[m * i + j] = a[n * j + i].powf(b[m * i + j]);
+        }
+    }
+    c
+}
+
+pub(crate) fn expected_pow_a_bt(a: &[f32], b: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut c = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            c[m * i + j] = a[m * i + j].powf(b[n * j + i]);
+        }
+    }
+    c
+}
+
+pub(crate) fn expected_pow_at_bt(a: &[f32], b: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut c = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            c[m * i + j] = a[n * j + i].powf(b[n * j + i]);
+        }
+    }
+    c
+}
+
+pub(crate) fn expected_pow_a_b_for_scalar(a: &[f32], b: f32, n: usize, m: usize) -> Vec<f32>
+{
+    let mut c = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            c[m * i + j] = a[m * i + j].powf(b);
+        }
+    }
+    c
+}
+
+pub(crate) fn expected_pow_at_b_for_scalar(a: &[f32], b: f32, n: usize, m: usize) -> Vec<f32>
+{
+    let mut c = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            c[m * i + j] = a[n * j + i].powf(b);
+        }
+    }
+    c
+}
+
+pub(crate) fn expected_rpow_a_b_for_scalar(a: &[f32], b: f32, n: usize, m: usize) -> Vec<f32>
+{
+    let mut c = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            c[m * i + j] = b.powf(a[m * i + j]);
+        }
+    }
+    c
+}
+
+pub(crate) fn expected_rpow_at_b_for_scalar(a: &[f32], b: f32, n: usize, m: usize) -> Vec<f32>
+{
+    let mut c = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            c[m * i + j] = b.powf(a[n * j + i]);
+        }
+    }
+    c
+}
+
+pub(crate) fn expected_exp_a(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[m * i + j].exp();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_exp_at(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[n * j + i].exp();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_ln_a(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[m * i + j].ln();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_ln_at(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[n * j + i].ln();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_log2_a(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[m * i + j].log2();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_log2_at(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[n * j + i].log2();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_log10_a(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[m * i + j].log10();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_log10_at(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[n * j + i].log10();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_sin_a(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[m * i + j].sin();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_sin_at(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[n * j + i].sin();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_cos_a(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[m * i + j].cos();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_cos_at(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[n * j + i].cos();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_tan_a(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[m * i + j].tan();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_tan_at(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[n * j + i].tan();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_asin_a(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[m * i + j].asin();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_asin_at(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[n * j + i].asin();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_acos_a(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[m * i + j].acos();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_acos_at(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[n * j + i].acos();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_atan_a(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[m * i + j].atan();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_atan_at(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[n * j + i].atan();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_atan2_a_b(a: &[f32], b: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut c = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            c[m * i + j] = a[m * i + j].atan2(b[m * i + j]);
+        }
+    }
+    c
+}
+
+pub(crate) fn expected_atan2_at_b(a: &[f32], b: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut c = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            c[m * i + j] = a[n * j + i].atan2(b[m * i + j]);
+        }
+    }
+    c
+}
+
+pub(crate) fn expected_atan2_a_bt(a: &[f32], b: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut c = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            c[m * i + j] = a[m * i + j].atan2(b[n * j + i]);
+        }
+    }
+    c
+}
+
+pub(crate) fn expected_atan2_at_bt(a: &[f32], b: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut c = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            c[m * i + j] = a[n * j + i].atan2(b[n * j + i]);
+        }
+    }
+    c
+}
+
+pub(crate) fn expected_atan2_a_b_for_scalar(a: &[f32], b: f32, n: usize, m: usize) -> Vec<f32>
+{
+    let mut c = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            c[m * i + j] = a[m * i + j].atan2(b);
+        }
+    }
+    c
+}
+
+pub(crate) fn expected_atan2_at_b_for_scalar(a: &[f32], b: f32, n: usize, m: usize) -> Vec<f32>
+{
+    let mut c = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            c[m * i + j] = a[n * j + i].atan2(b);
+        }
+    }
+    c
+}
+
+pub(crate) fn expected_ratan2_a_b_for_scalar(a: &[f32], b: f32, n: usize, m: usize) -> Vec<f32>
+{
+    let mut c = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            c[m * i + j] = b.atan2(a[m * i + j]);
+        }
+    }
+    c
+}
+
+pub(crate) fn expected_ratan2_at_b_for_scalar(a: &[f32], b: f32, n: usize, m: usize) -> Vec<f32>
+{
+    let mut c = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            c[m * i + j] = b.atan2(a[n * j + i]);
+        }
+    }
+    c
+}
+
+pub(crate) fn expected_sinh_a(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[m * i + j].sinh();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_sinh_at(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[n * j + i].sinh();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_cosh_a(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[m * i + j].cosh();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_cosh_at(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[n * j + i].cosh();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_asinh_a(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[m * i + j].asinh();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_asinh_at(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[n * j + i].asinh();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_acosh_a(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[m * i + j].acosh();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_acosh_at(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[n * j + i].acosh();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_atanh_a(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[m * i + j].atanh();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_atanh_at(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[n * j + i].atanh();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_signum_a(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[m * i + j].signum();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_signum_at(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[n * j + i].signum();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_ceil_a(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[m * i + j].ceil();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_ceil_at(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[n * j + i].ceil();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_floor_a(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[m * i + j].floor();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_floor_at(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[n * j + i].floor();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_round_a(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[m * i + j].round();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_round_at(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[n * j + i].round();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_trunc_a(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[m * i + j].trunc();
+        }
+    }
+    b
+}
+
+pub(crate) fn expected_trunc_at(a: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut b = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            b[m * i + j] = a[n * j + i].trunc();
         }
     }
     b
