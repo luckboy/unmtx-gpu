@@ -618,6 +618,914 @@ fn test_frontend_repeat_repeats_column_or_row()
 }
 
 #[test]
+fn test_frontend_abs_calculates_abs_for_matrix()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let a1 = fixture_a_for_common_math_fun(2, 3);
+            match frontend_abs_for_a(&frontend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_abs_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(3, 2);
+            match frontend_abs_for_at(&frontend, a2.as_slice(), 2, 3) {
+                Ok(b2) => {
+                    let expected_b2 = expected_abs_at(a2.as_slice(), 2, 3);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_frontend_pow_calculates_pow_for_matrices()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let (a1, b1) = fixture_a_b_for_pow(2, 3, 2, 3);
+            match frontend_pow_for_a_b(&frontend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => {
+                    let expected_c1 = expected_pow_a_b(a1.as_slice(), b1.as_slice(), 2, 3);
+                    assert_eq!(expected_c1.len(), c1.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c1[i] - c1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b_for_pow(3, 2, 2, 3);
+            match frontend_pow_for_at_b(&frontend, a2.as_slice(), b2.as_slice(), 2, 3) {
+                Ok(c2) => {
+                    let expected_c2 = expected_pow_at_b(a2.as_slice(), b2.as_slice(), 2, 3);
+                    assert_eq!(expected_c2.len(), c2.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c2[i] - c2[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let (a3, b3) = fixture_a_b_for_pow(2, 3, 3, 2);
+            match frontend_pow_for_a_bt(&frontend, a3.as_slice(), b3.as_slice(), 2, 3) {
+                Ok(c3) => {
+                    let expected_c3 = expected_pow_a_bt(a3.as_slice(), b3.as_slice(), 2, 3);
+                    assert_eq!(expected_c3.len(), c3.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c3[i] - c3[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let (a4, b4) = fixture_a_b_for_pow(3, 2, 3, 2);
+            match frontend_pow_for_at_bt(&frontend, a4.as_slice(), b4.as_slice(), 2, 3) {
+                Ok(c4) => {
+                    let expected_c4 = expected_pow_at_bt(a4.as_slice(), b4.as_slice(), 2, 3);
+                    assert_eq!(expected_c4.len(), c4.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c4[i] - c4[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_frontend_pow_for_scalar_calculates_pow_for_matrix_and_scalar()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let a1 = fixture_a_for_log(2, 3);
+            match frontend_pow_for_scalar_and_a_b(&frontend, a1.as_slice(), 2.5, 2, 3) {
+                Ok(c1) => {
+                    let expected_c1 = expected_pow_a_b_for_scalar(a1.as_slice(), 2.5, 2, 3);
+                    assert_eq!(expected_c1.len(), c1.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c1[i] - c1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_log(3, 2);
+            match frontend_pow_for_scalar_and_at_b(&frontend, a2.as_slice(), 2.5, 2, 3) {
+                Ok(c2) => {
+                    let expected_c2 = expected_pow_at_b_for_scalar(a2.as_slice(), 2.5, 2, 3);
+                    assert_eq!(expected_c2.len(), c2.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c2[i] - c2[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_frontend_rpow_for_scalar_calculates_pow_for_matrix_and_scalar()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let a1 = fixture_a_for_common_math_fun(2, 3);
+            match frontend_rpow_for_scalar_and_a_b(&frontend, a1.as_slice(), 10.5, 2, 3) {
+                Ok(c1) => {
+                    let expected_c1 = expected_rpow_a_b_for_scalar(a1.as_slice(), 10.5, 2, 3);
+                    assert_eq!(expected_c1.len(), c1.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c1[i] - c1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(3, 2);
+            match frontend_rpow_for_scalar_and_at_b(&frontend, a2.as_slice(), 10.5, 2, 3) {
+                Ok(c2) => {
+                    let expected_c2 = expected_rpow_at_b_for_scalar(a2.as_slice(), 10.5, 2, 3);
+                    assert_eq!(expected_c2.len(), c2.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c2[i] - c2[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_frontend_exp_calculates_exp_for_matrix()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let a1 = fixture_a_for_common_math_fun(2, 3);
+            match frontend_exp_for_a(&frontend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_exp_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(3, 2);
+            match frontend_exp_for_at(&frontend, a2.as_slice(), 2, 3) {
+                Ok(b2) => {
+                    let expected_b2 = expected_exp_at(a2.as_slice(), 2, 3);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_frontend_ln_calculates_ln_for_matrix()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let a1 = fixture_a_for_log(2, 3);
+            match frontend_ln_for_a(&frontend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_ln_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_log(3, 2);
+            match frontend_ln_for_at(&frontend, a2.as_slice(), 2, 3) {
+                Ok(b2) => {
+                    let expected_b2 = expected_ln_at(a2.as_slice(), 2, 3);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_frontend_log2_calculates_log2_for_matrix()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let a1 = fixture_a_for_log(2, 3);
+            match frontend_log2_for_a(&frontend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_log2_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_log(3, 2);
+            match frontend_log2_for_at(&frontend, a2.as_slice(), 2, 3) {
+                Ok(b2) => {
+                    let expected_b2 = expected_log2_at(a2.as_slice(), 2, 3);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_frontend_log10_calculates_log10_for_matrix()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let a1 = fixture_a_for_log(2, 3);
+            match frontend_log10_for_a(&frontend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_log10_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_log(3, 2);
+            match frontend_log10_for_at(&frontend, a2.as_slice(), 2, 3) {
+                Ok(b2) => {
+                    let expected_b2 = expected_log10_at(a2.as_slice(), 2, 3);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_frontend_sin_calculates_sin_for_matrix()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let a1 = fixture_a_for_common_math_fun(2, 3);
+            match frontend_sin_for_a(&frontend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_sin_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(3, 2);
+            match frontend_sin_for_at(&frontend, a2.as_slice(), 2, 3) {
+                Ok(b2) => {
+                    let expected_b2 = expected_sin_at(a2.as_slice(), 2, 3);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_frontend_cos_calculates_cos_for_matrix()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let a1 = fixture_a_for_common_math_fun(2, 3);
+            match frontend_cos_for_a(&frontend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_cos_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(3, 2);
+            match frontend_cos_for_at(&frontend, a2.as_slice(), 2, 3) {
+                Ok(b2) => {
+                    let expected_b2 = expected_cos_at(a2.as_slice(), 2, 3);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_frontend_tan_calculates_tan_for_matrix()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let a1 = fixture_a_for_common_math_fun(2, 3);
+            match frontend_tan_for_a(&frontend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_tan_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(3, 2);
+            match frontend_tan_for_at(&frontend, a2.as_slice(), 2, 3) {
+                Ok(b2) => {
+                    let expected_b2 = expected_tan_at(a2.as_slice(), 2, 3);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_frontend_asin_calculates_asin_for_matrix()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let a1 = fixture_a_for_asin_or_acos(2, 3);
+            match frontend_asin_for_a(&frontend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_asin_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_asin_or_acos(3, 2);
+            match frontend_asin_for_at(&frontend, a2.as_slice(), 2, 3) {
+                Ok(b2) => {
+                    let expected_b2 = expected_asin_at(a2.as_slice(), 2, 3);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_frontend_acos_calculates_acos_for_matrix()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let a1 = fixture_a_for_asin_or_acos(2, 3);
+            match frontend_acos_for_a(&frontend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_acos_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_asin_or_acos(3, 2);
+            match frontend_acos_for_at(&frontend, a2.as_slice(), 2, 3) {
+                Ok(b2) => {
+                    let expected_b2 = expected_acos_at(a2.as_slice(), 2, 3);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_frontend_atan_calculates_atan_for_matrix()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let a1 = fixture_a_for_common_math_fun(2, 3);
+            match frontend_atan_for_a(&frontend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_atan_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(3, 2);
+            match frontend_atan_for_at(&frontend, a2.as_slice(), 2, 3) {
+                Ok(b2) => {
+                    let expected_b2 = expected_atan_at(a2.as_slice(), 2, 3);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_frontend_atan2_calculates_atan2_for_matrices()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let (a1, b1) = fixture_a_b_for_common_math_fun(2, 3, 2, 3);
+            match frontend_atan2_for_a_b(&frontend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => {
+                    let expected_c1 = expected_atan2_a_b(a1.as_slice(), b1.as_slice(), 2, 3);
+                    assert_eq!(expected_c1.len(), c1.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c1[i] - c1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b_for_common_math_fun(3, 2, 2, 3);
+            match frontend_atan2_for_at_b(&frontend, a2.as_slice(), b2.as_slice(), 2, 3) {
+                Ok(c2) => {
+                    let expected_c2 = expected_atan2_at_b(a2.as_slice(), b2.as_slice(), 2, 3);
+                    assert_eq!(expected_c2.len(), c2.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c2[i] - c2[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let (a3, b3) = fixture_a_b_for_common_math_fun(2, 3, 3, 2);
+            match frontend_atan2_for_a_bt(&frontend, a3.as_slice(), b3.as_slice(), 2, 3) {
+                Ok(c3) => {
+                    let expected_c3 = expected_atan2_a_bt(a3.as_slice(), b3.as_slice(), 2, 3);
+                    assert_eq!(expected_c3.len(), c3.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c3[i] - c3[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let (a4, b4) = fixture_a_b_for_common_math_fun(3, 2, 3, 2);
+            match frontend_atan2_for_at_bt(&frontend, a4.as_slice(), b4.as_slice(), 2, 3) {
+                Ok(c4) => {
+                    let expected_c4 = expected_atan2_at_bt(a4.as_slice(), b4.as_slice(), 2, 3);
+                    assert_eq!(expected_c4.len(), c4.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c4[i] - c4[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_frontend_atan2_for_scalar_calculates_atan2_for_matrix_and_scalar()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let a1 = fixture_a_for_log(2, 3);
+            match frontend_atan2_for_scalar_and_a_b(&frontend, a1.as_slice(), 10.5, 2, 3) {
+                Ok(c1) => {
+                    let expected_c1 = expected_atan2_a_b_for_scalar(a1.as_slice(), 10.5, 2, 3);
+                    assert_eq!(expected_c1.len(), c1.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c1[i] - c1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_log(3, 2);
+            match frontend_atan2_for_scalar_and_at_b(&frontend, a2.as_slice(), 10.5, 2, 3) {
+                Ok(c2) => {
+                    let expected_c2 = expected_atan2_at_b_for_scalar(a2.as_slice(), 10.5, 2, 3);
+                    assert_eq!(expected_c2.len(), c2.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c2[i] - c2[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_frontend_ratan2_for_scalar_calculates_atan2_for_matrix_and_scalar()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let a1 = fixture_a_for_common_math_fun(2, 3);
+            match frontend_ratan2_for_scalar_and_a_b(&frontend, a1.as_slice(), 10.5, 2, 3) {
+                Ok(c1) => {
+                    let expected_c1 = expected_ratan2_a_b_for_scalar(a1.as_slice(), 10.5, 2, 3);
+                    assert_eq!(expected_c1.len(), c1.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c1[i] - c1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(3, 2);
+            match frontend_ratan2_for_scalar_and_at_b(&frontend, a2.as_slice(), 10.5, 2, 3) {
+                Ok(c2) => {
+                    let expected_c2 = expected_ratan2_at_b_for_scalar(a2.as_slice(), 10.5, 2, 3);
+                    assert_eq!(expected_c2.len(), c2.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c2[i] - c2[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_frontend_sinh_calculates_sinh_for_matrix()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let a1 = fixture_a_for_common_math_fun(2, 3);
+            match frontend_sinh_for_a(&frontend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_sinh_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(3, 2);
+            match frontend_sinh_for_at(&frontend, a2.as_slice(), 2, 3) {
+                Ok(b2) => {
+                    let expected_b2 = expected_sinh_at(a2.as_slice(), 2, 3);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_frontend_cosh_calculates_cosh_for_matrix()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let a1 = fixture_a_for_common_math_fun(2, 3);
+            match frontend_cosh_for_a(&frontend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_cosh_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(3, 2);
+            match frontend_cosh_for_at(&frontend, a2.as_slice(), 2, 3) {
+                Ok(b2) => {
+                    let expected_b2 = expected_cosh_at(a2.as_slice(), 2, 3);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_frontend_asinh_calculates_asinh_for_matrix()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let a1 = fixture_a_for_common_math_fun(2, 3);
+            match frontend_asinh_for_a(&frontend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_asinh_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(3, 2);
+            match frontend_asinh_for_at(&frontend, a2.as_slice(), 2, 3) {
+                Ok(b2) => {
+                    let expected_b2 = expected_asinh_at(a2.as_slice(), 2, 3);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_frontend_acosh_calculates_acosh_for_matrix()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let a1 = fixture_a_for_log(2, 3);
+            match frontend_acosh_for_a(&frontend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_acosh_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_log(3, 2);
+            match frontend_acosh_for_at(&frontend, a2.as_slice(), 2, 3) {
+                Ok(b2) => {
+                    let expected_b2 = expected_acosh_at(a2.as_slice(), 2, 3);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_frontend_atanh_calculates_atanh_for_matrix()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let a1 = fixture_a_for_asin_or_acos(2, 3);
+            match frontend_atanh_for_a(&frontend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_atanh_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_asin_or_acos(3, 2);
+            match frontend_atanh_for_at(&frontend, a2.as_slice(), 2, 3) {
+                Ok(b2) => {
+                    let expected_b2 = expected_atanh_at(a2.as_slice(), 2, 3);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_frontend_signum_calculates_signum_for_matrix()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let a1 = fixture_a_for_common_math_fun(2, 3);
+            match frontend_signum_for_a(&frontend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_signum_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(3, 2);
+            match frontend_signum_for_at(&frontend, a2.as_slice(), 2, 3) {
+                Ok(b2) => {
+                    let expected_b2 = expected_signum_at(a2.as_slice(), 2, 3);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_frontend_ceil_calculates_ceil_for_matrix()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let a1 = fixture_a_for_rounding(2, 3);
+            match frontend_ceil_for_a(&frontend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_ceil_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_rounding(3, 2);
+            match frontend_ceil_for_at(&frontend, a2.as_slice(), 2, 3) {
+                Ok(b2) => {
+                    let expected_b2 = expected_ceil_at(a2.as_slice(), 2, 3);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_frontend_floor_calculates_floor_for_matrix()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let a1 = fixture_a_for_rounding(2, 3);
+            match frontend_floor_for_a(&frontend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_floor_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_rounding(3, 2);
+            match frontend_floor_for_at(&frontend, a2.as_slice(), 2, 3) {
+                Ok(b2) => {
+                    let expected_b2 = expected_floor_at(a2.as_slice(), 2, 3);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_frontend_round_calculates_round_for_matrix()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let a1 = fixture_a_for_rounding(2, 3);
+            match frontend_round_for_a(&frontend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_round_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_rounding(3, 2);
+            match frontend_round_for_at(&frontend, a2.as_slice(), 2, 3) {
+                Ok(b2) => {
+                    let expected_b2 = expected_round_at(a2.as_slice(), 2, 3);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_frontend_trunc_calculates_trunc_for_matrix()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let a1 = fixture_a_for_rounding(2, 3);
+            match frontend_trunc_for_a(&frontend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_trunc_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_rounding(3, 2);
+            match frontend_trunc_for_at(&frontend, a2.as_slice(), 2, 3) {
+                Ok(b2) => {
+                    let expected_b2 = expected_trunc_at(a2.as_slice(), 2, 3);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
 fn test_matrix_creates_matrix()
 {
     let a = matrix![
@@ -882,6 +1790,29 @@ fn test_matrix_div_assign_divides_matrix_and_scalar()
 }
 
 #[test]
+fn test_matrix_mul_elems_multiplies_matrices()
+{
+    let (a_elems, b_elems) = fixture_a_b(2, 3, 2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let b = Matrix::new_with_elems(2, 3, b_elems.as_slice());
+    let expected_c_elems = expected_mul_a_b_for_elems(a_elems.as_slice(), b_elems.as_slice(), 2, 3);
+    assert_eq!(expected_c_elems, a.mul_elems(&b).elems());
+}
+
+#[test]
+fn test_matrix_div_elems_divides_matrices()
+{
+    let (a_elems, b_elems) = fixture_a_b(2, 3, 2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let b = Matrix::new_with_elems(2, 3, b_elems.as_slice());
+    let expected_c_elems = expected_div_a_b_for_elems(a_elems.as_slice(), b_elems.as_slice(), 2, 3);
+    let c_elems = a.div_elems(&b).elems();
+    for i in 0usize..(2usize * 3usize) {
+        assert!((expected_c_elems[i] - c_elems[i]).abs() < 0.001);
+    }
+}
+
+#[test]
 fn test_matrix_rsub_subtracts_matrix_and_scalar()
 {
     let a_elems = fixture_a(2, 3);
@@ -983,4 +1914,380 @@ fn test_matrix_repeat_repeats_column_or_row()
     let a_elems2 = fixture_a(1, 3);
     let a2 = Matrix::new_with_elems(1, 3, a_elems2.as_slice());
     assert_eq!(expected_repeat_row_a(a_elems2.as_slice(), 2, 3), a2.repeat(2).elems());
+}
+
+#[test]
+fn test_matrix_abs_calculates_abs_for_matrix()
+{
+    let a_elems = fixture_a_for_common_math_fun(2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let expected_b_elems = expected_abs_a(a_elems.as_slice(), 2, 3);
+    let b = a.abs();
+    let b_elems = b.elems();
+    assert_eq!(expected_b_elems.len(), b_elems.len());
+    for i in 0usize..(2usize * 3usize) {
+        assert!((expected_b_elems[i] - b_elems[i]).abs() < 0.001);
+    }
+}
+
+#[test]
+fn test_matrix_powm_calculates_pow_for_matrices()
+{
+    let (a_elems, b_elems) = fixture_a_b_for_pow(2, 3, 2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let b = Matrix::new_with_elems(2, 3, b_elems.as_slice());
+    let expected_c_elems = expected_pow_a_b(a_elems.as_slice(), b_elems.as_slice(), 2, 3);
+    let c_elems = a.powm(&b).elems();
+    for i in 0usize..(2usize * 3usize) {
+        assert!((expected_c_elems[i] - c_elems[i]).abs() < 0.001);
+    }
+}
+
+#[test]
+fn test_matrix_powf_calculates_pow_for_matrix_and_scalar()
+{
+    let a_elems = fixture_a_for_log(2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let expected_c_elems = expected_pow_a_b_for_scalar(a_elems.as_slice(), 2.5, 2, 3);
+    let c = a.powf(2.5);
+    let c_elems = c.elems();
+    assert_eq!(expected_c_elems.len(), c_elems.len());
+    for i in 0usize..(2usize * 3usize) {
+        assert!((expected_c_elems[i] - c_elems[i]).abs() < 0.001);
+    }
+}
+
+#[test]
+fn test_matrix_rpowf_calculates_pow_for_matrix_and_scalar()
+{
+    let a_elems = fixture_a_for_common_math_fun(2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let expected_c_elems = expected_rpow_a_b_for_scalar(a_elems.as_slice(), 10.5, 2, 3);
+    let c = a.rpowf(10.5);
+    let c_elems = c.elems();
+    assert_eq!(expected_c_elems.len(), c_elems.len());
+    for i in 0usize..(2usize * 3usize) {
+        assert!((expected_c_elems[i] - c_elems[i]).abs() < 0.001);
+    }
+}
+
+#[test]
+fn test_matrix_exp_calculates_exp_for_matrix()
+{
+    let a_elems = fixture_a_for_common_math_fun(2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let expected_b_elems = expected_exp_a(a_elems.as_slice(), 2, 3);
+    let b = a.exp();
+    let b_elems = b.elems();
+    assert_eq!(expected_b_elems.len(), b_elems.len());
+    for i in 0usize..(2usize * 3usize) {
+        assert!((expected_b_elems[i] - b_elems[i]).abs() < 0.001);
+    }
+}
+
+#[test]
+fn test_matrix_ln_calculates_ln_for_matrix()
+{
+    let a_elems = fixture_a_for_log(2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let expected_b_elems = expected_ln_a(a_elems.as_slice(), 2, 3);
+    let b = a.ln();
+    let b_elems = b.elems();
+    assert_eq!(expected_b_elems.len(), b_elems.len());
+    for i in 0usize..(2usize * 3usize) {
+        assert!((expected_b_elems[i] - b_elems[i]).abs() < 0.001);
+    }
+}
+
+#[test]
+fn test_matrix_log2_calculates_log2_for_matrix()
+{
+    let a_elems = fixture_a_for_log(2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let expected_b_elems = expected_log2_a(a_elems.as_slice(), 2, 3);
+    let b = a.log2();
+    let b_elems = b.elems();
+    assert_eq!(expected_b_elems.len(), b_elems.len());
+    for i in 0usize..(2usize * 3usize) {
+        assert!((expected_b_elems[i] - b_elems[i]).abs() < 0.001);
+    }
+}
+
+#[test]
+fn test_matrix_log10_calculates_log10_for_matrix()
+{
+    let a_elems = fixture_a_for_log(2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let expected_b_elems = expected_log10_a(a_elems.as_slice(), 2, 3);
+    let b = a.log10();
+    let b_elems = b.elems();
+    assert_eq!(expected_b_elems.len(), b_elems.len());
+    for i in 0usize..(2usize * 3usize) {
+        assert!((expected_b_elems[i] - b_elems[i]).abs() < 0.001);
+    }
+}
+
+#[test]
+fn test_matrix_sin_calculates_sin_for_matrix()
+{
+    let a_elems = fixture_a_for_common_math_fun(2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let expected_b_elems = expected_sin_a(a_elems.as_slice(), 2, 3);
+    let b = a.sin();
+    let b_elems = b.elems();
+    assert_eq!(expected_b_elems.len(), b_elems.len());
+    for i in 0usize..(2usize * 3usize) {
+        assert!((expected_b_elems[i] - b_elems[i]).abs() < 0.001);
+    }
+}
+
+#[test]
+fn test_matrix_cos_calculates_cos_for_matrix()
+{
+    let a_elems = fixture_a_for_common_math_fun(2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let expected_b_elems = expected_cos_a(a_elems.as_slice(), 2, 3);
+    let b = a.cos();
+    let b_elems = b.elems();
+    assert_eq!(expected_b_elems.len(), b_elems.len());
+    for i in 0usize..(2usize * 3usize) {
+        assert!((expected_b_elems[i] - b_elems[i]).abs() < 0.001);
+    }
+}
+
+#[test]
+fn test_matrix_tan_calculates_tan_for_matrix()
+{
+    let a_elems = fixture_a_for_common_math_fun(2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let expected_b_elems = expected_tan_a(a_elems.as_slice(), 2, 3);
+    let b = a.tan();
+    let b_elems = b.elems();
+    assert_eq!(expected_b_elems.len(), b_elems.len());
+    for i in 0usize..(2usize * 3usize) {
+        assert!((expected_b_elems[i] - b_elems[i]).abs() < 0.001);
+    }
+}
+
+#[test]
+fn test_matrix_asin_calculates_asin_for_matrix()
+{
+    let a_elems = fixture_a_for_asin_or_acos(2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let expected_b_elems = expected_asin_a(a_elems.as_slice(), 2, 3);
+    let b = a.asin();
+    let b_elems = b.elems();
+    assert_eq!(expected_b_elems.len(), b_elems.len());
+    for i in 0usize..(2usize * 3usize) {
+        assert!((expected_b_elems[i] - b_elems[i]).abs() < 0.001);
+    }
+}
+
+#[test]
+fn test_matrix_acos_calculates_acos_for_matrix()
+{
+    let a_elems = fixture_a_for_asin_or_acos(2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let expected_b_elems = expected_acos_a(a_elems.as_slice(), 2, 3);
+    let b = a.acos();
+    let b_elems = b.elems();
+    assert_eq!(expected_b_elems.len(), b_elems.len());
+    for i in 0usize..(2usize * 3usize) {
+        assert!((expected_b_elems[i] - b_elems[i]).abs() < 0.001);
+    }
+}
+
+#[test]
+fn test_matrix_atan_calculates_atan_for_matrix()
+{
+    let a_elems = fixture_a_for_common_math_fun(2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let expected_b_elems = expected_atan_a(a_elems.as_slice(), 2, 3);
+    let b = a.atan();
+    let b_elems = b.elems();
+    assert_eq!(expected_b_elems.len(), b_elems.len());
+    for i in 0usize..(2usize * 3usize) {
+        assert!((expected_b_elems[i] - b_elems[i]).abs() < 0.001);
+    }
+}
+
+#[test]
+fn test_matrix_atan2_calculates_atan2_for_matrices()
+{
+    let (a_elems, b_elems) = fixture_a_b_for_pow(2, 3, 2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let b = Matrix::new_with_elems(2, 3, b_elems.as_slice());
+    let expected_c_elems = expected_atan2_a_b(a_elems.as_slice(), b_elems.as_slice(), 2, 3);
+    let c_elems = a.atan2(&b).elems();
+    for i in 0usize..(2usize * 3usize) {
+        assert!((expected_c_elems[i] - c_elems[i]).abs() < 0.001);
+    }
+}
+
+#[test]
+fn test_matrix_atan2f_calculates_atan2_for_matrix_and_scalar()
+{
+    let a_elems = fixture_a_for_log(2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let expected_c_elems = expected_atan2_a_b_for_scalar(a_elems.as_slice(), 2.5, 2, 3);
+    let c = a.atan2f(2.5);
+    let c_elems = c.elems();
+    assert_eq!(expected_c_elems.len(), c_elems.len());
+    for i in 0usize..(2usize * 3usize) {
+        assert!((expected_c_elems[i] - c_elems[i]).abs() < 0.001);
+    }
+}
+
+#[test]
+fn test_matrix_ratan2f_calculates_atan2_for_matrix_and_scalar()
+{
+    let a_elems = fixture_a_for_common_math_fun(2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let expected_c_elems = expected_ratan2_a_b_for_scalar(a_elems.as_slice(), 10.5, 2, 3);
+    let c = a.ratan2f(10.5);
+    let c_elems = c.elems();
+    assert_eq!(expected_c_elems.len(), c_elems.len());
+    for i in 0usize..(2usize * 3usize) {
+        assert!((expected_c_elems[i] - c_elems[i]).abs() < 0.001);
+    }
+}
+
+#[test]
+fn test_matrix_sinh_calculates_sinh_for_matrix()
+{
+    let a_elems = fixture_a_for_common_math_fun(2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let expected_b_elems = expected_sinh_a(a_elems.as_slice(), 2, 3);
+    let b = a.sinh();
+    let b_elems = b.elems();
+    assert_eq!(expected_b_elems.len(), b_elems.len());
+    for i in 0usize..(2usize * 3usize) {
+        assert!((expected_b_elems[i] - b_elems[i]).abs() < 0.001);
+    }
+}
+
+#[test]
+fn test_matrix_cosh_calculates_cosh_for_matrix()
+{
+    let a_elems = fixture_a_for_common_math_fun(2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let expected_b_elems = expected_cosh_a(a_elems.as_slice(), 2, 3);
+    let b = a.cosh();
+    let b_elems = b.elems();
+    assert_eq!(expected_b_elems.len(), b_elems.len());
+    for i in 0usize..(2usize * 3usize) {
+        assert!((expected_b_elems[i] - b_elems[i]).abs() < 0.001);
+    }
+}
+
+#[test]
+fn test_matrix_asinh_calculates_asinh_for_matrix()
+{
+    let a_elems = fixture_a_for_common_math_fun(2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let expected_b_elems = expected_asinh_a(a_elems.as_slice(), 2, 3);
+    let b = a.asinh();
+    let b_elems = b.elems();
+    assert_eq!(expected_b_elems.len(), b_elems.len());
+    for i in 0usize..(2usize * 3usize) {
+        assert!((expected_b_elems[i] - b_elems[i]).abs() < 0.001);
+    }
+}
+
+#[test]
+fn test_matrix_acosh_calculates_acosh_for_matrix()
+{
+    let a_elems = fixture_a_for_log(2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let expected_b_elems = expected_acosh_a(a_elems.as_slice(), 2, 3);
+    let b = a.acosh();
+    let b_elems = b.elems();
+    assert_eq!(expected_b_elems.len(), b_elems.len());
+    for i in 0usize..(2usize * 3usize) {
+        assert!((expected_b_elems[i] - b_elems[i]).abs() < 0.001);
+    }
+}
+
+#[test]
+fn test_matrix_atanh_calculates_atanh_for_matrix()
+{
+    let a_elems = fixture_a_for_asin_or_acos(2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let expected_b_elems = expected_atanh_a(a_elems.as_slice(), 2, 3);
+    let b = a.atanh();
+    let b_elems = b.elems();
+    assert_eq!(expected_b_elems.len(), b_elems.len());
+    for i in 0usize..(2usize * 3usize) {
+        assert!((expected_b_elems[i] - b_elems[i]).abs() < 0.001);
+    }
+}
+
+#[test]
+fn test_matrix_signum_calculates_signum_for_matrix()
+{
+    let a_elems = fixture_a_for_common_math_fun(2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let expected_b_elems = expected_signum_a(a_elems.as_slice(), 2, 3);
+    let b = a.signum();
+    let b_elems = b.elems();
+    assert_eq!(expected_b_elems.len(), b_elems.len());
+    for i in 0usize..(2usize * 3usize) {
+        assert!((expected_b_elems[i] - b_elems[i]).abs() < 0.001);
+    }
+}
+
+#[test]
+fn test_matrix_ceil_calculates_ceil_for_matrix()
+{
+    let a_elems = fixture_a_for_rounding(2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let expected_b_elems = expected_ceil_a(a_elems.as_slice(), 2, 3);
+    let b = a.ceil();
+    let b_elems = b.elems();
+    assert_eq!(expected_b_elems.len(), b_elems.len());
+    for i in 0usize..(2usize * 3usize) {
+        assert!((expected_b_elems[i] - b_elems[i]).abs() < 0.001);
+    }
+}
+
+#[test]
+fn test_matrix_floor_calculates_floor_for_matrix()
+{
+    let a_elems = fixture_a_for_rounding(2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let expected_b_elems = expected_floor_a(a_elems.as_slice(), 2, 3);
+    let b = a.floor();
+    let b_elems = b.elems();
+    assert_eq!(expected_b_elems.len(), b_elems.len());
+    for i in 0usize..(2usize * 3usize) {
+        assert!((expected_b_elems[i] - b_elems[i]).abs() < 0.001);
+    }
+}
+
+#[test]
+fn test_matrix_round_calculates_round_for_matrix()
+{
+    let a_elems = fixture_a_for_rounding(2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let expected_b_elems = expected_round_a(a_elems.as_slice(), 2, 3);
+    let b = a.round();
+    let b_elems = b.elems();
+    assert_eq!(expected_b_elems.len(), b_elems.len());
+    for i in 0usize..(2usize * 3usize) {
+        assert!((expected_b_elems[i] - b_elems[i]).abs() < 0.001);
+    }
+}
+
+#[test]
+fn test_matrix_trunc_calculates_trunc_for_matrix()
+{
+    let a_elems = fixture_a_for_rounding(2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let expected_b_elems = expected_trunc_a(a_elems.as_slice(), 2, 3);
+    let b = a.trunc();
+    let b_elems = b.elems();
+    assert_eq!(expected_b_elems.len(), b_elems.len());
+    for i in 0usize..(2usize * 3usize) {
+        assert!((expected_b_elems[i] - b_elems[i]).abs() < 0.001);
+    }
 }
