@@ -523,7 +523,7 @@ pub enum BackendArray
     Cuda(cuda::CudaBackendArray),
 }
 
-static mut DEFAULT_BACKEND: Mutex<Option<Arc<dyn Backend>>> = Mutex::new(None);
+static mut DEFAULT_BACKEND: Mutex<Option<Arc<dyn Backend + Send + Sync>>> = Mutex::new(None);
 
 fn mutex_lock<T>(mutex: &Mutex<T>) -> Result<MutexGuard<'_, T>>
 {
@@ -534,7 +534,7 @@ fn mutex_lock<T>(mutex: &Mutex<T>) -> Result<MutexGuard<'_, T>>
 }
 
 /// Returns a default backend.
-pub fn get_default_backend() -> Result<Option<Arc<dyn Backend>>>
+pub fn get_default_backend() -> Result<Option<Arc<dyn Backend + Send + Sync>>>
 {
     unsafe {
         let default_backend_g = mutex_lock(&DEFAULT_BACKEND)?;
@@ -543,7 +543,7 @@ pub fn get_default_backend() -> Result<Option<Arc<dyn Backend>>>
 }
 
 /// Sets a default backend.
-pub fn set_default_backend(backend: Arc<dyn Backend>) -> Result<()>
+pub fn set_default_backend(backend: Arc<dyn Backend + Send + Sync>) -> Result<()>
 {
     unsafe {
         let mut default_backend_g = mutex_lock(&DEFAULT_BACKEND)?;
@@ -567,8 +567,8 @@ pub fn unset_default_backend() -> Result<()>
 /// This method takes a closure that returns the backend and then the backend is set as the default
 /// backend if the default backend is uninitialized. The closure is only called if the backend is
 /// to be set.
-pub fn set_default_backend_for_uninitialized<F>(f: F) -> Result<Arc<dyn Backend>>
-    where F: FnOnce() -> Result<Arc<dyn Backend>>
+pub fn set_default_backend_for_uninitialized<F>(f: F) -> Result<Arc<dyn Backend + Send + Sync>>
+    where F: FnOnce() -> Result<Arc<dyn Backend + Send + Sync>>
 {
     unsafe {
         let mut default_backend_g = mutex_lock(&DEFAULT_BACKEND)?;
@@ -584,14 +584,14 @@ pub fn set_default_backend_for_uninitialized<F>(f: F) -> Result<Arc<dyn Backend>
 }
 
 /// Initializes a default backend if the backend is uninitialized and returns the default backend.
-pub fn initialize_default_backend_for_uninitialized() -> Result<Arc<dyn Backend>>
+pub fn initialize_default_backend_for_uninitialized() -> Result<Arc<dyn Backend + Send + Sync>>
 {
     #[cfg(feature = "opencl")]
     let res = set_default_backend_for_uninitialized(|| Ok(Arc::new(opencl::ClBackend::new()?)));
     #[cfg(all(not(feature = "opencl"), feature = "cuda"))]
     let res = set_default_backend_for_uninitialized(|| Ok(Arc::new(cuda::CudaBackend::new()?)));
     #[cfg(all(not(feature = "opencl"), not(feature = "cuda")))]
-    let res: Result<Arc<dyn Backend>> = Err(Error::DefaultBackendInitialization);
+    let res: Result<Arc<dyn Backend + Send + Sync>> = Err(Error::DefaultBackendInitialization);
     res
 }
 
@@ -1801,7 +1801,7 @@ impl DivAssign<&f32> for Matrix
 /// high-level layer that can be directly used by programmer or a [`Matrix`] structure.
 pub struct Frontend
 {
-    backend: Arc<dyn Backend>,
+    backend: Arc<dyn Backend + Send + Sync>,
 }
 
 impl Frontend
@@ -1814,11 +1814,11 @@ impl Frontend
     { Ok(Frontend { backend: initialize_default_backend_for_uninitialized()?, }) }
 
     /// Creates a frotend with the backend.
-    pub fn new_with_backend(backend: Arc<dyn Backend>) -> Frontend
+    pub fn new_with_backend(backend: Arc<dyn Backend + Send + Sync>) -> Frontend
     { Frontend { backend, } }
     
     /// Returns the backend.
-    pub fn backend(&self) -> Arc<dyn Backend>
+    pub fn backend(&self) -> Arc<dyn Backend + Send + Sync>
     { self.backend.clone() }
     
     /// Creates a matrix with unset elements.
