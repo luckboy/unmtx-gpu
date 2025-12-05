@@ -1945,7 +1945,7 @@ fn test_cuda_backend_atan2_at_b_for_scalar_calculates_atan2_for_backend_array_an
 {
     match CudaBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_log(3, 2);
+            let a = fixture_a_for_common_math_fun(3, 2);
             match backend_atan2_at_b_for_scalar(&backend, a.as_slice(), 10.5, 2, 3) {
                 Ok(c) => {
                     let expected_c = expected_atan2_at_b_for_scalar(a.as_slice(), 10.5, 2, 3);
