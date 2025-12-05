@@ -523,7 +523,7 @@ pub enum BackendArray
     Cuda(cuda::CudaBackendArray),
 }
 
-static mut DEFAULT_BACKEND: Mutex<Option<Arc<dyn Backend + Send + Sync>>> = Mutex::new(None);
+static DEFAULT_BACKEND: Mutex<Option<Arc<dyn Backend + Send + Sync>>> = Mutex::new(None);
 
 fn mutex_lock<T>(mutex: &Mutex<T>) -> Result<MutexGuard<'_, T>>
 {
@@ -536,29 +536,23 @@ fn mutex_lock<T>(mutex: &Mutex<T>) -> Result<MutexGuard<'_, T>>
 /// Returns a default backend.
 pub fn get_default_backend() -> Result<Option<Arc<dyn Backend + Send + Sync>>>
 {
-    unsafe {
-        let default_backend_g = mutex_lock(&DEFAULT_BACKEND)?;
-        Ok(default_backend_g.clone())
-    }
+    let default_backend_g = mutex_lock(&DEFAULT_BACKEND)?;
+    Ok(default_backend_g.clone())
 }
 
 /// Sets a default backend.
 pub fn set_default_backend(backend: Arc<dyn Backend + Send + Sync>) -> Result<()>
 {
-    unsafe {
-        let mut default_backend_g = mutex_lock(&DEFAULT_BACKEND)?;
-        *default_backend_g = Some(backend);
-    }
+    let mut default_backend_g = mutex_lock(&DEFAULT_BACKEND)?;
+    *default_backend_g = Some(backend);
     Ok(())
 }
 
 /// Unsets a default backend.
 pub fn unset_default_backend() -> Result<()>
 {
-    unsafe {
-        let mut default_backend_g = mutex_lock(&DEFAULT_BACKEND)?;
-        *default_backend_g = None;
-    }
+    let mut default_backend_g = mutex_lock(&DEFAULT_BACKEND)?;
+    *default_backend_g = None;
     Ok(())
 }
 
@@ -570,16 +564,14 @@ pub fn unset_default_backend() -> Result<()>
 pub fn set_default_backend_for_uninitialized<F>(f: F) -> Result<Arc<dyn Backend + Send + Sync>>
     where F: FnOnce() -> Result<Arc<dyn Backend + Send + Sync>>
 {
-    unsafe {
-        let mut default_backend_g = mutex_lock(&DEFAULT_BACKEND)?;
-        match &*default_backend_g {
-            Some(default_backend) => Ok(default_backend.clone()),
-            None => {
-                let backend = f()?;
-                *default_backend_g = Some(backend.clone());
-                Ok(backend)
-            },
-        }
+    let mut default_backend_g = mutex_lock(&DEFAULT_BACKEND)?;
+    match &*default_backend_g {
+        Some(default_backend) => Ok(default_backend.clone()),
+        None => {
+            let backend = f()?;
+            *default_backend_g = Some(backend.clone());
+            Ok(backend)
+        },
     }
 }
 
