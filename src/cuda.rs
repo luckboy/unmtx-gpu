@@ -934,6 +934,180 @@ impl Backend for CudaBackend
 
     fn repeat_row_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
     { self.check_and_launch_for_repeat_row("repeat_row_a", a, b, n, m) }
+
+    fn abs_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("abs_a", a, b, n, m) }
+
+    fn abs_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("abs_at", a, b, n, m) }
+
+    fn pow_a_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_op("pow_a_b", a, b, c, n, m) }
+
+    fn pow_at_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_op("pow_at_b", a, b, c, n, m) }
+    
+    fn pow_a_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_op("pow_a_bt", a, b, c, n, m) }
+    
+    fn pow_at_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_op("pow_at_bt", a, b, c, n, m) }
+
+    fn pow_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_scalar("pow_a_b_for_scalar", a, b, c, n, m) }
+
+    fn pow_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_scalar("pow_at_b_for_scalar", a, b, c, n, m) }
+
+    fn rpow_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_scalar("rpow_a_b_for_scalar", a, b, c, n, m) }
+
+    fn rpow_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_scalar("rpow_at_b_for_scalar", a, b, c, n, m) }
+
+    fn exp_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("exp_a", a, b, n, m) }
+
+    fn exp_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("exp_at", a, b, n, m) }
+
+    fn ln_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("ln_a", a, b, n, m) }
+
+    fn ln_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("ln_at", a, b, n, m) }
+
+    fn log2_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("log2_a", a, b, n, m) }
+
+    fn log2_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("log2_at", a, b, n, m) }
+
+    fn log10_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("log10_a", a, b, n, m) }
+
+    fn log10_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("log10_at", a, b, n, m) }
+
+    fn sin_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("sin_a", a, b, n, m) }
+
+    fn sin_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("sin_at", a, b, n, m) }
+
+    fn cos_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("cos_a", a, b, n, m) }
+
+    fn cos_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("cos_at", a, b, n, m) }
+
+    fn tan_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("tan_a", a, b, n, m) }
+
+    fn tan_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("tan_at", a, b, n, m) }
+
+    fn asin_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("asin_a", a, b, n, m) }
+
+    fn asin_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("asin_at", a, b, n, m) }
+
+    fn acos_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("acos_a", a, b, n, m) }
+
+    fn acos_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("acos_at", a, b, n, m) }
+
+    fn atan_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("atan_a", a, b, n, m) }
+
+    fn atan_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("atan_at", a, b, n, m) }
+
+    fn atan2_a_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_op("atan2_a_b", a, b, c, n, m) }
+
+    fn atan2_at_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_op("atan2_at_b", a, b, c, n, m) }
+    
+    fn atan2_a_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_op("atan2_a_bt", a, b, c, n, m) }
+    
+    fn atan2_at_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_op("atan2_at_bt", a, b, c, n, m) }
+
+    fn atan2_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_scalar("atan2_a_b_for_scalar", a, b, c, n, m) }
+
+    fn atan2_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_scalar("atan2_at_b_for_scalar", a, b, c, n, m) }
+
+    fn ratan2_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_scalar("ratan2_a_b_for_scalar", a, b, c, n, m) }
+
+    fn ratan2_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_scalar("ratan2_at_b_for_scalar", a, b, c, n, m) }
+
+    fn sinh_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("sinh_a", a, b, n, m) }
+
+    fn sinh_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("sinh_at", a, b, n, m) }
+
+    fn cosh_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("cosh_a", a, b, n, m) }
+
+    fn cosh_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("cosh_at", a, b, n, m) }
+
+    fn asinh_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("asinh_a", a, b, n, m) }
+
+    fn asinh_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("asinh_at", a, b, n, m) }
+
+    fn acosh_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("acosh_a", a, b, n, m) }
+
+    fn acosh_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("acosh_at", a, b, n, m) }
+
+    fn atanh_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("atanh_a", a, b, n, m) }
+
+    fn atanh_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("atanh_at", a, b, n, m) }
+
+    fn signum_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("signum_a", a, b, n, m) }
+
+    fn signum_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("signum_at", a, b, n, m) }
+
+    fn ceil_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("ceil_a", a, b, n, m) }
+
+    fn ceil_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("ceil_at", a, b, n, m) }
+
+    fn floor_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("floor_a", a, b, n, m) }
+
+    fn floor_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("floor_at", a, b, n, m) }
+
+    fn round_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("round_a", a, b, n, m) }
+
+    fn round_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("round_at", a, b, n, m) }
+
+    fn trunc_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("trunc_a", a, b, n, m) }
+
+    fn trunc_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_fun("trunc_at", a, b, n, m) }
 }
 
 #[cfg(test)]
