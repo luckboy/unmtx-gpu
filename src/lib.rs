@@ -1030,6 +1030,222 @@ impl Matrix
         frontend.repeat(self, &res).unwrap();
         res
     }
+
+    pub fn abs(&self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.abs(self, &res).unwrap();
+        res
+    }
+
+    pub fn powm(&self, b: &Self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.pow(self, b, &res).unwrap();
+        res
+    }
+
+    pub fn powf(&self, b: f32) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.pow_for_scalar(self, b, &res).unwrap();
+        res
+    }
+
+    pub fn rpowf(&self, b: f32) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.rpow_for_scalar(self, b, &res).unwrap();
+        res
+    }
+
+    pub fn exp(&self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.exp(self, &res).unwrap();
+        res
+    }
+
+    pub fn ln(&self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.ln(self, &res).unwrap();
+        res
+    }
+
+    pub fn log2(&self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.log2(self, &res).unwrap();
+        res
+    }
+
+    pub fn log10(&self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.log10(self, &res).unwrap();
+        res
+    }
+
+    pub fn sin(&self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.sin(self, &res).unwrap();
+        res
+    }
+
+    pub fn cos(&self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.cos(self, &res).unwrap();
+        res
+    }
+
+    pub fn tan(&self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.tan(self, &res).unwrap();
+        res
+    }
+
+    pub fn asin(&self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.asin(self, &res).unwrap();
+        res
+    }
+
+    pub fn acos(&self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.acos(self, &res).unwrap();
+        res
+    }
+
+    pub fn atan(&self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.atan(self, &res).unwrap();
+        res
+    }
+
+    pub fn atan2(&self, b: &Self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.atan2(self, b, &res).unwrap();
+        res
+    }
+
+    pub fn atan2f(&self, b: f32) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.atan2_for_scalar(self, b, &res).unwrap();
+        res
+    }
+
+    pub fn ratan2f(&self, b: f32) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.ratan2_for_scalar(self, b, &res).unwrap();
+        res
+    }
+
+    pub fn sinh(&self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.sinh(self, &res).unwrap();
+        res
+    }
+
+    pub fn cosh(&self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.cosh(self, &res).unwrap();
+        res
+    }
+
+    pub fn asinh(&self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.asinh(self, &res).unwrap();
+        res
+    }
+
+    pub fn acosh(&self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.acosh(self, &res).unwrap();
+        res
+    }
+
+    pub fn atanh(&self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.atanh(self, &res).unwrap();
+        res
+    }
+
+    pub fn signum(&self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.signum(self, &res).unwrap();
+        res
+    }
+
+    pub fn ceil(&self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.ceil(self, &res).unwrap();
+        res
+    }
+
+    pub fn floor(&self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.floor(self, &res).unwrap();
+        res
+    }
+
+    pub fn round(&self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.round(self, &res).unwrap();
+        res
+    }
+
+    pub fn trunc(&self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.trunc(self, &res).unwrap();
+        res
+    }
 }
 
 impl Neg for Matrix
@@ -2334,6 +2550,419 @@ impl Frontend
             self.backend.repeat_row_a(&*a.array, &*b.array, b.row_count, a.col_count)
         } else {
             Err(Error::IsNotVector)
+        }
+    }
+
+    pub fn abs(&self, a: &Matrix, b: &Matrix) -> Result<()>
+    {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+        }
+        if b.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.abs_a(&*a.array, &*b.array, a.row_count, a.col_count)
+        } else {
+            self.backend.abs_at(&*a.array, &*b.array, a.row_count, a.col_count)
+        }
+    }
+
+    pub fn pow(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
+    {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+        }
+        if a.row_count != c.row_count || a.col_count != c.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, c.row_count, c.col_count)); 
+        }
+        if c.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        match (a.is_transposed, b.is_transposed) {
+            (false, false) => self.backend.pow_a_b(&*a.array, &*b.array, &*c.array, a.row_count, a.col_count),
+            (true, false) => self.backend.pow_at_b(&*a.array, &*b.array, &*c.array, a.row_count, a.col_count),
+            (false, true) => self.backend.pow_a_bt(&*a.array, &*b.array, &*c.array, a.row_count, a.col_count),
+            (true, true) => self.backend.pow_at_bt(&*a.array, &*b.array, &*c.array, a.row_count, a.col_count),
+        }
+    }
+
+    pub fn pow_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
+    {
+        if a.row_count != c.row_count || a.col_count != c.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, c.row_count, c.col_count)); 
+        }
+        if c.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.pow_a_b_for_scalar(&*a.array, b, &*c.array, a.row_count, a.col_count)
+        } else {
+            self.backend.pow_at_b_for_scalar(&*a.array, b, &*c.array, a.row_count, a.col_count)
+        }
+    }
+
+    pub fn rpow_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
+    {
+        if a.row_count != c.row_count || a.col_count != c.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, c.row_count, c.col_count)); 
+        }
+        if c.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.rpow_a_b_for_scalar(&*a.array, b, &*c.array, a.row_count, a.col_count)
+        } else {
+            self.backend.rpow_at_b_for_scalar(&*a.array, b, &*c.array, a.row_count, a.col_count)
+        }
+    }
+
+    pub fn exp(&self, a: &Matrix, b: &Matrix) -> Result<()>
+    {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+        }
+        if b.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.exp_a(&*a.array, &*b.array, a.row_count, a.col_count)
+        } else {
+            self.backend.exp_at(&*a.array, &*b.array, a.row_count, a.col_count)
+        }
+    }
+
+    pub fn ln(&self, a: &Matrix, b: &Matrix) -> Result<()>
+    {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+        }
+        if b.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.ln_a(&*a.array, &*b.array, a.row_count, a.col_count)
+        } else {
+            self.backend.ln_at(&*a.array, &*b.array, a.row_count, a.col_count)
+        }
+    }
+
+    pub fn log2(&self, a: &Matrix, b: &Matrix) -> Result<()>
+    {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+        }
+        if b.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.log2_a(&*a.array, &*b.array, a.row_count, a.col_count)
+        } else {
+            self.backend.log2_at(&*a.array, &*b.array, a.row_count, a.col_count)
+        }
+    }
+    
+    pub fn log10(&self, a: &Matrix, b: &Matrix) -> Result<()>
+    {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+        }
+        if b.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.log10_a(&*a.array, &*b.array, a.row_count, a.col_count)
+        } else {
+            self.backend.log10_at(&*a.array, &*b.array, a.row_count, a.col_count)
+        }
+    }
+
+    pub fn sin(&self, a: &Matrix, b: &Matrix) -> Result<()>
+    {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+        }
+        if b.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.sin_a(&*a.array, &*b.array, a.row_count, a.col_count)
+        } else {
+            self.backend.sin_at(&*a.array, &*b.array, a.row_count, a.col_count)
+        }
+    }
+
+    pub fn cos(&self, a: &Matrix, b: &Matrix) -> Result<()>
+    {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+        }
+        if b.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.cos_a(&*a.array, &*b.array, a.row_count, a.col_count)
+        } else {
+            self.backend.cos_at(&*a.array, &*b.array, a.row_count, a.col_count)
+        }
+    }
+
+    pub fn tan(&self, a: &Matrix, b: &Matrix) -> Result<()>
+    {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+        }
+        if b.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.tan_a(&*a.array, &*b.array, a.row_count, a.col_count)
+        } else {
+            self.backend.tan_at(&*a.array, &*b.array, a.row_count, a.col_count)
+        }
+    }
+
+    pub fn asin(&self, a: &Matrix, b: &Matrix) -> Result<()>
+    {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+        }
+        if b.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.asin_a(&*a.array, &*b.array, a.row_count, a.col_count)
+        } else {
+            self.backend.asin_at(&*a.array, &*b.array, a.row_count, a.col_count)
+        }
+    }
+
+    pub fn acos(&self, a: &Matrix, b: &Matrix) -> Result<()>
+    {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+        }
+        if b.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.acos_a(&*a.array, &*b.array, a.row_count, a.col_count)
+        } else {
+            self.backend.acos_at(&*a.array, &*b.array, a.row_count, a.col_count)
+        }
+    }
+
+    pub fn atan(&self, a: &Matrix, b: &Matrix) -> Result<()>
+    {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+        }
+        if b.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.atan_a(&*a.array, &*b.array, a.row_count, a.col_count)
+        } else {
+            self.backend.atan_at(&*a.array, &*b.array, a.row_count, a.col_count)
+        }
+    }
+
+    pub fn atan2(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
+    {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+        }
+        if a.row_count != c.row_count || a.col_count != c.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, c.row_count, c.col_count)); 
+        }
+        if c.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        match (a.is_transposed, b.is_transposed) {
+            (false, false) => self.backend.atan2_a_b(&*a.array, &*b.array, &*c.array, a.row_count, a.col_count),
+            (true, false) => self.backend.atan2_at_b(&*a.array, &*b.array, &*c.array, a.row_count, a.col_count),
+            (false, true) => self.backend.atan2_a_bt(&*a.array, &*b.array, &*c.array, a.row_count, a.col_count),
+            (true, true) => self.backend.atan2_at_bt(&*a.array, &*b.array, &*c.array, a.row_count, a.col_count),
+        }
+    }
+
+    pub fn atan2_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
+    {
+        if a.row_count != c.row_count || a.col_count != c.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, c.row_count, c.col_count)); 
+        }
+        if c.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.atan2_a_b_for_scalar(&*a.array, b, &*c.array, a.row_count, a.col_count)
+        } else {
+            self.backend.atan2_at_b_for_scalar(&*a.array, b, &*c.array, a.row_count, a.col_count)
+        }
+    }
+
+    pub fn ratan2_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
+    {
+        if a.row_count != c.row_count || a.col_count != c.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, c.row_count, c.col_count)); 
+        }
+        if c.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.ratan2_a_b_for_scalar(&*a.array, b, &*c.array, a.row_count, a.col_count)
+        } else {
+            self.backend.ratan2_at_b_for_scalar(&*a.array, b, &*c.array, a.row_count, a.col_count)
+        }
+    }
+
+    pub fn sinh(&self, a: &Matrix, b: &Matrix) -> Result<()>
+    {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+        }
+        if b.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.sinh_a(&*a.array, &*b.array, a.row_count, a.col_count)
+        } else {
+            self.backend.sinh_at(&*a.array, &*b.array, a.row_count, a.col_count)
+        }
+    }
+
+    pub fn cosh(&self, a: &Matrix, b: &Matrix) -> Result<()>
+    {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+        }
+        if b.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.cosh_a(&*a.array, &*b.array, a.row_count, a.col_count)
+        } else {
+            self.backend.cosh_at(&*a.array, &*b.array, a.row_count, a.col_count)
+        }
+    }
+
+    pub fn asinh(&self, a: &Matrix, b: &Matrix) -> Result<()>
+    {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+        }
+        if b.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.asinh_a(&*a.array, &*b.array, a.row_count, a.col_count)
+        } else {
+            self.backend.asinh_at(&*a.array, &*b.array, a.row_count, a.col_count)
+        }
+    }
+
+    pub fn acosh(&self, a: &Matrix, b: &Matrix) -> Result<()>
+    {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+        }
+        if b.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.acosh_a(&*a.array, &*b.array, a.row_count, a.col_count)
+        } else {
+            self.backend.acosh_at(&*a.array, &*b.array, a.row_count, a.col_count)
+        }
+    }
+
+    pub fn atanh(&self, a: &Matrix, b: &Matrix) -> Result<()>
+    {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+        }
+        if b.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.atanh_a(&*a.array, &*b.array, a.row_count, a.col_count)
+        } else {
+            self.backend.atanh_at(&*a.array, &*b.array, a.row_count, a.col_count)
+        }
+    }
+
+    pub fn signum(&self, a: &Matrix, b: &Matrix) -> Result<()>
+    {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+        }
+        if b.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.signum_a(&*a.array, &*b.array, a.row_count, a.col_count)
+        } else {
+            self.backend.signum_at(&*a.array, &*b.array, a.row_count, a.col_count)
+        }
+    }
+
+    pub fn ceil(&self, a: &Matrix, b: &Matrix) -> Result<()>
+    {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+        }
+        if b.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.ceil_a(&*a.array, &*b.array, a.row_count, a.col_count)
+        } else {
+            self.backend.ceil_at(&*a.array, &*b.array, a.row_count, a.col_count)
+        }
+    }
+
+    pub fn floor(&self, a: &Matrix, b: &Matrix) -> Result<()>
+    {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+        }
+        if b.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.floor_a(&*a.array, &*b.array, a.row_count, a.col_count)
+        } else {
+            self.backend.floor_at(&*a.array, &*b.array, a.row_count, a.col_count)
+        }
+    }
+
+    pub fn round(&self, a: &Matrix, b: &Matrix) -> Result<()>
+    {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+        }
+        if b.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.round_a(&*a.array, &*b.array, a.row_count, a.col_count)
+        } else {
+            self.backend.round_at(&*a.array, &*b.array, a.row_count, a.col_count)
+        }
+    }
+
+    pub fn trunc(&self, a: &Matrix, b: &Matrix) -> Result<()>
+    {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+        }
+        if b.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.trunc_a(&*a.array, &*b.array, a.row_count, a.col_count)
+        } else {
+            self.backend.trunc_at(&*a.array, &*b.array, a.row_count, a.col_count)
         }
     }
 }
