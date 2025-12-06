@@ -367,23 +367,23 @@ pub trait Backend
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>ln</mi><msub><mi>a</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub></mrow></math>).
     fn ln_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
 
-    /// Calculates logarithm to base 2 of the `a` matrix elements and the result is in the `b`
+    /// Calculates logarithm with base 2 of the `a` matrix elements and the result is in the `b`
     /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>log</mi><mn>2</mn></msub><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     fn log2_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates logarithm to base 2 of the transposed `a` matrix elements and the result is in
-    ///the `b` matrix
+    /// Calculates logarithm with base 2 of the transposed `a` matrix elements and the result is
+    /// in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>log</mi><mn>2</mn></msub><msub><mi>a</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub></mrow></math>).
     fn log2_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
 
-    /// Calculates logarithm to base 10 of the `a` matrix elements and the result is in the `b`
+    /// Calculates logarithm with base 10 of the `a` matrix elements and the result is in the `b`
     /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>log</mi><mn>10</mn></msub><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     fn log10_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates logarithm to base 10 of the transposed `a` matrix elements and the result is in
-    /// the `b` matrix
+    /// Calculates logarithm with base 10 of the transposed `a` matrix elements and the result is
+    /// in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>log</mi><mn>10</mn></msub><msub><mi>a</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub></mrow></math>).
     fn log10_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
 
@@ -1239,7 +1239,7 @@ impl Matrix
         res
     }
 
-    /// Calculates logarithm to base 2 of the matrix elements
+    /// Calculates logarithm with base 2 of the matrix elements
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>log</mi><mn>2</mn></msub><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     pub fn log2(&self) -> Self
     {
@@ -1249,7 +1249,7 @@ impl Matrix
         res
     }
 
-    /// Calculates logarithm to base 10 of the matrix elements
+    /// Calculates logarithm with base 10 of the matrix elements
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>log</mi><mn>10</mn></msub><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     pub fn log10(&self) -> Self
     {
@@ -2866,7 +2866,7 @@ impl Frontend
         }
     }
 
-    /// Calculates logarithm to base 2 of the `a` matrix elements and the result is in the `b`
+    /// Calculates logarithm with base 2 of the `a` matrix elements and the result is in the `b`
     /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>log</mi><mn>2</mn></msub><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     pub fn log2(&self, a: &Matrix, b: &Matrix) -> Result<()>
@@ -2884,7 +2884,7 @@ impl Frontend
         }
     }
     
-    /// Calculates logarithm to base 10 of the `a` matrix elements and the result is in the `b`
+    /// Calculates logarithm with base 10 of the `a` matrix elements and the result is in the `b`
     /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>log</mi><mn>10</mn></msub><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     pub fn log10(&self, a: &Matrix, b: &Matrix) -> Result<()>
