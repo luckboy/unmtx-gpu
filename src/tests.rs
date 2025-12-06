@@ -624,24 +624,12 @@ fn test_frontend_abs_calculates_abs_for_matrix()
         Ok(frontend) => {
             let a1 = fixture_a_for_common_math_fun(2, 3);
             match frontend_abs_for_a(&frontend, a1.as_slice(), 2, 3) {
-                Ok(b1) => {
-                    let expected_b1 = expected_abs_a(a1.as_slice(), 2, 3);
-                    assert_eq!(expected_b1.len(), b1.len());
-                    for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
-                    }
-                },
+                Ok(b1) => assert_eq!(expected_abs_a(a1.as_slice(), 2, 3), b1),
                 Err(_) => assert!(false),
             }
             let a2 = fixture_a_for_common_math_fun(3, 2);
             match frontend_abs_for_at(&frontend, a2.as_slice(), 2, 3) {
-                Ok(b2) => {
-                    let expected_b2 = expected_abs_at(a2.as_slice(), 2, 3);
-                    assert_eq!(expected_b2.len(), b2.len());
-                    for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
-                    }
-                },
+                Ok(b2) => assert_eq!(expected_abs_at(a2.as_slice(), 2, 3), b2),
                 Err(_) => assert!(false),
             }
         },
@@ -1372,24 +1360,12 @@ fn test_frontend_signum_calculates_signum_for_matrix()
         Ok(frontend) => {
             let a1 = fixture_a_for_common_math_fun(2, 3);
             match frontend_signum_for_a(&frontend, a1.as_slice(), 2, 3) {
-                Ok(b1) => {
-                    let expected_b1 = expected_signum_a(a1.as_slice(), 2, 3);
-                    assert_eq!(expected_b1.len(), b1.len());
-                    for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
-                    }
-                },
+                Ok(b1) => assert_eq!(expected_signum_a(a1.as_slice(), 2, 3), b1),
                 Err(_) => assert!(false),
             }
             let a2 = fixture_a_for_common_math_fun(3, 2);
             match frontend_signum_for_at(&frontend, a2.as_slice(), 2, 3) {
-                Ok(b2) => {
-                    let expected_b2 = expected_signum_at(a2.as_slice(), 2, 3);
-                    assert_eq!(expected_b2.len(), b2.len());
-                    for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
-                    }
-                },
+                Ok(b2) => assert_eq!(expected_signum_at(a2.as_slice(), 2, 3), b2),
                 Err(_) => assert!(false),
             }
         },
@@ -1404,24 +1380,12 @@ fn test_frontend_ceil_calculates_ceil_for_matrix()
         Ok(frontend) => {
             let a1 = fixture_a_for_rounding(2, 3);
             match frontend_ceil_for_a(&frontend, a1.as_slice(), 2, 3) {
-                Ok(b1) => {
-                    let expected_b1 = expected_ceil_a(a1.as_slice(), 2, 3);
-                    assert_eq!(expected_b1.len(), b1.len());
-                    for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
-                    }
-                },
+                Ok(b1) => assert_eq!(expected_ceil_a(a1.as_slice(), 2, 3), b1),
                 Err(_) => assert!(false),
             }
             let a2 = fixture_a_for_rounding(3, 2);
             match frontend_ceil_for_at(&frontend, a2.as_slice(), 2, 3) {
-                Ok(b2) => {
-                    let expected_b2 = expected_ceil_at(a2.as_slice(), 2, 3);
-                    assert_eq!(expected_b2.len(), b2.len());
-                    for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
-                    }
-                },
+                Ok(b2) => assert_eq!(expected_ceil_at(a2.as_slice(), 2, 3), b2),
                 Err(_) => assert!(false),
             }
         },
@@ -1436,24 +1400,12 @@ fn test_frontend_floor_calculates_floor_for_matrix()
         Ok(frontend) => {
             let a1 = fixture_a_for_rounding(2, 3);
             match frontend_floor_for_a(&frontend, a1.as_slice(), 2, 3) {
-                Ok(b1) => {
-                    let expected_b1 = expected_floor_a(a1.as_slice(), 2, 3);
-                    assert_eq!(expected_b1.len(), b1.len());
-                    for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
-                    }
-                },
+                Ok(b1) => assert_eq!(expected_floor_a(a1.as_slice(), 2, 3), b1),
                 Err(_) => assert!(false),
             }
             let a2 = fixture_a_for_rounding(3, 2);
             match frontend_floor_for_at(&frontend, a2.as_slice(), 2, 3) {
-                Ok(b2) => {
-                    let expected_b2 = expected_floor_at(a2.as_slice(), 2, 3);
-                    assert_eq!(expected_b2.len(), b2.len());
-                    for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
-                    }
-                },
+                Ok(b2) => assert_eq!(expected_floor_at(a2.as_slice(), 2, 3), b2),
                 Err(_) => assert!(false),
             }
         },
@@ -1468,24 +1420,12 @@ fn test_frontend_round_calculates_round_for_matrix()
         Ok(frontend) => {
             let a1 = fixture_a_for_rounding(2, 3);
             match frontend_round_for_a(&frontend, a1.as_slice(), 2, 3) {
-                Ok(b1) => {
-                    let expected_b1 = expected_round_a(a1.as_slice(), 2, 3);
-                    assert_eq!(expected_b1.len(), b1.len());
-                    for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
-                    }
-                },
+                Ok(b1) => assert_eq!(expected_round_a(a1.as_slice(), 2, 3), b1),
                 Err(_) => assert!(false),
             }
             let a2 = fixture_a_for_rounding(3, 2);
             match frontend_round_for_at(&frontend, a2.as_slice(), 2, 3) {
-                Ok(b2) => {
-                    let expected_b2 = expected_round_at(a2.as_slice(), 2, 3);
-                    assert_eq!(expected_b2.len(), b2.len());
-                    for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
-                    }
-                },
+                Ok(b2) => assert_eq!(expected_round_at(a2.as_slice(), 2, 3), b2),
                 Err(_) => assert!(false),
             }
         },
@@ -1500,24 +1440,12 @@ fn test_frontend_trunc_calculates_trunc_for_matrix()
         Ok(frontend) => {
             let a1 = fixture_a_for_rounding(2, 3);
             match frontend_trunc_for_a(&frontend, a1.as_slice(), 2, 3) {
-                Ok(b1) => {
-                    let expected_b1 = expected_trunc_a(a1.as_slice(), 2, 3);
-                    assert_eq!(expected_b1.len(), b1.len());
-                    for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
-                    }
-                },
+                Ok(b1) => assert_eq!(expected_trunc_a(a1.as_slice(), 2, 3), b1),
                 Err(_) => assert!(false),
             }
             let a2 = fixture_a_for_rounding(3, 2);
             match frontend_trunc_for_at(&frontend, a2.as_slice(), 2, 3) {
-                Ok(b2) => {
-                    let expected_b2 = expected_trunc_at(a2.as_slice(), 2, 3);
-                    assert_eq!(expected_b2.len(), b2.len());
-                    for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
-                    }
-                },
+                Ok(b2) => assert_eq!(expected_trunc_at(a2.as_slice(), 2, 3), b2),
                 Err(_) => assert!(false),
             }
         },
@@ -1921,13 +1849,7 @@ fn test_matrix_abs_calculates_abs_for_matrix()
 {
     let a_elems = fixture_a_for_common_math_fun(2, 3);
     let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
-    let expected_b_elems = expected_abs_a(a_elems.as_slice(), 2, 3);
-    let b = a.abs();
-    let b_elems = b.elems();
-    assert_eq!(expected_b_elems.len(), b_elems.len());
-    for i in 0usize..(2usize * 3usize) {
-        assert!((expected_b_elems[i] - b_elems[i]).abs() < 0.001);
-    }
+    assert_eq!(expected_abs_a(a_elems.as_slice(), 2, 3), a.abs().elems());
 }
 
 #[test]
@@ -2227,13 +2149,7 @@ fn test_matrix_signum_calculates_signum_for_matrix()
 {
     let a_elems = fixture_a_for_common_math_fun(2, 3);
     let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
-    let expected_b_elems = expected_signum_a(a_elems.as_slice(), 2, 3);
-    let b = a.signum();
-    let b_elems = b.elems();
-    assert_eq!(expected_b_elems.len(), b_elems.len());
-    for i in 0usize..(2usize * 3usize) {
-        assert!((expected_b_elems[i] - b_elems[i]).abs() < 0.001);
-    }
+    assert_eq!(expected_signum_a(a_elems.as_slice(), 2, 3), a.signum().elems());
 }
 
 #[test]
@@ -2241,13 +2157,7 @@ fn test_matrix_ceil_calculates_ceil_for_matrix()
 {
     let a_elems = fixture_a_for_rounding(2, 3);
     let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
-    let expected_b_elems = expected_ceil_a(a_elems.as_slice(), 2, 3);
-    let b = a.ceil();
-    let b_elems = b.elems();
-    assert_eq!(expected_b_elems.len(), b_elems.len());
-    for i in 0usize..(2usize * 3usize) {
-        assert!((expected_b_elems[i] - b_elems[i]).abs() < 0.001);
-    }
+    assert_eq!(expected_ceil_a(a_elems.as_slice(), 2, 3), a.ceil().elems());
 }
 
 #[test]
@@ -2255,13 +2165,7 @@ fn test_matrix_floor_calculates_floor_for_matrix()
 {
     let a_elems = fixture_a_for_rounding(2, 3);
     let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
-    let expected_b_elems = expected_floor_a(a_elems.as_slice(), 2, 3);
-    let b = a.floor();
-    let b_elems = b.elems();
-    assert_eq!(expected_b_elems.len(), b_elems.len());
-    for i in 0usize..(2usize * 3usize) {
-        assert!((expected_b_elems[i] - b_elems[i]).abs() < 0.001);
-    }
+    assert_eq!(expected_floor_a(a_elems.as_slice(), 2, 3), a.floor().elems());
 }
 
 #[test]
@@ -2269,13 +2173,7 @@ fn test_matrix_round_calculates_round_for_matrix()
 {
     let a_elems = fixture_a_for_rounding(2, 3);
     let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
-    let expected_b_elems = expected_round_a(a_elems.as_slice(), 2, 3);
-    let b = a.round();
-    let b_elems = b.elems();
-    assert_eq!(expected_b_elems.len(), b_elems.len());
-    for i in 0usize..(2usize * 3usize) {
-        assert!((expected_b_elems[i] - b_elems[i]).abs() < 0.001);
-    }
+    assert_eq!(expected_round_a(a_elems.as_slice(), 2, 3), a.round().elems());
 }
 
 #[test]
@@ -2283,11 +2181,5 @@ fn test_matrix_trunc_calculates_trunc_for_matrix()
 {
     let a_elems = fixture_a_for_rounding(2, 3);
     let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
-    let expected_b_elems = expected_trunc_a(a_elems.as_slice(), 2, 3);
-    let b = a.trunc();
-    let b_elems = b.elems();
-    assert_eq!(expected_b_elems.len(), b_elems.len());
-    for i in 0usize..(2usize * 3usize) {
-        assert!((expected_b_elems[i] - b_elems[i]).abs() < 0.001);
-    }
+    assert_eq!(expected_trunc_a(a_elems.as_slice(), 2, 3), a.trunc().elems());
 }
