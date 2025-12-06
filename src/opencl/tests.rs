@@ -1212,13 +1212,7 @@ fn test_cl_backend_abs_a_calculates_abs_for_backend_array()
         Ok(backend) => {
             let a = fixture_a_for_common_math_fun(2, 3);
             match backend_abs_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_abs_a(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
-                    for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
-                    }
-                },
+                Ok(b) => assert_eq!(expected_abs_a(a.as_slice(), 2, 3), b),
                 Err(_) => assert!(false),
             }
         },
@@ -1233,13 +1227,7 @@ fn test_cl_backend_abs_at_calculates_abs_for_backend_array()
         Ok(backend) => {
             let a = fixture_a_for_common_math_fun(3, 2);
             match backend_abs_at(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_abs_at(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
-                    for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
-                    }
-                },
+                Ok(b) => assert_eq!(expected_abs_at(a.as_slice(), 2, 3), b),
                 Err(_) => assert!(false),
             }
         },
@@ -2220,13 +2208,7 @@ fn test_cl_backend_signum_a_calculates_signum_for_backend_array()
         Ok(backend) => {
             let a = fixture_a_for_common_math_fun(2, 3);
             match backend_signum_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_signum_a(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
-                    for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
-                    }
-                },
+                Ok(b) => assert_eq!(expected_signum_a(a.as_slice(), 2, 3), b),
                 Err(_) => assert!(false),
             }
         },
@@ -2241,13 +2223,7 @@ fn test_cl_backend_signum_at_calculates_signum_for_backend_array()
         Ok(backend) => {
             let a = fixture_a_for_common_math_fun(3, 2);
             match backend_signum_at(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_signum_at(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
-                    for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
-                    }
-                },
+                Ok(b) => assert_eq!(expected_signum_at(a.as_slice(), 2, 3), b),
                 Err(_) => assert!(false),
             }
         },
@@ -2262,13 +2238,7 @@ fn test_cl_backend_ceil_a_calculates_ceil_for_backend_array()
         Ok(backend) => {
             let a = fixture_a_for_rounding(2, 3);
             match backend_ceil_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_ceil_a(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
-                    for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
-                    }
-                },
+                Ok(b) => assert_eq!(expected_ceil_a(a.as_slice(), 2, 3), b),
                 Err(_) => assert!(false),
             }
         },
@@ -2283,13 +2253,7 @@ fn test_cl_backend_ceil_at_calculates_ceil_for_backend_array()
         Ok(backend) => {
             let a = fixture_a_for_rounding(3, 2);
             match backend_ceil_at(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_ceil_at(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
-                    for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
-                    }
-                },
+                Ok(b) => assert_eq!(expected_ceil_at(a.as_slice(), 2, 3), b),
                 Err(_) => assert!(false),
             }
         },
@@ -2304,13 +2268,7 @@ fn test_cl_backend_floor_a_calculates_floor_for_backend_array()
         Ok(backend) => {
             let a = fixture_a_for_rounding(2, 3);
             match backend_floor_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_floor_a(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
-                    for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
-                    }
-                },
+                Ok(b) => assert_eq!(expected_floor_a(a.as_slice(), 2, 3), b),
                 Err(_) => assert!(false),
             }
         },
@@ -2325,13 +2283,7 @@ fn test_cl_backend_floor_at_calculates_floor_for_backend_array()
         Ok(backend) => {
             let a = fixture_a_for_rounding(3, 2);
             match backend_floor_at(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_floor_at(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
-                    for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
-                    }
-                },
+                Ok(b) => assert_eq!(expected_floor_at(a.as_slice(), 2, 3), b),
                 Err(_) => assert!(false),
             }
         },
@@ -2346,13 +2298,7 @@ fn test_cl_backend_round_a_calculates_round_for_backend_array()
         Ok(backend) => {
             let a = fixture_a_for_rounding(2, 3);
             match backend_round_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_round_a(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
-                    for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
-                    }
-                },
+                Ok(b) => assert_eq!(expected_round_a(a.as_slice(), 2, 3), b),
                 Err(_) => assert!(false),
             }
         },
@@ -2367,13 +2313,7 @@ fn test_cl_backend_round_at_calculates_round_for_backend_array()
         Ok(backend) => {
             let a = fixture_a_for_rounding(3, 2);
             match backend_round_at(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_round_at(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
-                    for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
-                    }
-                },
+                Ok(b) => assert_eq!(expected_round_at(a.as_slice(), 2, 3), b),
                 Err(_) => assert!(false),
             }
         },
@@ -2388,13 +2328,7 @@ fn test_cl_backend_trunc_a_calculates_trunc_for_backend_array()
         Ok(backend) => {
             let a = fixture_a_for_rounding(2, 3);
             match backend_trunc_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_trunc_a(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
-                    for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
-                    }
-                },
+                Ok(b) => assert_eq!(expected_trunc_a(a.as_slice(), 2, 3), b),
                 Err(_) => assert!(false),
             }
         },
@@ -2409,13 +2343,7 @@ fn test_cl_backend_trunc_at_calculates_trunc_for_backend_array()
         Ok(backend) => {
             let a = fixture_a_for_rounding(3, 2);
             match backend_trunc_at(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_trunc_at(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
-                    for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
-                    }
-                },
+                Ok(b) => assert_eq!(expected_trunc_at(a.as_slice(), 2, 3), b),
                 Err(_) => assert!(false),
             }
         },
