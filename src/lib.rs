@@ -299,12 +299,12 @@ pub trait Backend
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>a</mi><mi>j</mi></msub></mrow></math>).
     fn repeat_row_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates absolute value of the `a` matrix and the result is in the `b` matrix
+    /// Calculates absolute values of the `a` matrix elements and the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mo fence="true">|</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo fence="true">|</mo></mrow></math>).
     fn abs_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates absolute value for the transposed `a` matrix and then the result is in the `b`
-    /// matrix
+    /// Calculates absolute values for the transposed `a` matrix elements and then the result is in
+    /// the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mo fence="true">|</mo><msub><mi>a</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub><mo fence="true">|</mo></mrow></math>).
     fn abs_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
 
@@ -352,35 +352,38 @@ pub trait Backend
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msup><mi>e</mi><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></msup></mrow></math>).
     fn exp_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates exponential function for the transposed `a` matrix and the result is in the `b`
-    /// matrix
+    /// Calculates exponential function for the transposed `a` matrix elements and the result is
+    /// in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msup><mi>e</mi><msub><mi>a</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub></msup></mrow></math>).
     fn exp_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
     
-    /// Calculates natural logarithm of the `a` matrix and the result is in the `b` matrix
+    /// Calculates natural logarithm of the `a` matrix elements and the result is in the `b`
+    /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>ln</mi><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     fn ln_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates natural logarithm of the transposed `a` matrix and the result is in the `b`
-    /// matrix
+    /// Calculates natural logarithm of the transposed `a` matrix elements and the result is in
+    /// the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>ln</mi><msub><mi>a</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub></mrow></math>).
     fn ln_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
 
-    /// Calculates logarithm to base 2 of the `a` matrix and the result is in the `b` matrix
+    /// Calculates logarithm to base 2 of the `a` matrix elements and the result is in the `b`
+    /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>log</mi><mn>2</mn></msub><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     fn log2_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates logarithm to base 2 of the transposed `a` matrix and the result is in the `b`
-    /// matrix
+    /// Calculates logarithm to base 2 of the transposed `a` matrix elements and the result is in
+    ///the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>log</mi><mn>2</mn></msub><msub><mi>a</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub></mrow></math>).
     fn log2_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
 
-    /// Calculates logarithm to base 10 of the `a` matrix and the result is in the `b` matrix
+    /// Calculates logarithm to base 10 of the `a` matrix elements and the result is in the `b`
+    /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>log</mi><mn>10</mn></msub><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     fn log10_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates logarithm to base 10 of the transposed `a` matrix and the result is in the `b`
-    /// matrix
+    /// Calculates logarithm to base 10 of the transposed `a` matrix elements and the result is in
+    /// the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>log</mi><mn>10</mn></msub><msub><mi>a</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub></mrow></math>).
     fn log10_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
 
@@ -401,7 +404,7 @@ pub trait Backend
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>cos</mi><mo fence="true">(</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup><mo fence="true">)</mo></mrow></math>).
     fn cos_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
 
-    /// Calculates tangent function the `a` matrix and the result is in the `b` matrix
+    /// Calculates tangent function for the `a` matrix and the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>tan</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     fn tan_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
@@ -467,12 +470,12 @@ pub trait Backend
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>arctan</mi><mo fence="true">(</mo><mfrac><msub><mi>a</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub><mi>b</mi></mfrac><mo fence="true">)</mo></mrow></math>).
     fn atan2_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates arctangent function for the `b` scalar and the `b` matrix elements and then the
+    /// Calculates arctangent function for the `b` scalar and the `a` matrix elements and then the
     /// result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>arctan</mi><mo fence="true">(</mo><mfrac><mi>b</mi><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mfrac><mo fence="true">)</mo></mrow></math>).
     fn ratan2_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates arctangent function for the `b` scalar and the transposed `b` matrix elements
+    /// Calculates arctangent function for the `b` scalar and the transposed `a` matrix elements
     /// and then the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>arctan</mi><mo fence="true">(</mo><mfrac><mi>b</mi><msub><mi>a</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub></mfrac><mo fence="true">)</mo></mrow></math>).
     fn ratan2_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
@@ -1176,6 +1179,8 @@ impl Matrix
         res
     }
 
+    /// Calculates absolute values of the matrix elements
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo fence="true">|</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo fence="true">|</mo></mrow></math>).
     pub fn abs(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1184,6 +1189,8 @@ impl Matrix
         res
     }
 
+    /// Raises the matrix elements to the power of the `b` matrix elements
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msup><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></msup></mrow></math>).
     pub fn powm(&self, b: &Self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1192,6 +1199,8 @@ impl Matrix
         res
     }
 
+    /// Raises the matrix elements to the power of the `b` scalar
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msup><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mi>b</mi></msup></mrow></math>).
     pub fn powf(&self, b: f32) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1200,6 +1209,8 @@ impl Matrix
         res
     }
 
+    /// Raises the `b` scalar to the power of the matrix elements
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msup><mi>b</mi><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></msup></mrow></math>).
     pub fn rpowf(&self, b: f32) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1208,6 +1219,8 @@ impl Matrix
         res
     }
 
+    /// Calculates exponential function for the matrix elements
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msup><mi>e</mi><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></msup></mrow></math>).
     pub fn exp(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1216,6 +1229,8 @@ impl Matrix
         res
     }
 
+    /// Calculates natural logarithm of the matrix elements
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>ln</mi><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     pub fn ln(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1224,6 +1239,8 @@ impl Matrix
         res
     }
 
+    /// Calculates logarithm to base 2 of the matrix elements
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>log</mi><mn>2</mn></msub><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     pub fn log2(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1232,6 +1249,8 @@ impl Matrix
         res
     }
 
+    /// Calculates logarithm to base 10 of the matrix elements
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>log</mi><mn>10</mn></msub><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     pub fn log10(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1240,6 +1259,8 @@ impl Matrix
         res
     }
 
+    /// Calculates sine function for the matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>sin</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn sin(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1248,6 +1269,8 @@ impl Matrix
         res
     }
 
+    /// Calculates cosine function for the matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>cos</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn cos(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1256,6 +1279,8 @@ impl Matrix
         res
     }
 
+    /// Calculates tangent function for the matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>tan</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn tan(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1264,6 +1289,8 @@ impl Matrix
         res
     }
 
+    /// Calculates arcsine function for the matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>arcsin</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn asin(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1272,6 +1299,8 @@ impl Matrix
         res
     }
 
+    /// Calculates arccosine function for the matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>arccos</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn acos(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1280,6 +1309,8 @@ impl Matrix
         res
     }
 
+    /// Calculates arctangent function for the `a` matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>arctan</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn atan(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1288,6 +1319,8 @@ impl Matrix
         res
     }
 
+    /// Calculates arctangent function for the matrix elements and the `b` matrix elements
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>arctan</mi><mo fence="true">(</mo><mfrac><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mfrac><mo fence="true">)</mo></mrow></math>).
     pub fn atan2(&self, b: &Self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1296,6 +1329,8 @@ impl Matrix
         res
     }
 
+    /// Calculates arctangent function for the matrix elements and the `b` scalar
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>arctan</mi><mo fence="true">(</mo><mfrac><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mi>b</mi></mfrac><mo fence="true">)</mo></mrow></math>).
     pub fn atan2f(&self, b: f32) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1304,6 +1339,8 @@ impl Matrix
         res
     }
 
+    /// Calculates arctangent function for the `b` scalar and the matrix elements
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>arctan</mi><mo fence="true">(</mo><mfrac><mi>b</mi><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mfrac><mo fence="true">)</mo></mrow></math>).
     pub fn ratan2f(&self, b: f32) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1312,6 +1349,8 @@ impl Matrix
         res
     }
 
+    /// Calculates hyperbolic sine function for the matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>sinh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn sinh(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1320,6 +1359,8 @@ impl Matrix
         res
     }
 
+    /// Calculates hyperbolic cosine function for the matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>cosh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn cosh(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1328,6 +1369,8 @@ impl Matrix
         res
     }
 
+    /// Calculates inverse hyperbolic sine function for the matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>arsinh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn asinh(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1336,6 +1379,8 @@ impl Matrix
         res
     }
 
+    /// Calculates inverse hyperbolic cosine function for the matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>arcosh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn acosh(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1344,6 +1389,8 @@ impl Matrix
         res
     }
 
+    /// Calculates inverse hyperbolic tangent function for the matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>artanh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn atanh(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1352,6 +1399,8 @@ impl Matrix
         res
     }
 
+    /// Calculates signum function for the matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>sgn</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn signum(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1360,6 +1409,8 @@ impl Matrix
         res
     }
 
+    /// Calculates ceil function for the matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>ceil</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn ceil(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1368,6 +1419,8 @@ impl Matrix
         res
     }
 
+    /// Calculates floor function for the matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>floor</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn floor(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1376,6 +1429,8 @@ impl Matrix
         res
     }
 
+    /// Calculates round function for the matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>round</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn round(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1384,6 +1439,8 @@ impl Matrix
         res
     }
 
+    /// Calculates trunc function for the matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>trunc</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn trunc(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -2698,6 +2755,8 @@ impl Frontend
         }
     }
 
+    /// Calculates absolute values of the `a` matrix elements and the result is in the `b` matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mo fence="true">|</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo fence="true">|</mo></mrow></math>).
     pub fn abs(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -2713,6 +2772,9 @@ impl Frontend
         }
     }
 
+    /// Raises the `a` matrix elements to the power of the `b` matrix elements and then the result
+    /// is in the `c` matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msup><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></msup></mrow></math>).
     pub fn pow(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -2732,6 +2794,9 @@ impl Frontend
         }
     }
 
+    /// Raises the `a` matrix elements to the power of the `b` scalar and then the result is in
+    /// the `c` matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msup><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mi>b</mi></msup></mrow></math>).
     pub fn pow_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
         if a.row_count != c.row_count || a.col_count != c.col_count {
@@ -2747,6 +2812,9 @@ impl Frontend
         }
     }
 
+    /// Raises the `b` scalar to the power of the `a` matrix elements and then the result is in
+    /// the `c` matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msup><mi>b</mi><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></msup></mrow></math>).
     pub fn rpow_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
         if a.row_count != c.row_count || a.col_count != c.col_count {
@@ -2762,6 +2830,9 @@ impl Frontend
         }
     }
 
+    /// Calculates exponential function for the `a` matrix elements and the result is in the `b`
+    /// matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msup><mi>e</mi><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></msup></mrow></math>).
     pub fn exp(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -2777,6 +2848,9 @@ impl Frontend
         }
     }
 
+    /// Calculates natural logarithm of the `a` matrix elements and the result is in the `b`
+    /// matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>ln</mi><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     pub fn ln(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -2792,6 +2866,9 @@ impl Frontend
         }
     }
 
+    /// Calculates logarithm to base 2 of the `a` matrix elements and the result is in the `b`
+    /// matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>log</mi><mn>2</mn></msub><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     pub fn log2(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -2807,6 +2884,9 @@ impl Frontend
         }
     }
     
+    /// Calculates logarithm to base 10 of the `a` matrix elements and the result is in the `b`
+    /// matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>log</mi><mn>10</mn></msub><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     pub fn log10(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -2822,6 +2902,8 @@ impl Frontend
         }
     }
 
+    /// Calculates sine function for the `a` matrix and the result is in the `b` matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>sin</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn sin(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -2837,6 +2919,8 @@ impl Frontend
         }
     }
 
+    /// Calculates cosine function for the `a` matrix and the result is in the `b` matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>cos</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn cos(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -2852,6 +2936,8 @@ impl Frontend
         }
     }
 
+    /// Calculates tangent function for the `a` matrix and the result is in the `b` matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>tan</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn tan(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -2867,6 +2953,8 @@ impl Frontend
         }
     }
 
+    /// Calculates arcsine function for the `a` matrix and the result is in the `b` matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>arcsin</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn asin(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -2882,6 +2970,8 @@ impl Frontend
         }
     }
 
+    /// Calculates arccosine function for the `a` matrix and the result is in the `b` matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>arccos</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn acos(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -2897,6 +2987,8 @@ impl Frontend
         }
     }
 
+    /// Calculates arctangent function for the `a` matrix and the result is in the `b` matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>arctan</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn atan(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -2912,6 +3004,9 @@ impl Frontend
         }
     }
 
+    /// Calculates arctangent function for the `a` matrix elements and the `b` matrix elements and
+    /// then the result is in the `c` matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>arctan</mi><mo fence="true">(</mo><mfrac><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mfrac><mo fence="true">)</mo></mrow></math>).
     pub fn atan2(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -2931,6 +3026,9 @@ impl Frontend
         }
     }
 
+    /// Calculates arctangent function for the `a` matrix elements and the `b` scalar and then the
+    /// result is in the `c` matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>arctan</mi><mo fence="true">(</mo><mfrac><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mi>b</mi></mfrac><mo fence="true">)</mo></mrow></math>).
     pub fn atan2_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
         if a.row_count != c.row_count || a.col_count != c.col_count {
@@ -2946,6 +3044,9 @@ impl Frontend
         }
     }
 
+    /// Calculates arctangent function for the `b` scalar and the `a` matrix elements and then the
+    /// result is in the `c` matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>arctan</mi><mo fence="true">(</mo><mfrac><mi>b</mi><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mfrac><mo fence="true">)</mo></mrow></math>).
     pub fn ratan2_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
         if a.row_count != c.row_count || a.col_count != c.col_count {
@@ -2961,6 +3062,8 @@ impl Frontend
         }
     }
 
+    /// Calculates hyperbolic sine function for the `a` matrix and the result is in the `b` matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>sinh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn sinh(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -2976,6 +3079,9 @@ impl Frontend
         }
     }
 
+    /// Calculates hyperbolic cosine function for the `a` matrix and the result is in the `b`
+    /// matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>cosh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn cosh(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -2991,6 +3097,9 @@ impl Frontend
         }
     }
 
+    /// Calculates inverse hyperbolic sine function for the `a` matrix and the result is in the `b`
+    /// matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>arsinh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn asinh(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -3006,6 +3115,9 @@ impl Frontend
         }
     }
 
+    /// Calculates inverse hyperbolic cosine function for the `a` matrix and the result is in the
+    /// `b` matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>arcosh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn acosh(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -3021,6 +3133,9 @@ impl Frontend
         }
     }
 
+    /// Calculates inverse hyperbolic tangent function for the `a` matrix and the result is in the
+    /// `b` matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>artanh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn atanh(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -3036,6 +3151,8 @@ impl Frontend
         }
     }
 
+    /// Calculates signum function for the `a` matrix and the result is in the `b` matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>sgn</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn signum(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -3051,6 +3168,8 @@ impl Frontend
         }
     }
 
+    /// Calculates ceil function for the `a` matrix and the result is in the `b` matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>ceil</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn ceil(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -3066,6 +3185,8 @@ impl Frontend
         }
     }
 
+    /// Calculates floor function for the `a` matrix and the result is in the `b` matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>floor</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn floor(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -3081,6 +3202,8 @@ impl Frontend
         }
     }
 
+    /// Calculates round function for the `a` matrix and the result is in the `b` matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>round</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn round(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -3096,6 +3219,8 @@ impl Frontend
         }
     }
 
+    /// Calculates trunc function for the `a` matrix and the result is in the `b` matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>trunc</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     pub fn trunc(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
