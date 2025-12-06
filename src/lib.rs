@@ -1181,6 +1181,18 @@ impl Matrix
 
     /// Calculates absolute values of the matrix elements
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mo fence="true">|</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo fence="true">|</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [-2.0, -1.0],
+    ///     [1.0, 2.0]
+    /// ];
+    /// let b = a.abs();
+    /// assert_eq!(vec![2.0, 1.0, 1.0, 2.0], b.elems());
+    /// ```
     pub fn abs(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1191,6 +1203,26 @@ impl Matrix
 
     /// Raises the matrix elements to the power of the `b` matrix elements
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msup><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></msup></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = matrix![
+    ///     [3.0, 4.0],
+    ///     [5.0, 6.0]
+    /// ];
+    /// let c = a.powm(&b);
+    /// let elems = c.elems();
+    /// assert!((1.0f32.powf(3.0) - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.powf(4.0) - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.powf(5.0) - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.powf(6.0) - elems[3]).abs() < 0.001);
+    /// ```
     pub fn powm(&self, b: &Self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1201,6 +1233,22 @@ impl Matrix
 
     /// Raises the matrix elements to the power of the `b` scalar
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msup><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mi>b</mi></msup></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = a.powf(2.5);
+    /// let elems = b.elems();
+    /// assert!((1.0f32.powf(2.5) - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.powf(2.5) - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.powf(2.5) - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.powf(2.5) - elems[3]).abs() < 0.001);
+    /// ```
     pub fn powf(&self, b: f32) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1211,6 +1259,22 @@ impl Matrix
 
     /// Raises the `b` scalar to the power of the matrix elements
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msup><mi>b</mi><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></msup></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = a.rpowf(10.5);
+    /// let elems = b.elems();
+    /// assert!((10.5f32.powf(1.0) - elems[0]).abs() < 0.001);
+    /// assert!((10.5f32.powf(2.0) - elems[1]).abs() < 0.001);
+    /// assert!((10.5f32.powf(3.0) - elems[2]).abs() < 0.001);
+    /// assert!((10.5f32.powf(4.0) - elems[3]).abs() < 0.001);
+    /// ```
     pub fn rpowf(&self, b: f32) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1221,6 +1285,22 @@ impl Matrix
 
     /// Calculates exponential function for the matrix elements
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msup><mi>e</mi><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></msup></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = a.exp();
+    /// let elems = b.elems();
+    /// assert!((1.0f32.exp() - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.exp() - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.exp() - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.exp() - elems[3]).abs() < 0.001);
+    /// ```
     pub fn exp(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1231,6 +1311,22 @@ impl Matrix
 
     /// Calculates natural logarithm of the matrix elements
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>ln</mi><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = a.ln();
+    /// let elems = b.elems();
+    /// assert!((1.0f32.ln() - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.ln() - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.ln() - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.ln() - elems[3]).abs() < 0.001);
+    /// ```
     pub fn ln(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1241,6 +1337,22 @@ impl Matrix
 
     /// Calculates logarithm with base 2 of the matrix elements
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>log</mi><mn>2</mn></msub><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = a.log2();
+    /// let elems = b.elems();
+    /// assert!((1.0f32.log2() - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.log2() - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.log2() - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.log2() - elems[3]).abs() < 0.001);
+    /// ```
     pub fn log2(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1251,6 +1363,22 @@ impl Matrix
 
     /// Calculates logarithm with base 10 of the matrix elements
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>log</mi><mn>10</mn></msub><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = a.log10();
+    /// let elems = b.elems();
+    /// assert!((1.0f32.log10() - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.log10() - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.log10() - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.log10() - elems[3]).abs() < 0.001);
+    /// ```
     pub fn log10(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1261,6 +1389,22 @@ impl Matrix
 
     /// Calculates sine function for the matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>sin</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = a.sin();
+    /// let elems = b.elems();
+    /// assert!((1.0f32.sin() - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.sin() - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.sin() - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.sin() - elems[3]).abs() < 0.001);
+    /// ```
     pub fn sin(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1271,6 +1415,22 @@ impl Matrix
 
     /// Calculates cosine function for the matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>cos</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = a.cos();
+    /// let elems = b.elems();
+    /// assert!((1.0f32.cos() - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.cos() - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.cos() - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.cos() - elems[3]).abs() < 0.001);
+    /// ```
     pub fn cos(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1281,6 +1441,22 @@ impl Matrix
 
     /// Calculates tangent function for the matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>tan</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = a.tan();
+    /// let elems = b.elems();
+    /// assert!((1.0f32.tan() - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.tan() - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.tan() - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.tan() - elems[3]).abs() < 0.001);
+    /// ```
     pub fn tan(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1291,6 +1467,22 @@ impl Matrix
 
     /// Calculates arcsine function for the matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>arcsin</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [0.25, 0.5],
+    ///     [0.75, 1.0]
+    /// ];
+    /// let b = a.asin();
+    /// let elems = b.elems();
+    /// assert!((0.25f32.asin() - elems[0]).abs() < 0.001);
+    /// assert!((0.5f32.asin() - elems[1]).abs() < 0.001);
+    /// assert!((0.75f32.asin() - elems[2]).abs() < 0.001);
+    /// assert!((1.0f32.asin() - elems[3]).abs() < 0.001);
+    /// ```
     pub fn asin(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1301,6 +1493,22 @@ impl Matrix
 
     /// Calculates arccosine function for the matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>arccos</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [0.25, 0.5],
+    ///     [0.75, 1.0]
+    /// ];
+    /// let b = a.acos();
+    /// let elems = b.elems();
+    /// assert!((0.25f32.acos() - elems[0]).abs() < 0.001);
+    /// assert!((0.5f32.acos() - elems[1]).abs() < 0.001);
+    /// assert!((0.75f32.acos() - elems[2]).abs() < 0.001);
+    /// assert!((1.0f32.acos() - elems[3]).abs() < 0.001);
+    /// ```
     pub fn acos(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1311,6 +1519,22 @@ impl Matrix
 
     /// Calculates arctangent function for the `a` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>arctan</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = a.atan();
+    /// let elems = b.elems();
+    /// assert!((1.0f32.atan() - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.atan() - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.atan() - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.atan() - elems[3]).abs() < 0.001);
+    /// ```
     pub fn atan(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1321,6 +1545,26 @@ impl Matrix
 
     /// Calculates arctangent function for the matrix elements and the `b` matrix elements
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>arctan</mi><mo fence="true">(</mo><mfrac><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mfrac><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = matrix![
+    ///     [5.0, 6.0],
+    ///     [7.0, 8.0]
+    /// ];
+    /// let c = a.atan2(&b);
+    /// let elems = c.elems();
+    /// assert!((1.0f32.atan2(5.0) - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.atan2(6.0) - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.atan2(7.0) - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.atan2(8.0) - elems[3]).abs() < 0.001);
+    /// ```
     pub fn atan2(&self, b: &Self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1331,6 +1575,22 @@ impl Matrix
 
     /// Calculates arctangent function for the matrix elements and the `b` scalar
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>arctan</mi><mo fence="true">(</mo><mfrac><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mi>b</mi></mfrac><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = a.atan2f(10.5);
+    /// let elems = b.elems();
+    /// assert!((1.0f32.atan2(10.5) - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.atan2(10.5) - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.atan2(10.5) - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.atan2(10.5) - elems[3]).abs() < 0.001);
+    /// ```
     pub fn atan2f(&self, b: f32) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1341,6 +1601,22 @@ impl Matrix
 
     /// Calculates arctangent function for the `b` scalar and the matrix elements
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>arctan</mi><mo fence="true">(</mo><mfrac><mi>b</mi><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mfrac><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = a.ratan2f(10.5);
+    /// let elems = b.elems();
+    /// assert!((10.5f32.atan2(1.0) - elems[0]).abs() < 0.001);
+    /// assert!((10.5f32.atan2(2.0) - elems[1]).abs() < 0.001);
+    /// assert!((10.5f32.atan2(3.0) - elems[2]).abs() < 0.001);
+    /// assert!((10.5f32.atan2(4.0) - elems[3]).abs() < 0.001);
+    /// ```
     pub fn ratan2f(&self, b: f32) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1351,6 +1627,22 @@ impl Matrix
 
     /// Calculates hyperbolic sine function for the matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>sinh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = a.sinh();
+    /// let elems = b.elems();
+    /// assert!((1.0f32.sinh() - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.sinh() - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.sinh() - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.sinh() - elems[3]).abs() < 0.001);
+    /// ```
     pub fn sinh(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1361,6 +1653,22 @@ impl Matrix
 
     /// Calculates hyperbolic cosine function for the matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>cosh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = a.cosh();
+    /// let elems = b.elems();
+    /// assert!((1.0f32.cosh() - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.cosh() - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.cosh() - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.cosh() - elems[3]).abs() < 0.001);
+    /// ```
     pub fn cosh(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1371,6 +1679,22 @@ impl Matrix
 
     /// Calculates inverse hyperbolic sine function for the matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>arsinh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = a.asinh();
+    /// let elems = b.elems();
+    /// assert!((1.0f32.asinh() - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.asinh() - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.asinh() - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.asinh() - elems[3]).abs() < 0.001);
+    /// ```
     pub fn asinh(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1381,6 +1705,22 @@ impl Matrix
 
     /// Calculates inverse hyperbolic cosine function for the matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>arcosh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = a.acosh();
+    /// let elems = b.elems();
+    /// assert!((1.0f32.acosh() - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.acosh() - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.acosh() - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.acosh() - elems[3]).abs() < 0.001);
+    /// ```
     pub fn acosh(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1391,6 +1731,22 @@ impl Matrix
 
     /// Calculates inverse hyperbolic tangent function for the matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>artanh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [0.25, 0.5],
+    ///     [0.75, 1.0]
+    /// ];
+    /// let b = a.atanh();
+    /// let elems = b.elems();
+    /// assert!((0.25f32.atanh() - elems[0]).abs() < 0.001);
+    /// assert!((0.5f32.atanh() - elems[1]).abs() < 0.001);
+    /// assert!((0.75f32.atanh() - elems[2]).abs() < 0.001);
+    /// assert_eq!(f32::INFINITY, elems[3]);
+    /// ```
     pub fn atanh(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1401,6 +1757,18 @@ impl Matrix
 
     /// Calculates signum function for the matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>sgn</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [-2.0, -1.0],
+    ///     [1.0, 2.0]
+    /// ];
+    /// let b = a.signum();
+    /// assert_eq!(vec![-1.0, -1.0, 1.0, 1.0], b.elems());
+    /// ```
     pub fn signum(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1411,6 +1779,18 @@ impl Matrix
 
     /// Calculates ceil function for the matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>ceil</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [-2.6, -1.3],
+    ///     [1.3, 2.6]
+    /// ];
+    /// let b = a.ceil();
+    /// assert_eq!(vec![-2.0, -1.0, 2.0, 3.0], b.elems());
+    /// ```
     pub fn ceil(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1421,6 +1801,18 @@ impl Matrix
 
     /// Calculates floor function for the matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>floor</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [-2.6, -1.3],
+    ///     [1.3, 2.6]
+    /// ];
+    /// let b = a.floor();
+    /// assert_eq!(vec![-3.0, -2.0, 1.0, 2.0], b.elems());
+    /// ```
     pub fn floor(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1431,6 +1823,18 @@ impl Matrix
 
     /// Calculates round function for the matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>round</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [-2.6, -1.3],
+    ///     [1.3, 2.6]
+    /// ];
+    /// let b = a.round();
+    /// assert_eq!(vec![-3.0, -1.0, 1.0, 3.0], b.elems());
+    /// ```
     pub fn round(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1441,6 +1845,18 @@ impl Matrix
 
     /// Calculates trunc function for the matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>trunc</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [-2.6, -1.3],
+    ///     [1.3, 2.6]
+    /// ];
+    /// let b = a.trunc();
+    /// assert_eq!(vec![-2.0, -1.0, 1.0, 2.0], b.elems());
+    /// ```
     pub fn trunc(&self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -2757,6 +3173,20 @@ impl Frontend
 
     /// Calculates absolute values of the `a` matrix elements and the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mo fence="true">|</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo fence="true">|</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [-2.0, -1.0],
+    ///     [1.0, 2.0]
+    /// ];
+    /// let b = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.abs(&a, &b).unwrap();
+    /// assert_eq!(vec![2.0, 1.0, 1.0, 2.0], b.elems());
+    /// ```
     pub fn abs(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -2775,6 +3205,28 @@ impl Frontend
     /// Raises the `a` matrix elements to the power of the `b` matrix elements and then the result
     /// is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msup><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></msup></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = matrix![
+    ///     [3.0, 4.0],
+    ///     [5.0, 6.0]
+    /// ];
+    /// let c = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.pow(&a, &b, &c).unwrap();
+    /// let elems = c.elems();
+    /// assert!((1.0f32.powf(3.0) - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.powf(4.0) - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.powf(5.0) - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.powf(6.0) - elems[3]).abs() < 0.001);
+    /// ```
     pub fn pow(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -2797,6 +3249,24 @@ impl Frontend
     /// Raises the `a` matrix elements to the power of the `b` scalar and then the result is in
     /// the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msup><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mi>b</mi></msup></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let c = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.pow_for_scalar(&a, 2.5, &c).unwrap();
+    /// let elems = c.elems();
+    /// assert!((1.0f32.powf(2.5) - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.powf(2.5) - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.powf(2.5) - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.powf(2.5) - elems[3]).abs() < 0.001);
+    /// ```
     pub fn pow_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
         if a.row_count != c.row_count || a.col_count != c.col_count {
@@ -2815,6 +3285,24 @@ impl Frontend
     /// Raises the `b` scalar to the power of the `a` matrix elements and then the result is in
     /// the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msup><mi>b</mi><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></msup></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let c = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.rpow_for_scalar(&a, 10.5, &c).unwrap();
+    /// let elems = c.elems();
+    /// assert!((10.5f32.powf(1.0) - elems[0]).abs() < 0.001);
+    /// assert!((10.5f32.powf(2.0) - elems[1]).abs() < 0.001);
+    /// assert!((10.5f32.powf(3.0) - elems[2]).abs() < 0.001);
+    /// assert!((10.5f32.powf(4.0) - elems[3]).abs() < 0.001);
+    /// ```
     pub fn rpow_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
         if a.row_count != c.row_count || a.col_count != c.col_count {
@@ -2833,6 +3321,24 @@ impl Frontend
     /// Calculates exponential function for the `a` matrix elements and the result is in the `b`
     /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msup><mi>e</mi><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></msup></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.exp(&a, &b).unwrap();
+    /// let elems = b.elems();
+    /// assert!((1.0f32.exp() - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.exp() - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.exp() - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.exp() - elems[3]).abs() < 0.001);
+    /// ```
     pub fn exp(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -2851,6 +3357,24 @@ impl Frontend
     /// Calculates natural logarithm of the `a` matrix elements and the result is in the `b`
     /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>ln</mi><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.ln(&a, &b).unwrap();
+    /// let elems = b.elems();
+    /// assert!((1.0f32.ln() - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.ln() - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.ln() - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.ln() - elems[3]).abs() < 0.001);
+    /// ```
     pub fn ln(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -2869,6 +3393,24 @@ impl Frontend
     /// Calculates logarithm with base 2 of the `a` matrix elements and the result is in the `b`
     /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>log</mi><mn>2</mn></msub><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.log2(&a, &b).unwrap();
+    /// let elems = b.elems();
+    /// assert!((1.0f32.log2() - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.log2() - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.log2() - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.log2() - elems[3]).abs() < 0.001);
+    /// ```
     pub fn log2(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -2887,6 +3429,24 @@ impl Frontend
     /// Calculates logarithm with base 10 of the `a` matrix elements and the result is in the `b`
     /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>log</mi><mn>10</mn></msub><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.log10(&a, &b).unwrap();
+    /// let elems = b.elems();
+    /// assert!((1.0f32.log10() - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.log10() - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.log10() - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.log10() - elems[3]).abs() < 0.001);
+    /// ```
     pub fn log10(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -2904,6 +3464,24 @@ impl Frontend
 
     /// Calculates sine function for the `a` matrix and the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>sin</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.sin(&a, &b).unwrap();
+    /// let elems = b.elems();
+    /// assert!((1.0f32.sin() - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.sin() - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.sin() - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.sin() - elems[3]).abs() < 0.001);
+    /// ```
     pub fn sin(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -2921,6 +3499,24 @@ impl Frontend
 
     /// Calculates cosine function for the `a` matrix and the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>cos</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.cos(&a, &b).unwrap();
+    /// let elems = b.elems();
+    /// assert!((1.0f32.cos() - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.cos() - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.cos() - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.cos() - elems[3]).abs() < 0.001);
+    /// ```
     pub fn cos(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -2938,6 +3534,24 @@ impl Frontend
 
     /// Calculates tangent function for the `a` matrix and the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>tan</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.tan(&a, &b).unwrap();
+    /// let elems = b.elems();
+    /// assert!((1.0f32.tan() - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.tan() - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.tan() - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.tan() - elems[3]).abs() < 0.001);
+    /// ```
     pub fn tan(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -2955,6 +3569,24 @@ impl Frontend
 
     /// Calculates arcsine function for the `a` matrix and the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>arcsin</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [0.25, 0.5],
+    ///     [0.75, 1.0]
+    /// ];
+    /// let b = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.asin(&a, &b).unwrap();
+    /// let elems = b.elems();
+    /// assert!((0.25f32.asin() - elems[0]).abs() < 0.001);
+    /// assert!((0.5f32.asin() - elems[1]).abs() < 0.001);
+    /// assert!((0.75f32.asin() - elems[2]).abs() < 0.001);
+    /// assert!((1.0f32.asin() - elems[3]).abs() < 0.001);
+    /// ```
     pub fn asin(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -2972,6 +3604,24 @@ impl Frontend
 
     /// Calculates arccosine function for the `a` matrix and the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>arccos</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [0.25, 0.5],
+    ///     [0.75, 1.0]
+    /// ];
+    /// let b = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.acos(&a, &b).unwrap();
+    /// let elems = b.elems();
+    /// assert!((0.25f32.acos() - elems[0]).abs() < 0.001);
+    /// assert!((0.5f32.acos() - elems[1]).abs() < 0.001);
+    /// assert!((0.75f32.acos() - elems[2]).abs() < 0.001);
+    /// assert!((1.0f32.acos() - elems[3]).abs() < 0.001);
+    /// ```
     pub fn acos(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -2989,6 +3639,24 @@ impl Frontend
 
     /// Calculates arctangent function for the `a` matrix and the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>arctan</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.atan(&a, &b).unwrap();
+    /// let elems = b.elems();
+    /// assert!((1.0f32.atan() - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.atan() - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.atan() - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.atan() - elems[3]).abs() < 0.001);
+    /// ```
     pub fn atan(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -3007,6 +3675,28 @@ impl Frontend
     /// Calculates arctangent function for the `a` matrix elements and the `b` matrix elements and
     /// then the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>arctan</mi><mo fence="true">(</mo><mfrac><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mfrac><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = matrix![
+    ///     [5.0, 6.0],
+    ///     [7.0, 8.0]
+    /// ];
+    /// let c = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.atan2(&a, &b, &c).unwrap();
+    /// let elems = c.elems();
+    /// assert!((1.0f32.atan2(5.0) - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.atan2(6.0) - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.atan2(7.0) - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.atan2(8.0) - elems[3]).abs() < 0.001);
+    /// ```
     pub fn atan2(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -3029,6 +3719,24 @@ impl Frontend
     /// Calculates arctangent function for the `a` matrix elements and the `b` scalar and then the
     /// result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>arctan</mi><mo fence="true">(</mo><mfrac><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mi>b</mi></mfrac><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let c = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.atan2_for_scalar(&a, 10.5, &c).unwrap();
+    /// let elems = c.elems();
+    /// assert!((1.0f32.atan2(10.5) - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.atan2(10.5) - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.atan2(10.5) - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.atan2(10.5) - elems[3]).abs() < 0.001);
+    /// ```
     pub fn atan2_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
         if a.row_count != c.row_count || a.col_count != c.col_count {
@@ -3047,6 +3755,24 @@ impl Frontend
     /// Calculates arctangent function for the `b` scalar and the `a` matrix elements and then the
     /// result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>arctan</mi><mo fence="true">(</mo><mfrac><mi>b</mi><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mfrac><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let c = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.ratan2_for_scalar(&a, 10.5, &c).unwrap();
+    /// let elems = c.elems();
+    /// assert!((10.5f32.atan2(1.0) - elems[0]).abs() < 0.001);
+    /// assert!((10.5f32.atan2(2.0) - elems[1]).abs() < 0.001);
+    /// assert!((10.5f32.atan2(3.0) - elems[2]).abs() < 0.001);
+    /// assert!((10.5f32.atan2(4.0) - elems[3]).abs() < 0.001);
+    /// ```
     pub fn ratan2_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
         if a.row_count != c.row_count || a.col_count != c.col_count {
@@ -3064,6 +3790,24 @@ impl Frontend
 
     /// Calculates hyperbolic sine function for the `a` matrix and the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>sinh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.sinh(&a, &b).unwrap();
+    /// let elems = b.elems();
+    /// assert!((1.0f32.sinh() - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.sinh() - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.sinh() - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.sinh() - elems[3]).abs() < 0.001);
+    /// ```
     pub fn sinh(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -3082,6 +3826,24 @@ impl Frontend
     /// Calculates hyperbolic cosine function for the `a` matrix and the result is in the `b`
     /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>cosh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.cosh(&a, &b).unwrap();
+    /// let elems = b.elems();
+    /// assert!((1.0f32.cosh() - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.cosh() - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.cosh() - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.cosh() - elems[3]).abs() < 0.001);
+    /// ```
     pub fn cosh(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -3100,6 +3862,24 @@ impl Frontend
     /// Calculates inverse hyperbolic sine function for the `a` matrix and the result is in the `b`
     /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>arsinh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.asinh(&a, &b).unwrap();
+    /// let elems = b.elems();
+    /// assert!((1.0f32.asinh() - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.asinh() - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.asinh() - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.asinh() - elems[3]).abs() < 0.001);
+    /// ```
     pub fn asinh(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -3118,6 +3898,24 @@ impl Frontend
     /// Calculates inverse hyperbolic cosine function for the `a` matrix and the result is in the
     /// `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>arcosh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [1.0, 2.0],
+    ///     [3.0, 4.0]
+    /// ];
+    /// let b = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.acosh(&a, &b).unwrap();
+    /// let elems = b.elems();
+    /// assert!((1.0f32.acosh() - elems[0]).abs() < 0.001);
+    /// assert!((2.0f32.acosh() - elems[1]).abs() < 0.001);
+    /// assert!((3.0f32.acosh() - elems[2]).abs() < 0.001);
+    /// assert!((4.0f32.acosh() - elems[3]).abs() < 0.001);
+    /// ```
     pub fn acosh(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -3136,6 +3934,24 @@ impl Frontend
     /// Calculates inverse hyperbolic tangent function for the `a` matrix and the result is in the
     /// `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>artanh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [0.25, 0.5],
+    ///     [0.75, 1.0]
+    /// ];
+    /// let b = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.atanh(&a, &b).unwrap();
+    /// let elems = b.elems();
+    /// assert!((0.25f32.atanh() - elems[0]).abs() < 0.001);
+    /// assert!((0.5f32.atanh() - elems[1]).abs() < 0.001);
+    /// assert!((0.75f32.atanh() - elems[2]).abs() < 0.001);
+    /// assert_eq!(f32::INFINITY, elems[3]);
+    /// ```
     pub fn atanh(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -3153,6 +3969,20 @@ impl Frontend
 
     /// Calculates signum function for the `a` matrix and the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>sgn</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [-2.0, -1.0],
+    ///     [1.0, 2.0]
+    /// ];
+    /// let b = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.signum(&a, &b).unwrap();
+    /// assert_eq!(vec![-1.0, -1.0, 1.0, 1.0], b.elems());
+    /// ```
     pub fn signum(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -3170,6 +4000,20 @@ impl Frontend
 
     /// Calculates ceil function for the `a` matrix and the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>ceil</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [-2.6, -1.3],
+    ///     [1.3, 2.6]
+    /// ];
+    /// let b = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.ceil(&a, &b).unwrap();
+    /// assert_eq!(vec![-2.0, -1.0, 2.0, 3.0], b.elems());
+    /// ```
     pub fn ceil(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -3187,6 +4031,20 @@ impl Frontend
 
     /// Calculates floor function for the `a` matrix and the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>floor</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [-2.6, -1.3],
+    ///     [1.3, 2.6]
+    /// ];
+    /// let b = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.floor(&a, &b).unwrap();
+    /// assert_eq!(vec![-3.0, -2.0, 1.0, 2.0], b.elems());
+    /// ```
     pub fn floor(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -3204,6 +4062,20 @@ impl Frontend
 
     /// Calculates round function for the `a` matrix and the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>round</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [-2.6, -1.3],
+    ///     [1.3, 2.6]
+    /// ];
+    /// let b = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.round(&a, &b).unwrap();
+    /// assert_eq!(vec![-3.0, -1.0, 1.0, 3.0], b.elems());
+    /// ```
     pub fn round(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -3221,6 +4093,20 @@ impl Frontend
 
     /// Calculates trunc function for the `a` matrix and the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>trunc</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [-2.6, -1.3],
+    ///     [1.3, 2.6]
+    /// ];
+    /// let b = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.trunc(&a, &b).unwrap();
+    /// assert_eq!(vec![-2.0, -1.0, 1.0, 2.0], b.elems());
+    /// ```
     pub fn trunc(&self, a: &Matrix, b: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
