@@ -182,7 +182,7 @@ pub trait Backend
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mfrac><msub><mi>a</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mfrac></mrow></math>).
     fn div_at_b_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
     
-    /// Divides the transposed `a` matrix elements by the `b` matrix elements and then the result
+    /// Divides the`a` matrix elements by the transposed `b` matrix elements and then the result
     /// is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mfrac><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><msub><mi>b</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub></mfrac></mrow></math>).
     fn div_a_bt_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
@@ -282,13 +282,13 @@ pub trait Backend
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>softmax</mi><mo fence="true">(</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup><mo fence="true">)</mo></mrow></math>).
     fn softmax_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates square root of the `a` matrix and the result is in the `b` matrix
-    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><msqrt><mi mathvariant="bold">A</mi></msqrt></mrow></math>).
+    /// Calculates square roots of the `a` matrix elements and the result is in the `b` matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msqrt><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></msqrt></mrow></math>).
     fn sqrt_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates square root of the transposed `a` matrix and then the result is in the `b`
-    /// matrix
-    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><msqrt><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup></msqrt></mrow></math>).
+    /// Calculates square roots of the transposed `a` matrix elements and then the result is in the
+    /// `b` matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msqrt><msub><mi>a</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub></msqrt></mrow></math>).
     fn sqrt_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
     
     /// Repeats the `a` vector as column
@@ -367,22 +367,22 @@ pub trait Backend
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>ln</mi><msub><mi>a</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub></mrow></math>).
     fn ln_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
 
-    /// Calculates logarithm with base 2 of the `a` matrix elements and the result is in the `b`
+    /// Calculates base 2 logarithm of the `a` matrix elements and the result is in the `b`
     /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>log</mi><mn>2</mn></msub><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     fn log2_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates logarithm with base 2 of the transposed `a` matrix elements and the result is
+    /// Calculates base 2 logarithm of the transposed `a` matrix elements and the result is
     /// in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>log</mi><mn>2</mn></msub><msub><mi>a</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub></mrow></math>).
     fn log2_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
 
-    /// Calculates logarithm with base 10 of the `a` matrix elements and the result is in the `b`
+    /// Calculates base 10 logarithm of the `a` matrix elements and the result is in the `b`
     /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>log</mi><mn>10</mn></msub><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     fn log10_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates logarithm with base 10 of the transposed `a` matrix elements and the result is
+    /// Calculates base 10 logarithm of the transposed `a` matrix elements and the result is
     /// in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>log</mi><mn>10</mn></msub><msub><mi>a</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub></mrow></math>).
     fn log10_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
@@ -1124,8 +1124,8 @@ impl Matrix
         res
     }
     
-    /// Calculates square root of the matrix
-    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msqrt><mi mathvariant="bold">A</mi></msqrt></mrow></math>).
+    /// Calculates square roots of the matrix elements
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msqrt><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></msqrt></mrow></math>).
     ///
     /// # Examples
     ///
@@ -1335,7 +1335,7 @@ impl Matrix
         res
     }
 
-    /// Calculates logarithm with base 2 of the matrix elements
+    /// Calculates base 2 logarithm of the matrix elements
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>log</mi><mn>2</mn></msub><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     ///
     /// # Examples
@@ -1361,7 +1361,7 @@ impl Matrix
         res
     }
 
-    /// Calculates logarithm with base 10 of the matrix elements
+    /// Calculates base 10 logarithm of the matrix elements
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>log</mi><mn>10</mn></msub><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     ///
     /// # Examples
@@ -3062,8 +3062,8 @@ impl Frontend
         }
     }    
 
-    /// Calculates square root of the `a` matrix and then the result is in the `b` matrix
-    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><msqrt><mi mathvariant="bold">A</mi></msqrt></mrow></math>).
+    /// Calculates square roots of the `a` matrix elements and then the result is in the `b` matrix
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msqrt><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></msqrt></mrow></math>).
     ///
     /// # Examples
     ///
@@ -3390,7 +3390,7 @@ impl Frontend
         }
     }
 
-    /// Calculates logarithm with base 2 of the `a` matrix elements and the result is in the `b`
+    /// Calculates base 2 logarithm of the `a` matrix elements and the result is in the `b`
     /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>log</mi><mn>2</mn></msub><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     ///
@@ -3426,7 +3426,7 @@ impl Frontend
         }
     }
     
-    /// Calculates logarithm with base 10 of the `a` matrix elements and the result is in the `b`
+    /// Calculates base 10 logarithm of the `a` matrix elements and the result is in the `b`
     /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>log</mi><mn>10</mn></msub><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     ///
