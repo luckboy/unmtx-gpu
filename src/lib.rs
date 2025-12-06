@@ -209,11 +209,11 @@ pub trait Backend
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">C</mi><mo>=</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup><mo>-</mo><mi>b</mi></mrow></math>).
     fn sub_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Subtracts the `a` matrix from the `b` scalar  and then the result is in the `c` matrix
+    /// Subtracts the `a` matrix from the `b` scalar and then the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">C</mi><mo>=</mo><mi>b</mi><mo>-</mo><mi mathvariant="bold">A</mi></mrow></math>).
     fn rsub_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Subtracts the transposed `a` matrix from the `b` scalar  and then the result is in the `c`
+    /// Subtracts the transposed `a` matrix from the `b` scalar and then the result is in the `c`
     /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">C</mi><mo>=</mo><mi>b</mi><mo>-</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup></mrow></math>).
     fn rsub_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
@@ -245,12 +245,12 @@ pub trait Backend
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mfrac><mi>b</mi><msub><mi>a</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub></mfrac></mrow></math>).
     fn rdiv_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates sigmoid function for the `a` matrix and the result is in the `b` matrix
+    /// Calculates sigmoid function for the `a` matrix and then the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>sigmoid</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     fn sigmoid_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates sigmoid function for the transposed `a` matrix and then the result is in the `b`
-    /// matrix
+    /// Calculates sigmoid function for the transposed `a` matrix and then the result is in the
+    /// `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>sigmoid</mi><mo fence="true">(</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup><mo fence="true">)</mo></mrow></math>).
     fn sigmoid_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
@@ -259,12 +259,12 @@ pub trait Backend
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>tanh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     fn tanh_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates hyperbolic tangent function for the transposed `a` matrix and then the result is
-    /// in the `b` matrix
+    /// Calculates hyperbolic tangent function for the transposed `a` matrix and then the result
+    /// is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>tanh</mi><mo fence="true">(</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup><mo fence="true">)</mo></mrow></math>).
     fn tanh_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates swish function for the `a` matrix and the result is in the `b` matrix
+    /// Calculates swish function for the `a` matrix and then the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>swish</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     fn swish_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
@@ -282,7 +282,7 @@ pub trait Backend
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>softmax</mi><mo fence="true">(</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup><mo fence="true">)</mo></mrow></math>).
     fn softmax_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates square roots of the `a` matrix elements and the result is in the `b` matrix
+    /// Calculates square roots of the `a` matrix elements and then the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msqrt><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></msqrt></mrow></math>).
     fn sqrt_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
@@ -299,7 +299,7 @@ pub trait Backend
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>a</mi><mi>j</mi></msub></mrow></math>).
     fn repeat_row_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates absolute values of the `a` matrix elements and the result is in the `b` matrix
+    /// Calculates absolute values of the `a` matrix elements and then the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mo fence="true">|</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo fence="true">|</mo></mrow></math>).
     fn abs_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
@@ -348,95 +348,97 @@ pub trait Backend
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msup><mi>b</mi><msub><mi>a</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub></msup></mrow></math>).
     fn rpow_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates exponential function for the `a` matrix and the result is in the `b` matrix
+    /// Calculates exponential function for the `a` matrix and then the result is in the `b`
+    /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msup><mi>e</mi><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></msup></mrow></math>).
     fn exp_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates exponential function for the transposed `a` matrix elements and the result is
-    /// in the `b` matrix
+    /// Calculates exponential function for the transposed `a` matrix elements and then the result
+    /// is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msup><mi>e</mi><msub><mi>a</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub></msup></mrow></math>).
     fn exp_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
     
-    /// Calculates natural logarithm of the `a` matrix elements and the result is in the `b`
+    /// Calculates natural logarithm of the `a` matrix elements and then the result is in the `b`
     /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>ln</mi><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     fn ln_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates natural logarithm of the transposed `a` matrix elements and the result is in
-    /// the `b` matrix
+    /// Calculates natural logarithm of the transposed `a` matrix elements and then the result is
+    /// in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>ln</mi><msub><mi>a</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub></mrow></math>).
     fn ln_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
 
-    /// Calculates base 2 logarithm of the `a` matrix elements and the result is in the `b`
+    /// Calculates base 2 logarithm of the `a` matrix elements and then the result is in the `b`
     /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>log</mi><mn>2</mn></msub><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     fn log2_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates base 2 logarithm of the transposed `a` matrix elements and the result is
+    /// Calculates base 2 logarithm of the transposed `a` matrix elements and then the result is
     /// in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>log</mi><mn>2</mn></msub><msub><mi>a</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub></mrow></math>).
     fn log2_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
 
-    /// Calculates base 10 logarithm of the `a` matrix elements and the result is in the `b`
+    /// Calculates base 10 logarithm of the `a` matrix elements and then the result is in the `b`
     /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>log</mi><mn>10</mn></msub><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     fn log10_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates base 10 logarithm of the transposed `a` matrix elements and the result is
+    /// Calculates base 10 logarithm of the transposed `a` matrix elements and then the result is
     /// in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>log</mi><mn>10</mn></msub><msub><mi>a</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub></mrow></math>).
     fn log10_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
 
-    /// Calculates sine function for the `a` matrix and the result is in the `b` matrix
+    /// Calculates sine function for the `a` matrix and then the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>sin</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     fn sin_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates sine function for the transposed `a` matrix and the result is in the `b` matrix
+    /// Calculates sine function for the transposed `a` matrix and then the result is in the `b`
+    /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>sin</mi><mo fence="true">(</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup><mo fence="true">)</mo></mrow></math>).
     fn sin_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
 
-    /// Calculates cosine function for the `a` matrix and the result is in the `b` matrix
+    /// Calculates cosine function for the `a` matrix and then the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>cos</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     fn cos_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates cosine function for the transposed `a` matrix and the result is in the `b`
+    /// Calculates cosine function for the transposed `a` matrix and then the result is in the `b`
     /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>cos</mi><mo fence="true">(</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup><mo fence="true">)</mo></mrow></math>).
     fn cos_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
 
-    /// Calculates tangent function for the `a` matrix and the result is in the `b` matrix
+    /// Calculates tangent function for the `a` matrix and then the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>tan</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     fn tan_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates tangent function for the transposed `a` matrix and the result is in the `b`
-    /// matrix
+    /// Calculates tangent function for the transposed `a` matrix and then the result is in the
+    /// `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>tan</mi><mo fence="true">(</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup><mo fence="true">)</mo></mrow></math>).
     fn tan_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
 
-    /// Calculates arcsine function for the `a` matrix and the result is in the `b` matrix
+    /// Calculates arcsine function for the `a` matrix and then the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>arcsin</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     fn asin_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates arcsine function for the transposed `a` matrix and the result is in the `b`
-    /// matrix
+    /// Calculates arcsine function for the transposed `a` matrix and then the result is in the
+    /// `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>arcsin</mi><mo fence="true">(</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup><mo fence="true">)</mo></mrow></math>).
     fn asin_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
 
-    /// Calculates arccosine function for the `a` matrix and the result is in the `b` matrix
+    /// Calculates arccosine function for the `a` matrix and then the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>arccos</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     fn acos_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates arccosine function for the transposed `a` matrix and the result is in the `b`
-    /// matrix
+    /// Calculates arccosine function for the transposed `a` matrix and then the result is in the
+    /// `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>arccos</mi><mo fence="true">(</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup><mo fence="true">)</mo></mrow></math>).
     fn acos_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
 
-    /// Calculates arctangent function for the `a` matrix and the result is in the `b` matrix
+    /// Calculates arctangent function for the `a` matrix and then the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>arctan</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     fn atan_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates arctangent function for the transposed `a` matrix and the result is in the `b`
-    /// matrix
+    /// Calculates arctangent function for the transposed `a` matrix and then the result is in the
+    /// `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>arctan</mi><mo fence="true">(</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup><mo fence="true">)</mo></mrow></math>).
     fn atan_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
 
@@ -480,94 +482,98 @@ pub trait Backend
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>arctan</mi><mo fence="true">(</mo><mfrac><mi>b</mi><msub><mi>a</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub></mfrac><mo fence="true">)</mo></mrow></math>).
     fn ratan2_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates hyperbolic sine function for the `a` matrix and the result is in the `b` matrix
+    /// Calculates hyperbolic sine function for the `a` matrix and then the result is in the `b`
+    /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>sinh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     fn sinh_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates hyperbolic sine function for the transposed `a` matrix and the result is in the `b` matrix
+    /// Calculates hyperbolic sine function for the transposed `a` matrix and then the result is
+    /// in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>sinh</mi><mo fence="true">(</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup><mo fence="true">)</mo></mrow></math>).
     fn sinh_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
 
-    /// Calculates hyperbolic cosine function for the `a` matrix and the result is in the `b`
+    /// Calculates hyperbolic cosine function for the `a` matrix and then the result is in the `b`
     /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>cosh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     fn cosh_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates hyperbolic cosine function for the transposed `a` matrix and the result is in
-    /// the `b` matrix
+    /// Calculates hyperbolic cosine function for the transposed `a` matrix and then the result is
+    /// in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>cosh</mi><mo fence="true">(</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup><mo fence="true">)</mo></mrow></math>).
     fn cosh_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
 
-    /// Calculates inverse hyperbolic sine function for the `a` matrix and the result is in the `b`
-    /// matrix
+    /// Calculates inverse hyperbolic sine function for the `a` matrix and then the result is in
+    /// the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>arsinh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     fn asinh_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates inverse hyperbolic sine function for the transposed `a` matrix and the result is
-    /// in the `b` matrix
+    /// Calculates inverse hyperbolic sine function for the transposed `a` matrix and then the
+    /// result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>arsinh</mi><mo fence="true">(</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup><mo fence="true">)</mo></mrow></math>).
     fn asinh_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
 
-    /// Calculates inverse hyperbolic cosine function for the `a` matrix and the result is in the
-    /// `b` matrix
+    /// Calculates inverse hyperbolic cosine function for the `a` matrix and then the result is in
+    /// the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>arcosh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     fn acosh_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates inverse hyperbolic cosine function for the transposed `a` matrix and the result
-    /// is in the `b` matrix
+    /// Calculates inverse hyperbolic cosine function for the transposed `a` matrix and then the
+    /// result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>arcosh</mi><mo fence="true">(</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup><mo fence="true">)</mo></mrow></math>).
     fn acosh_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
 
-    /// Calculates inverse hyperbolic tangent function for the `a` matrix and the result is in the
-    /// `b` matrix
+    /// Calculates inverse hyperbolic tangent function for the `a` matrix and then the result is
+    /// in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>artanh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     fn atanh_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates inverse hyperbolic tangent function for the transposed `a` matrix and the result
-    /// is in the `b` matrix
+    /// Calculates inverse hyperbolic tangent function for the transposed `a` matrix and then the
+    /// result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>artanh</mi><mo fence="true">(</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup><mo fence="true">)</mo></mrow></math>).
     fn atanh_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
 
-    /// Calculates signum function for the `a` matrix and the result is in the `b` matrix
+    /// Calculates signum function for the `a` matrix and then the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>sgn</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     fn signum_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates signum function for the transposed `a` matrix and the result is in the `b`
+    /// Calculates signum function for the transposed `a` matrix and then the result is in the `b`
     /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>sgn</mi><mo fence="true">(</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup><mo fence="true">)</mo></mrow></math>).
     fn signum_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
 
-    /// Calculates ceil function for the `a` matrix and the result is in the `b` matrix
+    /// Calculates ceil function for the `a` matrix and then the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>ceil</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     fn ceil_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates ceil function for the transposed `a` matrix and the result is in the `b` matrix
+    /// Calculates ceil function for the transposed `a` matrix and then the result is in the `b`
+    /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>ceil</mi><mo fence="true">(</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup><mo fence="true">)</mo></mrow></math>).
     fn ceil_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
 
-    /// Calculates floor function for the `a` matrix and the result is in the `b` matrix
+    /// Calculates floor function for the `a` matrix and then the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>floor</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     fn floor_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates floor function for the transposed `a` matrix and the result is in the `b`
+    /// Calculates floor function for the transposed `a` matrix and then the result is in the `b`
     /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>floor</mi><mo fence="true">(</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup><mo fence="true">)</mo></mrow></math>).
     fn floor_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
 
-    /// Calculates round function for the `a` matrix and the result is in the `b` matrix
+    /// Calculates round function for the `a` matrix and then the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>round</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     fn round_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates round function for the transposed `a` matrix and the result is in the `b`
+    /// Calculates round function for the transposed `a` matrix and then the result is in the `b`
     /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>round</mi><mo fence="true">(</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup><mo fence="true">)</mo></mrow></math>).
     fn round_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
 
-    /// Calculates trunc function for the `a` matrix and the result is in the `b` matrix
+    /// Calculates trunc function for the `a` matrix and then the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>trunc</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     fn trunc_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates trunc function for the transposed `a` matrix and the result is in the `b`matrix
+    /// Calculates trunc function for the transposed `a` matrix and then the result is in the `b`
+    /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>trunc</mi><mo fence="true">(</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup><mo fence="true">)</mo></mrow></math>).
     fn trunc_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
 }
@@ -712,11 +718,12 @@ pub fn unset_default_backend() -> Result<()>
     Ok(())
 }
 
-/// Sets a default backend if the default backend is uninitialized and returns the default backend.
+/// Sets a default backend if the default backend is uninitialized and returns the default
+/// backend.
 ///
-/// This method takes a closure that returns the backend and then the backend is set as the default
-/// backend if the default backend is uninitialized. The closure is only called if the backend is
-/// to be set.
+/// This method takes a closure that returns the backend and then the backend is set as the
+/// default backend if the default backend is uninitialized. The closure is only called if the
+/// backend is to be set.
 pub fn set_default_backend_for_uninitialized<F>(f: F) -> Result<Arc<dyn Backend + Send + Sync>>
     where F: FnOnce() -> Result<Arc<dyn Backend + Send + Sync>>
 {
@@ -970,7 +977,7 @@ impl Matrix
         res
     }
 
-    /// Subtracts the matrix from the scalar
+    /// Subtracts the matrix from the `b` scalar
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>b</mi><mo>-</mo><mi mathvariant="bold">A</mi></mrow></math>).
     ///
     /// # Examples
@@ -992,7 +999,7 @@ impl Matrix
         res
     }
 
-    /// Divides the scalar by the matrix elements
+    /// Divides the `b` scalar by the matrix elements
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mfrac><mi>b</mi><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mfrac></mrow></math>).
     ///
     /// # Examples
@@ -1044,7 +1051,7 @@ impl Matrix
         res
     }
 
-    /// Calculates hiperbolic tangent function for the matrix
+    /// Calculates hyperbolic tangent function for the matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>tanh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     ///
     /// # Examples
@@ -2641,8 +2648,8 @@ impl Frontend
         }
     }
 
-    /// Multiplies the `a` matrix elements by the `b` matrix elements and then the result is in the
-    /// `c` matrix
+    /// Multiplies the `a` matrix elements by the `b` matrix elements and then the result is in
+    /// the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>·</mo><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     ///
     /// # Examples
@@ -2681,8 +2688,8 @@ impl Frontend
         }
     }
 
-    /// Divides the `a` matrix elements by the `b` matrix elements and then the result is in the `c`
-    /// matrix
+    /// Divides the `a` matrix elements by the `b` matrix elements and then the result is in the
+    /// `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mfrac><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mfrac></mrow></math>).
     ///
     /// # Examples
@@ -2954,8 +2961,8 @@ impl Frontend
         }
     }
 
-    /// Calculates hyperbolic tangent function for the `a` matrix and then the result is in the `b`
-    /// matrix
+    /// Calculates hyperbolic tangent function for the `a` matrix and then the result is in the
+    /// `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>tanh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     ///
     /// # Examples
@@ -3062,7 +3069,8 @@ impl Frontend
         }
     }    
 
-    /// Calculates square roots of the `a` matrix elements and then the result is in the `b` matrix
+    /// Calculates square roots of the `a` matrix elements and then the result is in the `b`
+    /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msqrt><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></msqrt></mrow></math>).
     ///
     /// # Examples
@@ -3171,7 +3179,8 @@ impl Frontend
         }
     }
 
-    /// Calculates absolute values of the `a` matrix elements and the result is in the `b` matrix
+    /// Calculates absolute values of the `a` matrix elements and then the result is in the `b`
+    /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mo fence="true">|</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo fence="true">|</mo></mrow></math>).
     ///
     /// # Examples
@@ -3318,8 +3327,8 @@ impl Frontend
         }
     }
 
-    /// Calculates exponential function for the `a` matrix elements and the result is in the `b`
-    /// matrix
+    /// Calculates exponential function for the `a` matrix elements and then the result is in the
+    /// `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msup><mi>e</mi><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></msup></mrow></math>).
     ///
     /// # Examples
@@ -3354,7 +3363,7 @@ impl Frontend
         }
     }
 
-    /// Calculates natural logarithm of the `a` matrix elements and the result is in the `b`
+    /// Calculates natural logarithm of the `a` matrix elements and then the result is in the `b`
     /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>ln</mi><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     ///
@@ -3390,7 +3399,7 @@ impl Frontend
         }
     }
 
-    /// Calculates base 2 logarithm of the `a` matrix elements and the result is in the `b`
+    /// Calculates base 2 logarithm of the `a` matrix elements and then the result is in the `b`
     /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>log</mi><mn>2</mn></msub><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     ///
@@ -3426,7 +3435,7 @@ impl Frontend
         }
     }
     
-    /// Calculates base 10 logarithm of the `a` matrix elements and the result is in the `b`
+    /// Calculates base 10 logarithm of the `a` matrix elements and then the result is in the `b`
     /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>log</mi><mn>10</mn></msub><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     ///
@@ -3462,7 +3471,7 @@ impl Frontend
         }
     }
 
-    /// Calculates sine function for the `a` matrix and the result is in the `b` matrix
+    /// Calculates sine function for the `a` matrix and then the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>sin</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     ///
     /// # Examples
@@ -3497,7 +3506,7 @@ impl Frontend
         }
     }
 
-    /// Calculates cosine function for the `a` matrix and the result is in the `b` matrix
+    /// Calculates cosine function for the `a` matrix and then the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>cos</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     ///
     /// # Examples
@@ -3532,7 +3541,7 @@ impl Frontend
         }
     }
 
-    /// Calculates tangent function for the `a` matrix and the result is in the `b` matrix
+    /// Calculates tangent function for the `a` matrix and then the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>tan</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     ///
     /// # Examples
@@ -3567,7 +3576,7 @@ impl Frontend
         }
     }
 
-    /// Calculates arcsine function for the `a` matrix and the result is in the `b` matrix
+    /// Calculates arcsine function for the `a` matrix and then the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>arcsin</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     ///
     /// # Examples
@@ -3602,7 +3611,7 @@ impl Frontend
         }
     }
 
-    /// Calculates arccosine function for the `a` matrix and the result is in the `b` matrix
+    /// Calculates arccosine function for the `a` matrix and then the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>arccos</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     ///
     /// # Examples
@@ -3637,7 +3646,7 @@ impl Frontend
         }
     }
 
-    /// Calculates arctangent function for the `a` matrix and the result is in the `b` matrix
+    /// Calculates arctangent function for the `a` matrix and then the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>arctan</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     ///
     /// # Examples
@@ -3788,7 +3797,8 @@ impl Frontend
         }
     }
 
-    /// Calculates hyperbolic sine function for the `a` matrix and the result is in the `b` matrix
+    /// Calculates hyperbolic sine function for the `a` matrix and then the result is in the `b`
+    /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>sinh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     ///
     /// # Examples
@@ -3823,7 +3833,7 @@ impl Frontend
         }
     }
 
-    /// Calculates hyperbolic cosine function for the `a` matrix and the result is in the `b`
+    /// Calculates hyperbolic cosine function for the `a` matrix and then the result is in the `b`
     /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>cosh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     ///
@@ -3859,8 +3869,8 @@ impl Frontend
         }
     }
 
-    /// Calculates inverse hyperbolic sine function for the `a` matrix and the result is in the `b`
-    /// matrix
+    /// Calculates inverse hyperbolic sine function for the `a` matrix and then the result is in
+    /// the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>arsinh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     ///
     /// # Examples
@@ -3895,8 +3905,8 @@ impl Frontend
         }
     }
 
-    /// Calculates inverse hyperbolic cosine function for the `a` matrix and the result is in the
-    /// `b` matrix
+    /// Calculates inverse hyperbolic cosine function for the `a` matrix and then the result is in
+    /// the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>arcosh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     ///
     /// # Examples
@@ -3931,8 +3941,8 @@ impl Frontend
         }
     }
 
-    /// Calculates inverse hyperbolic tangent function for the `a` matrix and the result is in the
-    /// `b` matrix
+    /// Calculates inverse hyperbolic tangent function for the `a` matrix and then the result is
+    /// in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>artanh</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     ///
     /// # Examples
@@ -3967,7 +3977,7 @@ impl Frontend
         }
     }
 
-    /// Calculates signum function for the `a` matrix and the result is in the `b` matrix
+    /// Calculates signum function for the `a` matrix and then the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>sgn</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     ///
     /// # Examples
@@ -3998,7 +4008,7 @@ impl Frontend
         }
     }
 
-    /// Calculates ceil function for the `a` matrix and the result is in the `b` matrix
+    /// Calculates ceil function for the `a` matrix and then the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>ceil</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     ///
     /// # Examples
@@ -4029,7 +4039,7 @@ impl Frontend
         }
     }
 
-    /// Calculates floor function for the `a` matrix and the result is in the `b` matrix
+    /// Calculates floor function for the `a` matrix and then the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>floor</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     ///
     /// # Examples
@@ -4060,7 +4070,7 @@ impl Frontend
         }
     }
 
-    /// Calculates round function for the `a` matrix and the result is in the `b` matrix
+    /// Calculates round function for the `a` matrix and then the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>round</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     ///
     /// # Examples
@@ -4091,7 +4101,7 @@ impl Frontend
         }
     }
 
-    /// Calculates trunc function for the `a` matrix and the result is in the `b` matrix
+    /// Calculates trunc function for the `a` matrix and then the result is in the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>trunc</mi><mo fence="true">(</mo><mi mathvariant="bold">A</mi><mo fence="true">)</mo></mrow></math>).
     ///
     /// # Examples
