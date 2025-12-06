@@ -696,7 +696,7 @@ fn test_frontend_pow_for_scalar_calculates_pow_for_matrix_and_scalar()
 {
     match Frontend::new() {
         Ok(frontend) => {
-            let a1 = fixture_a_for_log(2, 3);
+            let a1 = fixture_a_for_pow(2, 3);
             match frontend_pow_for_scalar_and_a_b(&frontend, a1.as_slice(), 2.5, 2, 3) {
                 Ok(c1) => {
                     let expected_c1 = expected_pow_a_b_for_scalar(a1.as_slice(), 2.5, 2, 3);
@@ -707,7 +707,7 @@ fn test_frontend_pow_for_scalar_calculates_pow_for_matrix_and_scalar()
                 },
                 Err(_) => assert!(false),
             }
-            let a2 = fixture_a_for_log(3, 2);
+            let a2 = fixture_a_for_pow(3, 2);
             match frontend_pow_for_scalar_and_at_b(&frontend, a2.as_slice(), 2.5, 2, 3) {
                 Ok(c2) => {
                     let expected_c2 = expected_pow_at_b_for_scalar(a2.as_slice(), 2.5, 2, 3);
@@ -1868,7 +1868,7 @@ fn test_matrix_powm_calculates_pow_for_matrices()
 #[test]
 fn test_matrix_powf_calculates_pow_for_matrix_and_scalar()
 {
-    let a_elems = fixture_a_for_log(2, 3);
+    let a_elems = fixture_a_for_pow(2, 3);
     let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
     let expected_c_elems = expected_pow_a_b_for_scalar(a_elems.as_slice(), 2.5, 2, 3);
     let c = a.powf(2.5);

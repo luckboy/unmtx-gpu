@@ -75,6 +75,17 @@ pub(crate) fn fixture_a_b_for_common_math_fun(n1: usize, m1: usize, n2: usize, m
     (a, b)
 }
 
+pub(crate) fn fixture_a_for_pow(n: usize, m: usize) -> Vec<f32>
+{
+    let mut a = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            a[m * i + j] = (i as f32) * 2.0 + (j as f32);
+        }
+    }
+    a
+}
+
 pub(crate) fn fixture_a_b_for_pow(n1: usize, m1: usize, n2: usize, m2: usize) -> (Vec<f32>, Vec<f32>)
 {
     let mut a = vec![0.0f32; n1 * m1];

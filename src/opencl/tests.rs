@@ -1324,7 +1324,7 @@ fn test_cl_backend_pow_a_b_for_scalar_calculates_pow_for_backend_array_and_scala
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_log(2, 3);
+            let a = fixture_a_for_pow(2, 3);
             match backend_pow_a_b_for_scalar(&backend, a.as_slice(), 2.5, 2, 3) {
                 Ok(c) => {
                     let expected_c = expected_pow_a_b_for_scalar(a.as_slice(), 2.5, 2, 3);
@@ -1345,7 +1345,7 @@ fn test_cl_backend_pow_at_b_for_scalar_calculates_pow_for_backend_array_and_scal
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_log(3, 2);
+            let a = fixture_a_for_pow(3, 2);
             match backend_pow_at_b_for_scalar(&backend, a.as_slice(), 2.5, 2, 3) {
                 Ok(c) => {
                     let expected_c = expected_pow_at_b_for_scalar(a.as_slice(), 2.5, 2, 3);
