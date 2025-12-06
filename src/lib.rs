@@ -299,11 +299,12 @@ pub trait Backend
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><msub><mi>a</mi><mi>j</mi></msub></mrow></math>).
     fn repeat_row_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates absolute values of the `a` matrix elements and then the result is in the `b` matrix
+    /// Calculates absolute values of the `a` matrix elements and then the result is in the `b`
+    /// matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mo fence="true">|</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo fence="true">|</mo></mrow></math>).
     fn abs_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates absolute values for the transposed `a` matrix elements and then the result is in
+    /// Calculates absolute values of the transposed `a` matrix elements and then the result is in
     /// the `b` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mo fence="true">|</mo><msub><mi>a</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub><mo fence="true">|</mo></mrow></math>).
     fn abs_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
