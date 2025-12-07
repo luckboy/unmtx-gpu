@@ -18,7 +18,7 @@ You can use this library by add the following lines in the `Cargo.toml` file:
 
 ```toml
 [dependencies]
-unmtx-gpu = "0.1.5"
+unmtx-gpu = "0.1.6"
 ```
 
 ## Features
