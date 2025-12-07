@@ -1629,7 +1629,7 @@ __kernel void signum_a(__global const float *a, __global float *b, ulong n, ulon
   size_t i = get_global_id(0);
   size_t j = get_global_id(1);
   if(i < n2 && j < m2) {
-    if(!isnan(a[n2 * j + i])) {
+    if(!isnan(a[m2 * i + j])) {
       b[m2 * i + j] = (signbit(a[m2 * i + j]) ? -1.0 : 1.0);
     } else {
       b[m2 * i + j] = a[m2 * i + j];

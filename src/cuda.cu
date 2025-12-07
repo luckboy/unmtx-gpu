@@ -1759,7 +1759,7 @@ extern "C" {
     size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
     size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
     if(i < n && j < m) {
-      if(!isnan(a[m * i + j])) {
+      if(!isnan(a[n * j + i])) {
         b[m * i + j] = (signbit(a[n * j + i]) ? -1.0 : 1.0);
       } else {
         b[m * i + j] = a[n * j + i];
