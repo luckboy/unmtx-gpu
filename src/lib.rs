@@ -739,7 +739,8 @@ pub fn set_default_backend_for_uninitialized<F>(f: F) -> Result<Arc<dyn Backend 
     }
 }
 
-/// Initializes a default backend if the backend is uninitialized and returns the default backend.
+/// Initializes a default backend if the default backend is uninitialized and returns the default
+/// backend.
 pub fn initialize_default_backend_for_uninitialized() -> Result<Arc<dyn Backend + Send + Sync>>
 {
     #[cfg(feature = "opencl")]
@@ -1318,7 +1319,7 @@ impl Matrix
     }
 
     /// Calculates natural logarithm of the matrix elements
-    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>ln</mi><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
+    /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>ln</mi><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow></math>).
     ///
     /// # Examples
     ///
