@@ -439,7 +439,7 @@ fn test_cuda_backend_mul_at_bt_for_elems_multiplies_backend_arrays()
 {
     match CudaBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b(2, 3, 3, 2);
+            let (a, b) = fixture_a_b(3, 2, 3, 2);
             match backend_mul_at_bt_for_elems(&backend, a.as_slice(), b.as_slice(), 2, 3) {
                 Ok(c) => assert_eq!(expected_mul_at_bt_for_elems(a.as_slice(), b.as_slice(), 2, 3), c),
                 Err(_) => assert!(false),
@@ -517,7 +517,7 @@ fn test_cuda_backend_div_at_bt_for_elems_divides_backend_arrays()
 {
     match CudaBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b(3, 2, 2, 3);
+            let (a, b) = fixture_a_b(3, 2, 3, 2);
             match backend_div_at_bt_for_elems(&backend, a.as_slice(), b.as_slice(), 2, 3) {
                 Ok(c) => {
                     let expected_c = expected_div_at_bt_for_elems(a.as_slice(), b.as_slice(), 2, 3);
@@ -1303,7 +1303,7 @@ fn test_cuda_backend_pow_at_bt_calculates_pow_for_backend_arrays()
 {
     match CudaBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b_for_pow(3, 2, 2, 3);
+            let (a, b) = fixture_a_b_for_pow(3, 2, 3, 2);
             match backend_pow_at_bt(&backend, a.as_slice(), b.as_slice(), 2, 3) {
                 Ok(c) => {
                     let expected_c = expected_pow_at_bt(a.as_slice(), b.as_slice(), 2, 3);
@@ -1891,7 +1891,7 @@ fn test_cuda_backend_atan2_at_bt_calculates_atan2_for_backend_arrays()
 {
     match CudaBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b_for_common_math_fun(3, 2, 2, 3);
+            let (a, b) = fixture_a_b_for_common_math_fun(3, 2, 3, 2);
             match backend_atan2_at_bt(&backend, a.as_slice(), b.as_slice(), 2, 3) {
                 Ok(c) => {
                     let expected_c = expected_atan2_at_bt(a.as_slice(), b.as_slice(), 2, 3);
@@ -2344,6 +2344,186 @@ fn test_cuda_backend_trunc_at_calculates_trunc_for_backend_array()
             let a = fixture_a_for_rounding(3, 2);
             match backend_trunc_at(&backend, a.as_slice(), 2, 3) {
                 Ok(b) => assert_eq!(expected_trunc_at(a.as_slice(), 2, 3), b),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_max_a_b_calculates_max_for_backend_arrays()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let (a, b) = fixture_a_b_for_common_math_fun(2, 3, 2, 3);
+            match backend_max_a_b(&backend, a.as_slice(), b.as_slice(), 2, 3) {
+                Ok(c) => assert_eq!(expected_max_a_b(a.as_slice(), b.as_slice(), 2, 3), c), 
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_max_at_b_calculates_max_for_backend_arrays()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let (a, b) = fixture_a_b_for_common_math_fun(3, 2, 2, 3);
+            match backend_max_at_b(&backend, a.as_slice(), b.as_slice(), 2, 3) {
+                Ok(c) => assert_eq!(expected_max_at_b(a.as_slice(), b.as_slice(), 2, 3), c),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_max_a_bt_calculates_max_for_backend_arrays()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let (a, b) = fixture_a_b_for_common_math_fun(2, 3, 3, 2);
+            match backend_max_a_bt(&backend, a.as_slice(), b.as_slice(), 2, 3) {
+                Ok(c) => assert_eq!(expected_max_a_bt(a.as_slice(), b.as_slice(), 2, 3), c),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_max_at_bt_calculates_max_for_backend_arrays()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let (a, b) = fixture_a_b_for_common_math_fun(3, 2, 3, 2);
+            match backend_max_at_bt(&backend, a.as_slice(), b.as_slice(), 2, 3) {
+                Ok(c) => assert_eq!(expected_max_at_bt(a.as_slice(), b.as_slice(), 2, 3), c),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_max_a_b_for_scalar_calculates_max_for_backend_array_and_scalar()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_common_math_fun(2, 3);
+            match backend_max_a_b_for_scalar(&backend, a.as_slice(), 0.0, 2, 3) {
+                Ok(c) => assert_eq!(expected_max_a_b_for_scalar(a.as_slice(), 0.0, 2, 3), c),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_max_at_b_for_scalar_calculates_max_for_backend_array_and_scalar()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_common_math_fun(3, 2);
+            match backend_max_at_b_for_scalar(&backend, a.as_slice(), 0.0, 2, 3) {
+                Ok(c) => assert_eq!(expected_max_at_b_for_scalar(a.as_slice(), 0.0, 2, 3), c),
+                Err(_) => assert!(false)
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_min_a_b_calculates_min_for_backend_arrays()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let (a, b) = fixture_a_b_for_common_math_fun(2, 3, 2, 3);
+            match backend_min_a_b(&backend, a.as_slice(), b.as_slice(), 2, 3) {
+                Ok(c) => assert_eq!(expected_min_a_b(a.as_slice(), b.as_slice(), 2, 3), c), 
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_min_at_b_calculates_min_for_backend_arrays()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let (a, b) = fixture_a_b_for_common_math_fun(3, 2, 2, 3);
+            match backend_min_at_b(&backend, a.as_slice(), b.as_slice(), 2, 3) {
+                Ok(c) => assert_eq!(expected_min_at_b(a.as_slice(), b.as_slice(), 2, 3), c),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_min_a_bt_calculates_min_for_backend_arrays()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let (a, b) = fixture_a_b_for_common_math_fun(2, 3, 3, 2);
+            match backend_min_a_bt(&backend, a.as_slice(), b.as_slice(), 2, 3) {
+                Ok(c) => assert_eq!(expected_min_a_bt(a.as_slice(), b.as_slice(), 2, 3), c),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_min_at_bt_calculates_min_for_backend_arrays()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let (a, b) = fixture_a_b_for_common_math_fun(3, 2, 3, 2);
+            match backend_min_at_bt(&backend, a.as_slice(), b.as_slice(), 2, 3) {
+                Ok(c) => assert_eq!(expected_min_at_bt(a.as_slice(), b.as_slice(), 2, 3), c),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_min_a_b_for_scalar_calculates_min_for_backend_array_and_scalar()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_common_math_fun(2, 3);
+            match backend_min_a_b_for_scalar(&backend, a.as_slice(), 0.0, 2, 3) {
+                Ok(c) => assert_eq!(expected_min_a_b_for_scalar(a.as_slice(), 0.0, 2, 3), c),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_cuda_backend_min_at_b_for_scalar_calculates_min_for_backend_array_and_scalar()
+{
+    match CudaBackend::new() {
+        Ok(backend) => {
+            let a = fixture_a_for_common_math_fun(3, 2);
+            match backend_min_at_b_for_scalar(&backend, a.as_slice(), 0.0, 2, 3) {
+                Ok(c) => assert_eq!(expected_min_at_b_for_scalar(a.as_slice(), 0.0, 2, 3), c),
                 Err(_) => assert!(false),
             }
         },

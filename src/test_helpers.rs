@@ -1288,6 +1288,134 @@ pub(crate) fn backend_trunc_at(backend: &dyn Backend, a_elems: &[f32], n: usize,
     Ok(b_elems)
 }
 
+pub(crate) fn backend_max_a_b(backend: &dyn Backend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store(b_elems)?;
+    let c = backend.alloc_and_store_zeros(n * m)?;
+    backend.max_a_b(&a, &b, &c, n, m)?;
+    let mut c_elems = vec![0.0f32; n * m];
+    backend.load(&c, &mut c_elems)?;
+    Ok(c_elems)
+}
+
+pub(crate) fn backend_max_at_b(backend: &dyn Backend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store(b_elems)?;
+    let c = backend.alloc_and_store_zeros(n * m)?;
+    backend.max_at_b(&a, &b, &c, n, m)?;
+    let mut c_elems = vec![0.0f32; n * m];
+    backend.load(&c, &mut c_elems)?;
+    Ok(c_elems)
+}
+
+pub(crate) fn backend_max_a_bt(backend: &dyn Backend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store(b_elems)?;
+    let c = backend.alloc_and_store_zeros(n * m)?;
+    backend.max_a_bt(&a, &b, &c, n, m)?;
+    let mut c_elems = vec![0.0f32; n * m];
+    backend.load(&c, &mut c_elems)?;
+    Ok(c_elems)
+}
+
+pub(crate) fn backend_max_at_bt(backend: &dyn Backend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store(b_elems)?;
+    let c = backend.alloc_and_store_zeros(n * m)?;
+    backend.max_at_bt(&a, &b, &c, n, m)?;
+    let mut c_elems = vec![0.0f32; n * m];
+    backend.load(&c, &mut c_elems)?;
+    Ok(c_elems)
+}
+
+pub(crate) fn backend_max_a_b_for_scalar(backend: &dyn Backend, a_elems: &[f32], b: f32, n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let c = backend.alloc_and_store_zeros(n * m)?;
+    backend.max_a_b_for_scalar(&a, b, &c, n, m)?;
+    let mut c_elems = vec![0.0f32; n * m];
+    backend.load(&c, &mut c_elems)?;
+    Ok(c_elems)
+}
+
+pub(crate) fn backend_max_at_b_for_scalar(backend: &dyn Backend, a_elems: &[f32], b: f32, n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let c = backend.alloc_and_store_zeros(n * m)?;
+    backend.max_at_b_for_scalar(&a, b, &c, n, m)?;
+    let mut c_elems = vec![0.0f32; n * m];
+    backend.load(&c, &mut c_elems)?;
+    Ok(c_elems)
+}
+
+pub(crate) fn backend_min_a_b(backend: &dyn Backend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store(b_elems)?;
+    let c = backend.alloc_and_store_zeros(n * m)?;
+    backend.min_a_b(&a, &b, &c, n, m)?;
+    let mut c_elems = vec![0.0f32; n * m];
+    backend.load(&c, &mut c_elems)?;
+    Ok(c_elems)
+}
+
+pub(crate) fn backend_min_at_b(backend: &dyn Backend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store(b_elems)?;
+    let c = backend.alloc_and_store_zeros(n * m)?;
+    backend.min_at_b(&a, &b, &c, n, m)?;
+    let mut c_elems = vec![0.0f32; n * m];
+    backend.load(&c, &mut c_elems)?;
+    Ok(c_elems)
+}
+
+pub(crate) fn backend_min_a_bt(backend: &dyn Backend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store(b_elems)?;
+    let c = backend.alloc_and_store_zeros(n * m)?;
+    backend.min_a_bt(&a, &b, &c, n, m)?;
+    let mut c_elems = vec![0.0f32; n * m];
+    backend.load(&c, &mut c_elems)?;
+    Ok(c_elems)
+}
+
+pub(crate) fn backend_min_at_bt(backend: &dyn Backend, a_elems: &[f32], b_elems: &[f32], n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let b = backend.alloc_and_store(b_elems)?;
+    let c = backend.alloc_and_store_zeros(n * m)?;
+    backend.min_at_bt(&a, &b, &c, n, m)?;
+    let mut c_elems = vec![0.0f32; n * m];
+    backend.load(&c, &mut c_elems)?;
+    Ok(c_elems)
+}
+
+pub(crate) fn backend_min_a_b_for_scalar(backend: &dyn Backend, a_elems: &[f32], b: f32, n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let c = backend.alloc_and_store_zeros(n * m)?;
+    backend.min_a_b_for_scalar(&a, b, &c, n, m)?;
+    let mut c_elems = vec![0.0f32; n * m];
+    backend.load(&c, &mut c_elems)?;
+    Ok(c_elems)
+}
+
+pub(crate) fn backend_min_at_b_for_scalar(backend: &dyn Backend, a_elems: &[f32], b: f32, n: usize, m: usize) -> Result<Vec<f32>>
+{
+    let a = backend.alloc_and_store(a_elems)?;
+    let c = backend.alloc_and_store_zeros(n * m)?;
+    backend.min_at_b_for_scalar(&a, b, &c, n, m)?;
+    let mut c_elems = vec![0.0f32; n * m];
+    backend.load(&c, &mut c_elems)?;
+    Ok(c_elems)
+}
+
 #[cfg(not(feature = "test_only_backend"))]
 pub(crate) fn frontend_create_matrix_and_set_zeros(frontend: &Frontend, n: usize, m: usize) -> Result<(Matrix, Vec<f32>)>
 {
@@ -3427,4 +3555,136 @@ pub(crate) fn expected_trunc_at(a: &[f32], n: usize, m: usize) -> Vec<f32>
         }
     }
     b
+}
+
+pub(crate) fn expected_max_a_b(a: &[f32], b: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut c = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            c[m * i + j] = a[m * i + j].max(b[m * i + j]);
+        }
+    }
+    c
+}
+
+pub(crate) fn expected_max_at_b(a: &[f32], b: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut c = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            c[m * i + j] = a[n * j + i].max(b[m * i + j]);
+        }
+    }
+    c
+}
+
+pub(crate) fn expected_max_a_bt(a: &[f32], b: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut c = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            c[m * i + j] = a[m * i + j].max(b[n * j + i]);
+        }
+    }
+    c
+}
+
+pub(crate) fn expected_max_at_bt(a: &[f32], b: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut c = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            c[m * i + j] = a[n * j + i].max(b[n * j + i]);
+        }
+    }
+    c
+}
+
+pub(crate) fn expected_max_a_b_for_scalar(a: &[f32], b: f32, n: usize, m: usize) -> Vec<f32>
+{
+    let mut c = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            c[m * i + j] = a[m * i + j].max(b);
+        }
+    }
+    c
+}
+
+pub(crate) fn expected_max_at_b_for_scalar(a: &[f32], b: f32, n: usize, m: usize) -> Vec<f32>
+{
+    let mut c = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            c[m * i + j] = a[n * j + i].max(b);
+        }
+    }
+    c
+}
+
+pub(crate) fn expected_min_a_b(a: &[f32], b: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut c = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            c[m * i + j] = a[m * i + j].min(b[m * i + j]);
+        }
+    }
+    c
+}
+
+pub(crate) fn expected_min_at_b(a: &[f32], b: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut c = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            c[m * i + j] = a[n * j + i].min(b[m * i + j]);
+        }
+    }
+    c
+}
+
+pub(crate) fn expected_min_a_bt(a: &[f32], b: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut c = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            c[m * i + j] = a[m * i + j].min(b[n * j + i]);
+        }
+    }
+    c
+}
+
+pub(crate) fn expected_min_at_bt(a: &[f32], b: &[f32], n: usize, m: usize) -> Vec<f32>
+{
+    let mut c = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            c[m * i + j] = a[n * j + i].min(b[n * j + i]);
+        }
+    }
+    c
+}
+
+pub(crate) fn expected_min_a_b_for_scalar(a: &[f32], b: f32, n: usize, m: usize) -> Vec<f32>
+{
+    let mut c = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            c[m * i + j] = a[m * i + j].min(b);
+        }
+    }
+    c
+}
+
+pub(crate) fn expected_min_at_b_for_scalar(a: &[f32], b: f32, n: usize, m: usize) -> Vec<f32>
+{
+    let mut c = vec![0.0f32; n * m];
+    for i in 0..n {
+        for j in 0..m {
+            c[m * i + j] = a[n * j + i].min(b);
+        }
+    }
+    c
 }

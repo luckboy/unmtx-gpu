@@ -1784,7 +1784,7 @@ __kernel void max_at_bt(__global const float *a, __global const float *b, __glob
   }
 }
 
-__kernel void fmax_a_b_for_scalar(__global const float *a, float b, __global float *c, ulong n, ulong m)
+__kernel void max_a_b_for_scalar(__global const float *a, float b, __global float *c, ulong n, ulong m)
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
@@ -1795,7 +1795,7 @@ __kernel void fmax_a_b_for_scalar(__global const float *a, float b, __global flo
   }
 }
 
-__kernel void fmax_at_b_for_scalar(__global const float *a, float b, __global float *c, ulong n, ulong m)
+__kernel void max_at_b_for_scalar(__global const float *a, float b, __global float *c, ulong n, ulong m)
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
@@ -1850,7 +1850,7 @@ __kernel void min_at_bt(__global const float *a, __global const float *b, __glob
   }
 }
 
-__kernel void fmin_a_b_for_scalar(__global const float *a, float b, __global float *c, ulong n, ulong m)
+__kernel void min_a_b_for_scalar(__global const float *a, float b, __global float *c, ulong n, ulong m)
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
@@ -1861,7 +1861,7 @@ __kernel void fmin_a_b_for_scalar(__global const float *a, float b, __global flo
   }
 }
 
-__kernel void fmin_at_b_for_scalar(__global const float *a, float b, __global float *c, ulong n, ulong m)
+__kernel void min_at_b_for_scalar(__global const float *a, float b, __global float *c, ulong n, ulong m)
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
