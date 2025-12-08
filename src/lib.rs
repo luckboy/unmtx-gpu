@@ -1897,6 +1897,38 @@ impl Matrix
         frontend.trunc(self, &res).unwrap();
         res
     }
+
+    pub fn max(&self, b: &Self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.max(self, b, &res).unwrap();
+        res
+    }
+
+    pub fn maxf(&self, b: f32) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.max_for_scalar(self, b, &res).unwrap();
+        res
+    }
+
+    pub fn min(&self, b: &Self) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.min(self, b, &res).unwrap();
+        res
+    }
+
+    pub fn minf(&self, b: f32) -> Self
+    {
+        let frontend = Frontend::new().unwrap();
+        let res = unsafe { frontend.create_matrix(self.row_count, self.col_count) }.unwrap();
+        frontend.min_for_scalar(self, b, &res).unwrap();
+        res
+    }
 }
 
 impl Neg for Matrix
@@ -4155,6 +4187,74 @@ impl Frontend
             self.backend.trunc_a(&*a.array, &*b.array, a.row_count, a.col_count)
         } else {
             self.backend.trunc_at(&*a.array, &*b.array, a.row_count, a.col_count)
+        }
+    }
+
+    pub fn max(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
+    {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+        }
+        if a.row_count != c.row_count || a.col_count != c.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, c.row_count, c.col_count)); 
+        }
+        if c.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        match (a.is_transposed, b.is_transposed) {
+            (false, false) => self.backend.max_a_b(&*a.array, &*b.array, &*c.array, a.row_count, a.col_count),
+            (true, false) => self.backend.max_at_b(&*a.array, &*b.array, &*c.array, a.row_count, a.col_count),
+            (false, true) => self.backend.max_a_bt(&*a.array, &*b.array, &*c.array, a.row_count, a.col_count),
+            (true, true) => self.backend.max_at_bt(&*a.array, &*b.array, &*c.array, a.row_count, a.col_count),
+        }
+    }
+
+    pub fn max_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
+    {
+        if a.row_count != c.row_count || a.col_count != c.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, c.row_count, c.col_count)); 
+        }
+        if c.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.max_a_b_for_scalar(&*a.array, b, &*c.array, a.row_count, a.col_count)
+        } else {
+            self.backend.max_at_b_for_scalar(&*a.array, b, &*c.array, a.row_count, a.col_count)
+        }
+    }
+
+    pub fn min(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
+    {
+        if a.row_count != b.row_count || a.col_count != b.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, b.row_count, b.col_count)); 
+        }
+        if a.row_count != c.row_count || a.col_count != c.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, c.row_count, c.col_count)); 
+        }
+        if c.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        match (a.is_transposed, b.is_transposed) {
+            (false, false) => self.backend.min_a_b(&*a.array, &*b.array, &*c.array, a.row_count, a.col_count),
+            (true, false) => self.backend.min_at_b(&*a.array, &*b.array, &*c.array, a.row_count, a.col_count),
+            (false, true) => self.backend.min_a_bt(&*a.array, &*b.array, &*c.array, a.row_count, a.col_count),
+            (true, true) => self.backend.min_at_bt(&*a.array, &*b.array, &*c.array, a.row_count, a.col_count),
+        }
+    }
+
+    pub fn min_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
+    {
+        if a.row_count != c.row_count || a.col_count != c.col_count {
+            return Err(Error::OpSize(a.row_count, a.col_count, c.row_count, c.col_count)); 
+        }
+        if c.is_transposed {
+            return Err(Error::ResTransposition);
+        }
+        if !a.is_transposed {
+            self.backend.min_a_b_for_scalar(&*a.array, b, &*c.array, a.row_count, a.col_count)
+        } else {
+            self.backend.min_at_b_for_scalar(&*a.array, b, &*c.array, a.row_count, a.col_count)
         }
     }
 }
