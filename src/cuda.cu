@@ -1838,4 +1838,112 @@ extern "C" {
       b[m * i + j] = truncf(a[n * j + i]);
     }
   }
+
+  __global__ void max_a_b(const float *a, const float *b, float *c, size_t n, size_t m)
+  {
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
+    if(i < n && j < m) {
+      c[m * i + j] = fmaxf(a[m * i + j], b[m * i + j]);
+    }
+  }
+
+  __global__ void max_at_b(const float *a, const float *b, float *c, size_t n, size_t m)
+  {
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
+    if(i < n && j < m) {
+      c[m * i + j] = fmaxf(a[n * j + i], b[m * i + j]);
+    }
+  }
+
+  __global__ void max_a_bt(const float *a, const float *b, float *c, size_t n, size_t m)
+  {
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
+    if(i < n && j < m) {
+      c[m * i + j] = fmaxf(a[m * i + j], b[n * j + i]);
+    }
+  }
+
+  __global__ void max_at_bt(const float *a, const float *b, float *c, size_t n, size_t m)
+  {
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
+    if(i < n && j < m) {
+      c[m * i + j] = fmaxf(a[n * j + i], b[n * j + i]);
+    }
+  }
+
+  __global__ void max_a_b_for_scalar(const float *a, float b, float *c, size_t n, size_t m)
+  {
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
+    if(i < n && j < m) {
+      c[m * i + j] = fmaxf(a[m * i + j], b);
+    }
+  }
+
+  __global__ void max_at_b_for_scalar(const float *a, float b, float *c, size_t n, size_t m)
+  {
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
+    if(i < n && j < m) {
+      c[m * i + j] = fmaxf(a[n * j + i], b);
+    }
+  }
+
+  __global__ void min_a_b(const float *a, const float *b, float *c, size_t n, size_t m)
+  {
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
+    if(i < n && j < m) {
+      c[m * i + j] = fminf(a[m * i + j], b[m * i + j]);
+    }
+  }
+
+  __global__ void min_at_b(const float *a, const float *b, float *c, size_t n, size_t m)
+  {
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
+    if(i < n && j < m) {
+      c[m * i + j] = fminf(a[n * j + i], b[m * i + j]);
+    }
+  }
+
+  __global__ void min_a_bt(const float *a, const float *b, float *c, size_t n, size_t m)
+  {
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
+    if(i < n && j < m) {
+      c[m * i + j] = fminf(a[m * i + j], b[n * j + i]);
+    }
+  }
+
+  __global__ void min_at_bt(const float *a, const float *b, float *c, size_t n, size_t m)
+  {
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
+    if(i < n && j < m) {
+      c[m * i + j] = fminf(a[n * j + i], b[n * j + i]);
+    }
+  }
+
+  __global__ void min_a_b_for_scalar(const float *a, float b, float *c, size_t n, size_t m)
+  {
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
+    if(i < n && j < m) {
+      c[m * i + j] = fminf(a[m * i + j], b);
+    }
+  }
+
+  __global__ void min_at_b_for_scalar(const float *a, float b, float *c, size_t n, size_t m)
+  {
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
+    if(i < n && j < m) {
+      c[m * i + j] = fminf(a[n * j + i], b);
+    }
+  }
 }

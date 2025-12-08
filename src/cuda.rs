@@ -141,7 +141,19 @@ const KERNELS: &'static [&'static str] = &[
     "round_a",
     "round_at",
     "trunc_a",
-    "trunc_at"
+    "trunc_at",
+    "max_a_b",
+    "max_at_b",
+    "max_a_bt",
+    "max_at_bt",
+    "max_a_b_for_scalar",
+    "max_at_b_for_scalar",
+    "min_a_b",
+    "min_at_b",
+    "min_a_bt",
+    "min_at_bt",
+    "min_a_b_for_scalar",
+    "min_at_b_for_scalar"
 ];
 
 /// A structure of CUDA backend array.
