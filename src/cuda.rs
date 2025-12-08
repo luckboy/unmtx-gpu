@@ -1122,6 +1122,42 @@ impl Backend for CudaBackend
 
     fn trunc_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
     { self.check_and_launch_for_fun("trunc_at", a, b, n, m) }
+
+    fn max_a_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_op("max_a_b", a, b, c, n, m) }
+
+    fn max_at_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_op("max_at_b", a, b, c, n, m) }
+    
+    fn max_a_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_op("max_a_bt", a, b, c, n, m) }
+    
+    fn max_at_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_op("max_at_bt", a, b, c, n, m) }
+
+    fn max_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_scalar("max_a_b_for_scalar", a, b, c, n, m) }
+
+    fn max_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_scalar("max_at_b_for_scalar", a, b, c, n, m) }
+
+    fn min_a_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_op("min_a_b", a, b, c, n, m) }
+
+    fn min_at_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_op("min_at_b", a, b, c, n, m) }
+    
+    fn min_a_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_op("min_a_bt", a, b, c, n, m) }
+    
+    fn min_at_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_op("min_at_bt", a, b, c, n, m) }
+
+    fn min_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_scalar("min_a_b_for_scalar", a, b, c, n, m) }
+
+    fn min_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
+    { self.check_and_launch_for_scalar("min_at_b_for_scalar", a, b, c, n, m) }
 }
 
 #[cfg(test)]
