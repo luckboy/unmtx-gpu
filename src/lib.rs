@@ -1936,6 +1936,22 @@ impl Matrix
 
     /// Calculates maximum values of the matrix elements and the `b` matrix elements
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>max</mi><mo fence="true">(</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>,</mo><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [-2.0, -1.0],
+    ///     [1.0, 2.0]
+    /// ];
+    /// let b = matrix![
+    ///     [2.0, 1.0],
+    ///     [-1.0, -2.0]
+    /// ];
+    /// let c = a.max(&b);
+    /// assert_eq!(vec![2.0, 1.0, 1.0, 2.0], c.elems());
+    /// ```
     pub fn max(&self, b: &Self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1946,6 +1962,18 @@ impl Matrix
 
     /// Calculates maximum values of the matrix elements and the `b` scalar
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>max</mi><mo fence="true">(</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>,</mo><mi>b</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [-2.0, -1.0],
+    ///     [1.0, 2.0]
+    /// ];
+    /// let b = a.maxf(0.0);
+    /// assert_eq!(vec![0.0, 0.0, 1.0, 2.0], b.elems());
+    /// ```
     pub fn maxf(&self, b: f32) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1956,6 +1984,22 @@ impl Matrix
 
     /// Calculates minimum values of the matrix elements and the `b` matrix elements
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>min</mi><mo fence="true">(</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>,</mo><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [-2.0, -1.0],
+    ///     [1.0, 2.0]
+    /// ];
+    /// let b = matrix![
+    ///     [2.0, 1.0],
+    ///     [-1.0, -2.0]
+    /// ];
+    /// let c = a.min(&b);
+    /// assert_eq!(vec![-2.0, -1.0, -1.0, -2.0], c.elems());
+    /// ```
     pub fn min(&self, b: &Self) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -1966,6 +2010,18 @@ impl Matrix
 
     /// Calculates minimum values of the matrix elements and the `b` scalar
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>min</mi><mo fence="true">(</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>,</mo><mi>b</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [-2.0, -1.0],
+    ///     [1.0, 2.0]
+    /// ];
+    /// let b = a.minf(0.0);
+    /// assert_eq!(vec![-2.0, -1.0, 0.0, 0.0], b.elems());
+    /// ```
     pub fn minf(&self, b: f32) -> Self
     {
         let frontend = Frontend::new().unwrap();
@@ -4237,6 +4293,24 @@ impl Frontend
     /// Calculates maximum values of the `a` matrix elements and the `b` matrix elements and then
     /// the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>max</mi><mo fence="true">(</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>,</mo><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [-2.0, -1.0],
+    ///     [1.0, 2.0]
+    /// ];
+    /// let b = matrix![
+    ///     [2.0, 1.0],
+    ///     [-1.0, -2.0]
+    /// ];
+    /// let c = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.max(&a, &b, &c).unwrap();
+    /// assert_eq!(vec![2.0, 1.0, 1.0, 2.0], c.elems());
+    /// ```
     pub fn max(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -4259,6 +4333,20 @@ impl Frontend
     /// Calculates maximum values of the `a` matrix elements and the `b` scalar and then the
     /// result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>max</mi><mo fence="true">(</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>,</mo><mi>b</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [-2.0, -1.0],
+    ///     [1.0, 2.0]
+    /// ];
+    /// let c = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.max_for_scalar(&a, 0.0, &c).unwrap();
+    /// assert_eq!(vec![0.0, 0.0, 1.0, 2.0], c.elems());
+    /// ```
     pub fn max_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
         if a.row_count != c.row_count || a.col_count != c.col_count {
@@ -4277,6 +4365,24 @@ impl Frontend
     /// Calculates minimum values of the `a` matrix elements and the `b` matrix elements and then
     /// the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>min</mi><mo fence="true">(</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>,</mo><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [-2.0, -1.0],
+    ///     [1.0, 2.0]
+    /// ];
+    /// let b = matrix![
+    ///     [2.0, 1.0],
+    ///     [-1.0, -2.0]
+    /// ];
+    /// let c = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.min(&a, &b, &c).unwrap();
+    /// assert_eq!(vec![-2.0, -1.0, -1.0, -2.0], c.elems());
+    /// ```
     pub fn min(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
     {
         if a.row_count != b.row_count || a.col_count != b.col_count {
@@ -4299,6 +4405,20 @@ impl Frontend
     /// Calculates minimum values of the `a` matrix elements and the `b` scalar and then the
     /// result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>min</mi><mo fence="true">(</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>,</mo><mi>b</mi><mo fence="true">)</mo></mrow></math>).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use unmtx_gpu::*;
+    /// let a = matrix![
+    ///     [-2.0, -1.0],
+    ///     [1.0, 2.0]
+    /// ];
+    /// let c = Matrix::new(2, 2);
+    /// let frontend = Frontend::new().unwrap();
+    /// frontend.min_for_scalar(&a, 0.0, &c).unwrap();
+    /// assert_eq!(vec![-2.0, -1.0, 0.0, 0.0], c.elems());
+    /// ```
     pub fn min_for_scalar(&self, a: &Matrix, b: f32, c: &Matrix) -> Result<()>
     {
         if a.row_count != c.row_count || a.col_count != c.col_count {
