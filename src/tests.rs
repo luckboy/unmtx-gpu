@@ -1454,6 +1454,106 @@ fn test_frontend_trunc_calculates_trunc_for_matrix()
 }
 
 #[test]
+fn test_frontend_max_calculates_max_for_matrices()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let (a1, b1) = fixture_a_b_for_common_math_fun(2, 3, 2, 3);
+            match frontend_max_for_a_b(&frontend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => assert_eq!(expected_max_a_b(a1.as_slice(), b1.as_slice(), 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b_for_common_math_fun(3, 2, 2, 3);
+            match frontend_max_for_at_b(&frontend, a2.as_slice(), b2.as_slice(), 2, 3) {
+                Ok(c2) => assert_eq!(expected_max_at_b(a2.as_slice(), b2.as_slice(), 2, 3), c2),
+                Err(_) => assert!(false),
+            }
+            let (a3, b3) = fixture_a_b_for_common_math_fun(2, 3, 3, 2);
+            match frontend_max_for_a_bt(&frontend, a3.as_slice(), b3.as_slice(), 2, 3) {
+                Ok(c3) => assert_eq!(expected_max_a_bt(a3.as_slice(), b3.as_slice(), 2, 3), c3),
+                Err(_) => assert!(false),
+            }
+            let (a4, b4) = fixture_a_b_for_common_math_fun(3, 2, 3, 2);
+            match frontend_max_for_at_bt(&frontend, a4.as_slice(), b4.as_slice(), 2, 3) {
+                Ok(c4) => assert_eq!(expected_max_at_bt(a4.as_slice(), b4.as_slice(), 2, 3), c4),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_frontend_max_for_scalar_calculates_max_for_matrix_and_scalar()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let a1 = fixture_a_for_common_math_fun(2, 3);
+            match frontend_max_for_scalar_and_a_b(&frontend, a1.as_slice(), 0.0, 2, 3) {
+                Ok(c1) => assert_eq!(expected_max_a_b_for_scalar(a1.as_slice(), 0.0, 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(3, 2);
+            match frontend_max_for_scalar_and_at_b(&frontend, a2.as_slice(), 0.0, 2, 3) {
+                Ok(c2) => assert_eq!(expected_max_at_b_for_scalar(a2.as_slice(), 0.0, 2, 3), c2),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_frontend_min_calculates_mim_for_matrices()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let (a1, b1) = fixture_a_b_for_common_math_fun(2, 3, 2, 3);
+            match frontend_min_for_a_b(&frontend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => assert_eq!(expected_min_a_b(a1.as_slice(), b1.as_slice(), 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b_for_common_math_fun(3, 2, 2, 3);
+            match frontend_min_for_at_b(&frontend, a2.as_slice(), b2.as_slice(), 2, 3) {
+                Ok(c2) => assert_eq!(expected_min_at_b(a2.as_slice(), b2.as_slice(), 2, 3), c2),
+                Err(_) => assert!(false),
+            }
+            let (a3, b3) = fixture_a_b_for_common_math_fun(2, 3, 3, 2);
+            match frontend_min_for_a_bt(&frontend, a3.as_slice(), b3.as_slice(), 2, 3) {
+                Ok(c3) => assert_eq!(expected_min_a_bt(a3.as_slice(), b3.as_slice(), 2, 3), c3),
+                Err(_) => assert!(false),
+            }
+            let (a4, b4) = fixture_a_b_for_common_math_fun(3, 2, 3, 2);
+            match frontend_min_for_at_bt(&frontend, a4.as_slice(), b4.as_slice(), 2, 3) {
+                Ok(c4) => assert_eq!(expected_min_at_bt(a4.as_slice(), b4.as_slice(), 2, 3), c4),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
+fn test_frontend_min_for_scalar_calculates_min_for_matrix_and_scalar()
+{
+    match Frontend::new() {
+        Ok(frontend) => {
+            let a1 = fixture_a_for_common_math_fun(2, 3);
+            match frontend_min_for_scalar_and_a_b(&frontend, a1.as_slice(), 0.0, 2, 3) {
+                Ok(c1) => assert_eq!(expected_min_a_b_for_scalar(a1.as_slice(), 0.0, 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(3, 2);
+            match frontend_min_for_scalar_and_at_b(&frontend, a2.as_slice(), 0.0, 2, 3) {
+                Ok(c2) => assert_eq!(expected_min_at_b_for_scalar(a2.as_slice(), 0.0, 2, 3), c2),
+                Err(_) => assert!(false),
+            }
+        },
+        Err(_) => assert!(false),
+    }
+}
+
+#[test]
 fn test_matrix_creates_matrix()
 {
     let a = matrix![
@@ -1860,6 +1960,7 @@ fn test_matrix_powm_calculates_pow_for_matrices()
     let b = Matrix::new_with_elems(2, 3, b_elems.as_slice());
     let expected_c_elems = expected_pow_a_b(a_elems.as_slice(), b_elems.as_slice(), 2, 3);
     let c_elems = a.powm(&b).elems();
+    assert_eq!(expected_c_elems.len(), c_elems.len());
     for i in 0usize..(2usize * 3usize) {
         assert!((expected_c_elems[i] - c_elems[i]).abs() < 0.001);
     }
@@ -2041,6 +2142,7 @@ fn test_matrix_atan2_calculates_atan2_for_matrices()
     let b = Matrix::new_with_elems(2, 3, b_elems.as_slice());
     let expected_c_elems = expected_atan2_a_b(a_elems.as_slice(), b_elems.as_slice(), 2, 3);
     let c_elems = a.atan2(&b).elems();
+    assert_eq!(expected_c_elems.len(), c_elems.len());
     for i in 0usize..(2usize * 3usize) {
         assert!((expected_c_elems[i] - c_elems[i]).abs() < 0.001);
     }
@@ -2182,4 +2284,38 @@ fn test_matrix_trunc_calculates_trunc_for_matrix()
     let a_elems = fixture_a_for_rounding(2, 3);
     let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
     assert_eq!(expected_trunc_a(a_elems.as_slice(), 2, 3), a.trunc().elems());
+}
+
+#[test]
+fn test_matrix_max_calculates_max_for_matrices()
+{
+    let (a_elems, b_elems) = fixture_a_b_for_common_math_fun(2, 3, 2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let b = Matrix::new_with_elems(2, 3, b_elems.as_slice());
+    assert_eq!(expected_max_a_b(a_elems.as_slice(), b_elems.as_slice(), 2, 3), a.max(&b).elems());
+}
+
+#[test]
+fn test_matrix_maxf_calculates_max_for_matrix_and_scalar()
+{
+    let a_elems = fixture_a_for_common_math_fun(2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    assert_eq!(expected_max_a_b_for_scalar(a_elems.as_slice(), 0.0, 2, 3), a.maxf(0.0).elems());
+}
+
+#[test]
+fn test_matrix_min_calculates_min_for_matrices()
+{
+    let (a_elems, b_elems) = fixture_a_b_for_common_math_fun(2, 3, 2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    let b = Matrix::new_with_elems(2, 3, b_elems.as_slice());
+    assert_eq!(expected_min_a_b(a_elems.as_slice(), b_elems.as_slice(), 2, 3), a.min(&b).elems());
+}
+
+#[test]
+fn test_matrix_minf_calculates_min_for_matrix_and_scalar()
+{
+    let a_elems = fixture_a_for_common_math_fun(2, 3);
+    let a = Matrix::new_with_elems(2, 3, a_elems.as_slice());
+    assert_eq!(expected_min_a_b_for_scalar(a_elems.as_slice(), 0.0, 2, 3), a.minf(0.0).elems());
 }
