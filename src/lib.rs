@@ -578,62 +578,62 @@ pub trait Backend
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi mathvariant="bold">B</mi><mo>=</mo><mi>trunc</mi><mo fence="true">(</mo><msup><mi mathvariant="bold">A</mi><mi mathvariant="normal">T</mi></msup><mo fence="true">)</mo></mrow></math>).
     fn trunc_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>;    
 
-    /// Calculates maximum values of the `a` matrix elements and the `b` matrix elements and then
+    /// Finds maximum values between the `a` matrix elements and the `b` matrix elements and then
     /// the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>max</mi><mo fence="true">(</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>,</mo><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo fence="true">)</mo></mrow></math>).
     fn max_a_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates maximum values of the transposed `a` matrix elements and the `b` matrix
+    /// Finds maximum values between the transposed `a` matrix elements and the `b` matrix
     /// elements and then the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>max</mi><mo fence="true">(</mo><msub><mi>a</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub><mo>,</mo><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo fence="true">)</mo></mrow></math>).
     fn max_at_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
     
-    /// Calculates maximum values of the `a` matrix elements and the transposed `b` matrix
+    /// Finds maximum values between the `a` matrix elements and the transposed `b` matrix
     /// elements and then the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>max</mi><mo fence="true">(</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>,</mo><msub><mi>b</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub><mo fence="true">)</mo></mrow></math>).
     fn max_a_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
     
-    /// Calculates maximum values of the transposed `a` matrix elements and the transposed `b`
+    /// Finds maximum values between the transposed `a` matrix elements and the transposed `b`
     /// matrix elements and then the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>max</mi><mo fence="true">(</mo><msub><mi>a</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub><mo>,</mo><msub><mi>b</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub><mo fence="true">)</mo></mrow></math>).
     fn max_at_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates maximum values of the `a` matrix elements and the `b` scalar and then the
+    /// Finds maximum values between the `a` matrix elements and the `b` scalar and then the
     /// result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>max</mi><mo fence="true">(</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>,</mo><mi>b</mi><mo fence="true">)</mo></mrow></math>).
     fn max_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates maximum values of the transposed `a` matrix elements and the `b` scalar and
+    /// Finds maximum values between the transposed `a` matrix elements and the `b` scalar and
     /// then the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>max</mi><mo fence="true">(</mo><msub><mi>a</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub><mo>,</mo><mi>b</mi><mo fence="true">)</mo></mrow></math>).
     fn max_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates minimum values of the `a` matrix elements and the `b` matrix elements and then
+    /// Finds minimum values between the `a` matrix elements and the `b` matrix elements and then
     /// the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>min</mi><mo fence="true">(</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>,</mo><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo fence="true">)</mo></mrow></math>).
     fn min_a_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates minimum values of the transposed `a` matrix elements and the `b` matrix
+    /// Finds minimum values between the transposed `a` matrix elements and the `b` matrix
     /// elements and then the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>min</mi><mo fence="true">(</mo><msub><mi>a</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub><mo>,</mo><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo fence="true">)</mo></mrow></math>).
     fn min_at_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
     
-    /// Calculates minimum values of the `a` matrix elements and the transposed `b` matrix
+    /// Finds minimum values between the `a` matrix elements and the transposed `b` matrix
     /// elements and then the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>min</mi><mo fence="true">(</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>,</mo><msub><mi>b</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub><mo fence="true">)</mo></mrow></math>).
     fn min_a_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
     
-    /// Calculates minimum values of the transposed `a` matrix elements and the transposed `b`
+    /// Finds minimum values between the transposed `a` matrix elements and the transposed `b`
     /// matrix elements and then the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>min</mi><mo fence="true">(</mo><msub><mi>a</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub><mo>,</mo><msub><mi>b</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub><mo fence="true">)</mo></mrow></math>).
     fn min_at_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates minimum values of the `a` matrix elements and the `b` scalar and then the
+    /// Finds minimum values between the `a` matrix elements and the `b` scalar and then the
     /// result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>min</mi><mo fence="true">(</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>,</mo><mi>b</mi><mo fence="true">)</mo></mrow></math>).
     fn min_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
 
-    /// Calculates minimum values of the transposed `a` matrix elements and the `b` scalar and
+    /// Finds minimum values between the transposed `a` matrix elements and the `b` scalar and
     /// then the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>min</mi><mo fence="true">(</mo><msub><mi>a</mi><mrow><mi>j</mi><mi>i</mi></mrow></msub><mo>,</mo><mi>b</mi><mo fence="true">)</mo></mrow></math>).
     fn min_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>;
@@ -1934,7 +1934,7 @@ impl Matrix
         res
     }
 
-    /// Calculates maximum values of the matrix elements and the `b` matrix elements
+    /// Finds maximum values between the matrix elements and the `b` matrix elements
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>max</mi><mo fence="true">(</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>,</mo><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo fence="true">)</mo></mrow></math>).
     ///
     /// # Examples
@@ -1960,7 +1960,7 @@ impl Matrix
         res
     }
 
-    /// Calculates maximum values of the matrix elements and the `b` scalar
+    /// Finds maximum values between the matrix elements and the `b` scalar
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>max</mi><mo fence="true">(</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>,</mo><mi>b</mi><mo fence="true">)</mo></mrow></math>).
     ///
     /// # Examples
@@ -1982,7 +1982,7 @@ impl Matrix
         res
     }
 
-    /// Calculates minimum values of the matrix elements and the `b` matrix elements
+    /// Finds minimum values between the matrix elements and the `b` matrix elements
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>min</mi><mo fence="true">(</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>,</mo><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo fence="true">)</mo></mrow></math>).
     ///
     /// # Examples
@@ -2008,7 +2008,7 @@ impl Matrix
         res
     }
 
-    /// Calculates minimum values of the matrix elements and the `b` scalar
+    /// Finds minimum values between the matrix elements and the `b` scalar
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mi>min</mi><mo fence="true">(</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>,</mo><mi>b</mi><mo fence="true">)</mo></mrow></math>).
     ///
     /// # Examples
@@ -4290,7 +4290,7 @@ impl Frontend
         }
     }
 
-    /// Calculates maximum values of the `a` matrix elements and the `b` matrix elements and then
+    /// Finds maximum values between the `a` matrix elements and the `b` matrix elements and then
     /// the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>max</mi><mo fence="true">(</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>,</mo><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo fence="true">)</mo></mrow></math>).
     ///
@@ -4330,7 +4330,7 @@ impl Frontend
         }
     }
 
-    /// Calculates maximum values of the `a` matrix elements and the `b` scalar and then the
+    /// Finds maximum values between the `a` matrix elements and the `b` scalar and then the
     /// result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>max</mi><mo fence="true">(</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>,</mo><mi>b</mi><mo fence="true">)</mo></mrow></math>).
     ///
@@ -4362,7 +4362,7 @@ impl Frontend
         }
     }
 
-    /// Calculates minimum values of the `a` matrix elements and the `b` matrix elements and then
+    /// Finds minimum values between the `a` matrix elements and the `b` matrix elements and then
     /// the result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>min</mi><mo fence="true">(</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>,</mo><msub><mi>b</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo fence="true">)</mo></mrow></math>).
     ///
@@ -4402,7 +4402,7 @@ impl Frontend
         }
     }
 
-    /// Calculates minimum values of the `a` matrix elements and the `b` scalar and then the
+    /// Finds minimum values between the `a` matrix elements and the `b` scalar and then the
     /// result is in the `c` matrix
     /// (<math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><msub><mi>c</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo><mi>min</mi><mo fence="true">(</mo><msub><mi>a</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>,</mo><mi>b</mi><mo fence="true">)</mo></mrow></math>).
     ///
