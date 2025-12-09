@@ -1946,11 +1946,11 @@ impl Matrix
     ///     [1.0, 2.0]
     /// ];
     /// let b = matrix![
-    ///     [2.0, 1.0],
-    ///     [-1.0, -2.0]
+    ///     [4.0, 2.0],
+    ///     [-2.0, -4.0]
     /// ];
     /// let c = a.max(&b);
-    /// assert_eq!(vec![2.0, 1.0, 1.0, 2.0], c.elems());
+    /// assert_eq!(vec![4.0, 2.0, 1.0, 2.0], c.elems());
     /// ```
     pub fn max(&self, b: &Self) -> Self
     {
@@ -1994,11 +1994,11 @@ impl Matrix
     ///     [1.0, 2.0]
     /// ];
     /// let b = matrix![
-    ///     [2.0, 1.0],
-    ///     [-1.0, -2.0]
+    ///     [4.0, 2.0],
+    ///     [-2.0, -4.0]
     /// ];
     /// let c = a.min(&b);
-    /// assert_eq!(vec![-2.0, -1.0, -1.0, -2.0], c.elems());
+    /// assert_eq!(vec![-2.0, -1.0, -2.0, -4.0], c.elems());
     /// ```
     pub fn min(&self, b: &Self) -> Self
     {
@@ -4303,13 +4303,13 @@ impl Frontend
     ///     [1.0, 2.0]
     /// ];
     /// let b = matrix![
-    ///     [2.0, 1.0],
-    ///     [-1.0, -2.0]
+    ///     [4.0, 2.0],
+    ///     [-2.0, -4.0]
     /// ];
     /// let c = Matrix::new(2, 2);
     /// let frontend = Frontend::new().unwrap();
     /// frontend.max(&a, &b, &c).unwrap();
-    /// assert_eq!(vec![2.0, 1.0, 1.0, 2.0], c.elems());
+    /// assert_eq!(vec![4.0, 2.0, 1.0, 2.0], c.elems());
     /// ```
     pub fn max(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
     {
@@ -4375,13 +4375,13 @@ impl Frontend
     ///     [1.0, 2.0]
     /// ];
     /// let b = matrix![
-    ///     [2.0, 1.0],
-    ///     [-1.0, -2.0]
+    ///     [4.0, 2.0],
+    ///     [-2.0, -4.0]
     /// ];
     /// let c = Matrix::new(2, 2);
     /// let frontend = Frontend::new().unwrap();
     /// frontend.min(&a, &b, &c).unwrap();
-    /// assert_eq!(vec![-2.0, -1.0, -1.0, -2.0], c.elems());
+    /// assert_eq!(vec![-2.0, -1.0, -2.0, -4.0], c.elems());
     /// ```
     pub fn min(&self, a: &Matrix, b: &Matrix, c: &Matrix) -> Result<()>
     {
