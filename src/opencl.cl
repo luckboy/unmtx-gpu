@@ -303,6 +303,7 @@ __kernel void mul_at_b(__global const float *a, __global const float *b, __globa
     if(i + 1 < n2 && k + tj < l2) {
       as[mthread_size * (bi + 1) + tj] = a[n2 * (k + tj) + i + 1];
     }
+    as[mthread_size * (bi + 2) + tj] = 0.0f;
     if(i + 2 < n2 && k + tj < l2) {
       as[mthread_size * (bi + 2) + tj] = a[n2 * (k + tj) + i + 2];
     }
@@ -453,6 +454,7 @@ __kernel void mul_a_bt(__global const float *a, __global const float *b, __globa
     if(i + 1 < n2 && k + tj < l2) {
       as[mthread_size * (bi + 1) + tj] = a[l2 * (i + 1) + k + tj];
     }
+    as[mthread_size * (bi + 2) + tj] = 0.0f;
     if(i + 2 < n2 && k + tj < l2) {
       as[mthread_size * (bi + 2) + tj] = a[l2 * (i + 2) + k + tj];
     }
