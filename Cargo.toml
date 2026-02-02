@@ -1,6 +1,6 @@
 [package]
 name = "unmtx-gpu"
-version = "0.1.7"
+version = "0.1.8"
 authors = ["Łukasz Szpakowski <luckboy@vp.pl>"]
 edition = "2018"
 license = "MPL-2.0"
