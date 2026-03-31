@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2025 Łukasz Szpakowski
+// Copyright (c) 2025-2026 Łukasz Szpakowski
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -32,7 +32,6 @@ pub use opencl3::platform::get_platforms;
 use cl3::info_type::InfoType;
 use opencl3::command_queue::CommandQueue;
 use opencl3::device::CL_DEVICE_MAX_WORK_GROUP_SIZE;
-use opencl3::device::CL_DEVICE_PREFERRED_WORK_GROUP_SIZE_MULTIPLE;
 use opencl3::device::get_device_info;
 use opencl3::event::Event;
 use opencl3::kernel::ExecuteKernel;
@@ -132,10 +131,7 @@ impl ClBackend
             Ok(InfoType::Size(tmp_group_size_for_1d)) => tmp_group_size_for_1d,
             _ => return Err(Error::InvalidDeviceInfoType),
         };
-        let group_size_for_2d = match get_device_info(context.default_device(), CL_DEVICE_PREFERRED_WORK_GROUP_SIZE_MULTIPLE) {
-            Ok(InfoType::Size(tmp_group_size_for_2d)) => tmp_group_size_for_2d,
-            _ => return Err(Error::InvalidDeviceInfoType),
-        };
+        let group_size_for_2d = (group_size_for_1d as f64).sqrt().floor() as usize;
         let inner = ClInnerBackend {
             context,
             command_queue,
