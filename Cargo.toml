@@ -17,7 +17,7 @@ features = ["opencl", "cuda", "cuda-12060"]
 
 [dependencies]
 cl3 = { version = "0.12.0", optional = true }
-cudarc = { version = "0.12.1", optional = true }
+cudarc = { version = "0.19.2", optional = true }
 opencl3 = { version = "0.11.0", optional = true }
 
 [features]
@@ -28,6 +28,10 @@ default_mma = []
 opencl = ["dep:opencl3", "dep:cl3"]
 cuda = ["dep:cudarc"]
 cuda-version-from-build-system = ["cuda", "cudarc/cuda-version-from-build-system"]
+cuda-13010 = ["cuda", "cudarc/cuda-13010"]
+cuda-13000 = ["cuda", "cudarc/cuda-13000"]
+cuda-12090 = ["cuda", "cudarc/cuda-12090"]
+cuda-12080 = ["cuda", "cudarc/cuda-12080"]
 cuda-12060 = ["cuda", "cudarc/cuda-12060"]
 cuda-12050 = ["cuda", "cudarc/cuda-12050"]
 cuda-12040 = ["cuda", "cudarc/cuda-12040"]

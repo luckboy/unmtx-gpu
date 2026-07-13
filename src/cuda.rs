@@ -8,7 +8,6 @@
 //! A module that contains a CUDA backend.
 use std::default::Default;
 use std::ffi::c_int;
-use std::ffi::c_void;
 use std::sync::Arc;
 use std::sync::Mutex;
 use crate::Backend;
@@ -24,137 +23,20 @@ use cudarc::cublas::result::sgemm;
 use cudarc::cublas::sys::cublasOperation_t;
 use cudarc::cublas::CudaBlas;
 use cudarc::driver::sys::CUdeviceptr;
-use cudarc::driver::CudaDevice;
+use cudarc::driver::CudaContext;
+use cudarc::driver::CudaModule;
 use cudarc::driver::CudaFunction;
 use cudarc::driver::CudaSlice;
-use cudarc::driver::DeviceRepr;
+use cudarc::driver::CudaStream;
 use cudarc::driver::DevicePtr;
 use cudarc::driver::DevicePtrMut;
-use cudarc::driver::LaunchAsync;
 use cudarc::driver::LaunchConfig;
+use cudarc::driver::PushKernelArg;
 use cudarc::nvrtc::CompileError;
 use cudarc::nvrtc::CompileOptions;
 use cudarc::nvrtc::compile_ptx_with_opts;
 
 const SOURCE: &'static str = include_str!("cuda.cu");
-
-const KERNELS: &'static [&'static str] = &[
-    "transpose_a",
-    "add_a_b",
-    "add_at_b",
-    "add_a_bt",
-    "add_at_bt",
-    "sub_a_b",
-    "sub_at_b",
-    "sub_a_bt",
-    "sub_at_bt",
-    "mul_a_b",
-    "mul_at_b",
-    "mul_a_bt",
-    "mul_at_bt",
-    "mul_a_b_for_elems",
-    "mul_at_b_for_elems",
-    "mul_a_bt_for_elems",
-    "mul_at_bt_for_elems",
-    "div_a_b_for_elems",
-    "div_at_b_for_elems",
-    "div_a_bt_for_elems",
-    "div_at_bt_for_elems",
-    "add_a_b_for_scalar",
-    "add_at_b_for_scalar",
-    "sub_a_b_for_scalar",
-    "sub_at_b_for_scalar",
-    "rsub_a_b_for_scalar",
-    "rsub_at_b_for_scalar",
-    "mul_a_b_for_scalar",
-    "mul_at_b_for_scalar",
-    "div_a_b_for_scalar",
-    "div_at_b_for_scalar",
-    "rdiv_a_b_for_scalar",
-    "rdiv_at_b_for_scalar",
-    "sigmoid_a",
-    "sigmoid_at",
-    "tanh_a",
-    "tanh_at",
-    "swish_a",
-    "swish_at",
-    "softmax_a",
-    "softmax_at",
-    "sqrt_a",
-    "sqrt_at",
-    "repeat_col_a",
-    "repeat_row_a",
-    "abs_a",
-    "abs_at",
-    "pow_a_b",
-    "pow_at_b",
-    "pow_a_bt",
-    "pow_at_bt",
-    "pow_a_b_for_scalar",
-    "pow_at_b_for_scalar",
-    "rpow_a_b_for_scalar",
-    "rpow_at_b_for_scalar",
-    "exp_a",
-    "exp_at",
-    "ln_a",
-    "ln_at",
-    "log2_a",
-    "log2_at",
-    "log10_a",
-    "log10_at",
-    "sin_a",
-    "sin_at",
-    "cos_a",
-    "cos_at",
-    "tan_a",
-    "tan_at",
-    "asin_a",
-    "asin_at",
-    "acos_a",
-    "acos_at",
-    "atan_a",
-    "atan_at",
-    "atan2_a_b",
-    "atan2_at_b",
-    "atan2_a_bt",
-    "atan2_at_bt",
-    "atan2_a_b_for_scalar",
-    "atan2_at_b_for_scalar",
-    "ratan2_a_b_for_scalar",
-    "ratan2_at_b_for_scalar",
-    "sinh_a",
-    "sinh_at",
-    "cosh_a",
-    "cosh_at",
-    "asinh_a",
-    "asinh_at",
-    "acosh_a",
-    "acosh_at",
-    "atanh_a",
-    "atanh_at",
-    "signum_a",
-    "signum_at",
-    "ceil_a",
-    "ceil_at",
-    "floor_a",
-    "floor_at",
-    "round_a",
-    "round_at",
-    "trunc_a",
-    "trunc_at",
-    "max_a_b",
-    "max_at_b",
-    "max_a_bt",
-    "max_at_bt",
-    "max_a_b_for_scalar",
-    "max_at_b_for_scalar",
-    "min_a_b",
-    "min_at_b",
-    "min_a_bt",
-    "min_at_bt",
-    "min_a_b_for_scalar",
-    "min_at_b_for_scalar"
-];
 
 /// A structure of CUDA backend array.
 ///
@@ -168,7 +50,9 @@ pub struct CudaBackendArray
 
 struct CudaInnerBackend
 {
-    device: Arc<CudaDevice>,
+    context: Arc<CudaContext>,
+    stream: Arc<CudaStream>,
+    module: Arc<CudaModule>,
     cublas: Option<CudaBlas>,
 }
 
@@ -247,7 +131,7 @@ impl CudaBackend
     /// - `is_mma` - use the mma instruction to multiplication of matrices
     pub fn new_with_ordinal_and_flags(ordinal: usize, is_cublas: bool, is_mma: bool) -> Result<CudaBackend>
     {
-        let device = match CudaDevice::new(ordinal) {
+        let context = match CudaContext::new(ordinal) {
             Ok(tmp_device) => tmp_device,
             Err(err) => return Err(Error::Cuda(err)),
         };
@@ -261,19 +145,20 @@ impl CudaBackend
             Err(CompileError::CompileError { log, .. }) => return Err(Error::Compilation(log.as_c_str().to_string_lossy().into_owned())),
             Err(err) => return Err(Error::Compilation(format!("{}", err))),
         };
-        match device.load_ptx(ptx, "unmtx_gpu", KERNELS) {
-            Ok(()) => (),
+        let module = match context.load_module(ptx) {
+            Ok(module) => module,
             Err(err) => return Err(Error::Cuda(err)),
-        }
+        };
+        let stream = context.default_stream();
         let cublas = if is_cublas {
-            match CudaBlas::new(device.clone()) {
+            match CudaBlas::new(stream.clone()) {
                 Ok(tmp_cublas) => Some(tmp_cublas),
                 Err(err) => return Err(Error::Cublas(err)),
             }
         } else {
             None
         };
-        Ok(CudaBackend { inner: Mutex::new(CudaInnerBackend { device, cublas, }), has_cublas: is_cublas, has_mma: is_mma, })
+        Ok(CudaBackend { inner: Mutex::new(CudaInnerBackend { context, stream, module, cublas, }), has_cublas: is_cublas, has_mma: is_mma, })
     }
     
     pub fn has_cublas(&self) -> bool
@@ -281,26 +166,29 @@ impl CudaBackend
     
     fn check_and_launch2<F, G>(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, f: F, g: G) -> Result<()>
         where F: FnOnce(&CudaBackendArray, &CudaBackendArray) -> Result<()>,
-            G: FnOnce(&CudaInnerBackend, CudaFunction, *mut c_void, *mut c_void) -> Result<()>
+            G: FnOnce(&CudaInnerBackend, CudaFunction, CUdeviceptr, CUdeviceptr) -> Result<()>
     {
         #[allow(unreachable_patterns)]
         match (a, b) {
             (BackendArray::Cuda(a2), BackendArray::Cuda(b2)) => {
                 f(a2, b2)?;
                 let inner_g = mutex_lock(&self.inner)?;
-                let kernel = match inner_g.device.get_func("unmtx_gpu", kernel_name) {
-                    Some(tmp_kernel) => tmp_kernel,
-                    None => return Err(Error::NoKernel(String::from(kernel_name))),
+                let kernel = match inner_g.module.load_function(kernel_name) {
+                    Ok(tmp_kernel) => tmp_kernel,
+                    Err(_) => return Err(Error::NoKernel(String::from(kernel_name))),
                 };
                 if !Arc::ptr_eq(&a2.slice, &b2.slice) {
                     let a_slice_g = mutex_lock(&a2.slice)?;
                     let mut b_slice_g = mutex_lock(&b2.slice)?;
-                    g(&*inner_g, kernel, (&(*a_slice_g)).as_kernel_param(), (&mut (*b_slice_g)).as_kernel_param())?;
+                    let a_device_ptr = a_slice_g.device_ptr(&inner_g.stream).0;
+                    let b_device_ptr = b_slice_g.device_ptr_mut(&inner_g.stream).0;
+                    g(&*inner_g, kernel, a_device_ptr, b_device_ptr)?;
                 } else {
                     let mut a_slice_g = mutex_lock(&a2.slice)?;
-                    g(&*inner_g, kernel, (&mut (*a_slice_g)).as_kernel_param(), (&mut (*a_slice_g)).as_kernel_param())?;
+                    let a_device_ptr = a_slice_g.device_ptr_mut(&inner_g.stream).0;
+                    g(&*inner_g, kernel, a_device_ptr, a_device_ptr)?;
                 }
-                match inner_g.device.synchronize() {
+                match inner_g.context.synchronize() {
                     Ok(()) => (),
                     Err(err) => return Err(Error::Cuda(err)),
                 }
@@ -312,45 +200,55 @@ impl CudaBackend
 
     fn check_and_launch3<F, G>(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, c: &BackendArray, f: F, g: G) -> Result<()>
         where F: FnOnce(&CudaBackendArray, &CudaBackendArray, &CudaBackendArray) -> Result<()>,
-            G: FnOnce(&CudaInnerBackend, CudaFunction, *mut c_void, *mut c_void, *mut c_void) -> Result<()>
+            G: FnOnce(&CudaInnerBackend, CudaFunction, CUdeviceptr, CUdeviceptr, CUdeviceptr) -> Result<()>
     {
         #[allow(unreachable_patterns)]
         match (a, b, c) {
             (BackendArray::Cuda(a2), BackendArray::Cuda(b2), BackendArray::Cuda(c2)) => {
                 f(a2, b2, c2)?;
                 let inner_g = mutex_lock(&self.inner)?;
-                let kernel = match inner_g.device.get_func("unmtx_gpu", kernel_name) {
-                    Some(tmp_kernel) => tmp_kernel,
-                    None => return Err(Error::NoKernel(String::from(kernel_name))),
+                let kernel = match inner_g.module.load_function(kernel_name) {
+                    Ok(tmp_kernel) => tmp_kernel,
+                    Err(_) => return Err(Error::NoKernel(String::from(kernel_name))),
                 };
                 match (Arc::ptr_eq(&a2.slice, &b2.slice), Arc::ptr_eq(&a2.slice, &c2.slice), Arc::ptr_eq(&b2.slice, &c2.slice)) {
                     (false, false, false) => {
                         let a_slice_g = mutex_lock(&a2.slice)?;
                         let b_slice_g = mutex_lock(&b2.slice)?;
                         let mut c_slice_g = mutex_lock(&c2.slice)?;
-                        g(&*inner_g, kernel, (&(*a_slice_g)).as_kernel_param(), (&(*b_slice_g)).as_kernel_param(), (&mut (*c_slice_g)).as_kernel_param())?
+                        let a_device_ptr = a_slice_g.device_ptr(&inner_g.stream).0;
+                        let b_device_ptr = b_slice_g.device_ptr(&inner_g.stream).0;
+                        let c_device_ptr = c_slice_g.device_ptr_mut(&inner_g.stream).0;
+                        g(&*inner_g, kernel, a_device_ptr, b_device_ptr, c_device_ptr)?
                     },
                     (true, false, false) => {
                         let a_slice_g = mutex_lock(&a2.slice)?;
                         let mut c_slice_g = mutex_lock(&c2.slice)?;
-                        g(&*inner_g, kernel, (&(*a_slice_g)).as_kernel_param(), (&(*a_slice_g)).as_kernel_param(), (&mut (*c_slice_g)).as_kernel_param())?
+                        let a_device_ptr = a_slice_g.device_ptr(&inner_g.stream).0;
+                        let c_device_ptr = c_slice_g.device_ptr_mut(&inner_g.stream).0;
+                        g(&*inner_g, kernel, a_device_ptr, a_device_ptr, c_device_ptr)?
                     },
                     (false, true, false) => {
                         let mut a_slice_g = mutex_lock(&a2.slice)?;
                         let b_slice_g = mutex_lock(&b2.slice)?;
-                        g(&*inner_g, kernel, (&(*a_slice_g)).as_kernel_param(), (&(*b_slice_g)).as_kernel_param(), (&mut (*a_slice_g)).as_kernel_param())?
+                        let a_device_ptr = a_slice_g.device_ptr_mut(&inner_g.stream).0;
+                        let b_device_ptr = b_slice_g.device_ptr(&inner_g.stream).0;
+                        g(&*inner_g, kernel, a_device_ptr, b_device_ptr, a_device_ptr)?
                     },
                     (false, false, true) => {
                         let a_slice_g = mutex_lock(&a2.slice)?;
                         let mut b_slice_g = mutex_lock(&b2.slice)?;
-                        g(&*inner_g, kernel, (&(*a_slice_g)).as_kernel_param(), (&mut (*b_slice_g)).as_kernel_param(), (&mut (*b_slice_g)).as_kernel_param())?
+                        let a_device_ptr = a_slice_g.device_ptr(&inner_g.stream).0;
+                        let b_device_ptr = b_slice_g.device_ptr_mut(&inner_g.stream).0;
+                        g(&*inner_g, kernel, a_device_ptr, b_device_ptr, b_device_ptr)?
                     },
                     _ => {
                         let mut a_slice_g = mutex_lock(&a2.slice)?;
-                        g(&*inner_g, kernel, (&mut (*a_slice_g)).as_kernel_param(), (&mut (*a_slice_g)).as_kernel_param(), (&mut (*a_slice_g)).as_kernel_param())?
+                        let a_device_ptr = a_slice_g.device_ptr_mut(&inner_g.stream).0;
+                        g(&*inner_g, kernel, a_device_ptr, a_device_ptr, a_device_ptr)?
                     },
                 }
-                match inner_g.device.synchronize() {
+                match inner_g.context.synchronize() {
                     Ok(()) => (),
                     Err(err) => return Err(Error::Cuda(err)),
                 }
@@ -374,39 +272,39 @@ impl CudaBackend
                         let a_slice_g = mutex_lock(&a2.slice)?;
                         let b_slice_g = mutex_lock(&b2.slice)?;
                         let mut c_slice_g = mutex_lock(&c2.slice)?;
-                        let a_device_ptr = *(&(*a_slice_g)).device_ptr();
-                        let b_device_ptr = *(&(*b_slice_g)).device_ptr();
-                        let c_device_ptr = *(&mut (*c_slice_g)).device_ptr_mut();
+                        let a_device_ptr = a_slice_g.device_ptr(&inner_g.stream).0;
+                        let b_device_ptr = b_slice_g.device_ptr(&inner_g.stream).0;
+                        let c_device_ptr = c_slice_g.device_ptr_mut(&inner_g.stream).0;
                         g(&*inner_g, a_device_ptr, b_device_ptr, c_device_ptr)?
                     },
                     (true, false, false) => {
                         let a_slice_g = mutex_lock(&a2.slice)?;
                         let mut c_slice_g = mutex_lock(&c2.slice)?;
-                        let a_device_ptr = *(&(*a_slice_g)).device_ptr();
-                        let c_device_ptr = *(&mut (*c_slice_g)).device_ptr_mut();
+                        let a_device_ptr = a_slice_g.device_ptr(&inner_g.stream).0;
+                        let c_device_ptr = c_slice_g.device_ptr_mut(&inner_g.stream).0;
                         g(&*inner_g, a_device_ptr, a_device_ptr, c_device_ptr)?
                     },
                     (false, true, false) => {
                         let mut a_slice_g = mutex_lock(&a2.slice)?;
                         let b_slice_g = mutex_lock(&b2.slice)?;
-                        let a_device_ptr = *(&mut (*a_slice_g)).device_ptr_mut();
-                        let b_device_ptr = *(&(*b_slice_g)).device_ptr();
+                        let a_device_ptr = a_slice_g.device_ptr_mut(&inner_g.stream).0;
+                        let b_device_ptr = b_slice_g.device_ptr(&inner_g.stream).0;
                         g(&*inner_g, a_device_ptr, b_device_ptr, a_device_ptr)?
                     },
                     (false, false, true) => {
                         let a_slice_g = mutex_lock(&a2.slice)?;
                         let mut b_slice_g = mutex_lock(&b2.slice)?;
-                        let a_device_ptr = *(&(*a_slice_g)).device_ptr();
-                        let b_device_ptr = *(&mut (*b_slice_g)).device_ptr_mut();
+                        let a_device_ptr = a_slice_g.device_ptr(&inner_g.stream).0;
+                        let b_device_ptr = b_slice_g.device_ptr_mut(&inner_g.stream).0;
                         g(&*inner_g, a_device_ptr, b_device_ptr, b_device_ptr)?
                     },
                     _ => {
                         let mut a_slice_g = mutex_lock(&a2.slice)?;
-                        let a_device_ptr = *(&mut (*a_slice_g)).device_ptr_mut();
+                        let a_device_ptr = a_slice_g.device_ptr_mut(&inner_g.stream).0;
                         g(&*inner_g, a_device_ptr, a_device_ptr, a_device_ptr)?
                     },
                 }
-                match inner_g.device.synchronize() {
+                match inner_g.context.synchronize() {
                     Ok(()) => (),
                     Err(err) => return Err(Error::Cuda(err)),
                 }
@@ -427,17 +325,16 @@ impl CudaBackend
                     return Err(Error::BackendArrayElemCount(b2.len, n * m));
                 }
                 Ok(())
-        }, |_, kernel, a_param, b_param| {
+        }, |inner_g, kernel, a_param, b_param| {
                 let config = preferred_launch_config(n, m, false, is_mma);
-                let mut params = vec![
-                    a_param,
-                    b_param,
-                    n.as_kernel_param(),
-                    m.as_kernel_param()
-                ];
+                let mut launch_args = inner_g.stream.launch_builder(&kernel);
+                launch_args.arg(&a_param)
+                    .arg(&b_param)
+                    .arg(&n)
+                    .arg(&m);
                 unsafe {
-                    match kernel.launch(config, &mut params) {
-                        Ok(()) => Ok(()),
+                    match launch_args.launch(config) {
+                        Ok(_) => Ok(()),
                         Err(err) => Err(Error::Cuda(err)),
                     }
                 }
@@ -458,18 +355,17 @@ impl CudaBackend
                     return Err(Error::BackendArrayElemCount(c2.len, n * m));
                 }
                 Ok(())
-        }, |_, kernel, a_param, b_param, c_param| {
+        }, |inner_g, kernel, a_param, b_param, c_param| {
                 let config = preferred_launch_config(n, m, false, is_mma);
-                let mut params = vec![
-                    a_param,
-                    b_param,
-                    c_param,
-                    n.as_kernel_param(),
-                    m.as_kernel_param()
-                ];
+                let mut launch_args = inner_g.stream.launch_builder(&kernel);
+                launch_args.arg(&a_param)
+                    .arg(&b_param)
+                    .arg(&c_param)
+                    .arg(&n)
+                    .arg(&m);
                 unsafe {
-                    match kernel.launch(config, &mut params) {
-                        Ok(()) => Ok(()),
+                    match launch_args.launch(config) {
+                        Ok(_) => Ok(()),
                         Err(err) => Err(Error::Cuda(err)),
                     }
                 }
@@ -490,19 +386,18 @@ impl CudaBackend
                     return Err(Error::BackendArrayElemCount(c2.len, n * m));
                 }
                 Ok(())
-        }, |_, kernel, a_param, b_param, c_param| {
+        }, |inner_g, kernel, a_param, b_param, c_param| {
                 let config = preferred_launch_config(n, m, true, is_mma);
-                let mut params = vec![
-                    a_param,
-                    b_param,
-                    c_param,
-                    n.as_kernel_param(),
-                    m.as_kernel_param(),
-                    l.as_kernel_param()
-                ];
+                let mut launch_args = inner_g.stream.launch_builder(&kernel);
+                launch_args.arg(&a_param)
+                    .arg(&b_param)
+                    .arg(&c_param)
+                    .arg(&n)
+                    .arg(&m)
+                    .arg(&l);
                 unsafe {
-                    match kernel.launch(config, &mut params) {
-                        Ok(()) => Ok(()),
+                    match launch_args.launch(config) {
+                        Ok(_) => Ok(()),
                         Err(err) => Err(Error::Cuda(err)),
                     }
                 }
@@ -520,18 +415,17 @@ impl CudaBackend
                     return Err(Error::BackendArrayElemCount(c2.len, n * m));
                 }
                 Ok(())
-        }, |_, kernel, a_param, c_param| {
+        }, |inner_g, kernel, a_param, c_param| {
                 let config = preferred_launch_config(n, m, false, is_mma);
-                let mut params = vec![
-                    a_param,
-                    b.as_kernel_param(),
-                    c_param,
-                    n.as_kernel_param(),
-                    m.as_kernel_param()
-                ];
+                let mut launch_args = inner_g.stream.launch_builder(&kernel);
+                launch_args.arg(&a_param)
+                    .arg(&b)
+                    .arg(&c_param)
+                    .arg(&n)
+                    .arg(&m);
                 unsafe {
-                    match kernel.launch(config, &mut params) {
-                        Ok(()) => Ok(()),
+                    match launch_args.launch(config) {
+                        Ok(_) => Ok(()),
                         Err(err) => Err(Error::Cuda(err)),
                     }
                 }
@@ -549,19 +443,20 @@ impl CudaBackend
                     return Err(Error::BackendArrayElemCount(b2.len, n * m));
                 }
                 Ok(())
-        }, |_, kernel, a_param, b_param| {
+        }, |inner_g, kernel, a_param, b_param| {
                 let config = preferred_launch_config(n, m, false, is_mma);
-                let mut params = vec![
-                    a_param,
-                    b_param,
-                    n.as_kernel_param(),
-                    m.as_kernel_param(),
-                    ((config.block_dim.1) as usize).as_kernel_param(),
-                    ((config.block_dim.0) as usize).as_kernel_param()
-                ];
+                let mut launch_args = inner_g.stream.launch_builder(&kernel);
+                let block_dim_1 = (config.block_dim.1) as usize;
+                let block_dim_0 = (config.block_dim.0) as usize;
+                launch_args.arg(&a_param)
+                    .arg(&b_param)
+                    .arg(&n)
+                    .arg(&m)
+                    .arg(&block_dim_1)
+                    .arg(&block_dim_0);
                 unsafe {
-                    match kernel.launch(config, &mut params) {
-                        Ok(()) => Ok(()),
+                    match launch_args.launch(config) {
+                        Ok(_) => Ok(()),
                         Err(err) => Err(Error::Cuda(err)),
                     }
                 }
@@ -579,17 +474,16 @@ impl CudaBackend
                     return Err(Error::BackendArrayElemCount(b2.len, n * m));
                 }
                 Ok(())
-        }, |_, kernel, a_param, b_param| {
+        }, |inner_g, kernel, a_param, b_param| {
                 let config = preferred_launch_config(n, m, false, is_mma);
-                let mut params = vec![
-                    a_param,
-                    b_param,
-                    n.as_kernel_param(),
-                    m.as_kernel_param()
-                ];
+                let mut launch_args = inner_g.stream.launch_builder(&kernel);
+                launch_args.arg(&a_param)
+                    .arg(&b_param)
+                    .arg(&n)
+                    .arg(&m);
                 unsafe {
-                    match kernel.launch(config, &mut params) {
-                        Ok(()) => Ok(()),
+                    match launch_args.launch(config) {
+                        Ok(_) => Ok(()),
                         Err(err) => Err(Error::Cuda(err)),
                     }
                 }
@@ -607,17 +501,16 @@ impl CudaBackend
                     return Err(Error::BackendArrayElemCount(b2.len, n * m));
                 }
                 Ok(())
-        }, |_, kernel, a_param, b_param| {
+        }, |inner_g, kernel, a_param, b_param| {
                 let config = preferred_launch_config(n, m, false, is_mma);
-                let mut params = vec![
-                    a_param,
-                    b_param,
-                    n.as_kernel_param(),
-                    m.as_kernel_param()
-                ];
+                let mut launch_args = inner_g.stream.launch_builder(&kernel);
+                launch_args.arg(&a_param)
+                    .arg(&b_param)
+                    .arg(&n)
+                    .arg(&m);
                 unsafe {
-                    match kernel.launch(config, &mut params) {
-                        Ok(()) => Ok(()),
+                    match launch_args.launch(config) {
+                        Ok(_) => Ok(()),
                         Err(err) => Err(Error::Cuda(err)),
                     }
                 }
@@ -692,7 +585,7 @@ impl Backend for CudaBackend
     unsafe fn alloc(&self, n: usize) -> Result<BackendArray>
     {
         let inner_g = mutex_lock(&self.inner)?;
-        let slice: CudaSlice<f32> = match inner_g.device.alloc(n) {
+        let slice: CudaSlice<f32> = match inner_g.stream.alloc(n) {
             Ok(tmp_slice) => tmp_slice,
             Err(err) => return Err(Error::Cuda(err)),
         };
@@ -703,7 +596,7 @@ impl Backend for CudaBackend
     fn alloc_and_store_zeros(&self, n: usize) -> Result<BackendArray>
     {
         let inner_g = mutex_lock(&self.inner)?;
-        let slice: CudaSlice<f32> = match inner_g.device.alloc_zeros(n) {
+        let slice: CudaSlice<f32> = match inner_g.stream.alloc_zeros(n) {
             Ok(tmp_slice) => tmp_slice,
             Err(err) => return Err(Error::Cuda(err)),
         };
@@ -714,8 +607,12 @@ impl Backend for CudaBackend
     fn alloc_and_store(&self, elems: &[f32]) -> Result<BackendArray>
     {
         let inner_g = mutex_lock(&self.inner)?;
-        let slice: CudaSlice<f32> = match inner_g.device.htod_sync_copy(elems) {
+        let slice: CudaSlice<f32> = match inner_g.stream.clone_htod(elems) {
             Ok(tmp_slice) => tmp_slice,
+            Err(err) => return Err(Error::Cuda(err)),
+        };
+        match inner_g.context.synchronize() {
+            Ok(()) => (),
             Err(err) => return Err(Error::Cuda(err)),
         };
         let cuda_array = CudaBackendArray { slice: Arc::new(Mutex::new(slice)), len: elems.len(), };
@@ -732,7 +629,11 @@ impl Backend for CudaBackend
                 }
                 let inner_g = mutex_lock(&self.inner)?;
                 let a_slice_g = mutex_lock(&a2.slice)?;
-                match inner_g.device.dtoh_sync_copy_into(&(*a_slice_g), elems) {
+                match inner_g.stream.memcpy_dtoh(&(*a_slice_g), elems) {
+                    Ok(()) => (),
+                    Err(err) => return Err(Error::Cuda(err)),
+                };
+                match inner_g.context.synchronize() {
                     Ok(()) => (),
                     Err(err) => return Err(Error::Cuda(err)),
                 }
@@ -752,7 +653,11 @@ impl Backend for CudaBackend
                 }
                 let inner_g = mutex_lock(&self.inner)?;
                 let mut a_slice_g = mutex_lock(&a2.slice)?;
-                match inner_g.device.htod_sync_copy_into(elems, &mut (*a_slice_g)) {
+                match inner_g.stream.memcpy_htod(elems, &mut (*a_slice_g)) {
+                    Ok(()) => (),
+                    Err(err) => return Err(Error::Cuda(err)),
+                };
+                match inner_g.context.synchronize() {
                     Ok(()) => (),
                     Err(err) => return Err(Error::Cuda(err)),
                 }
@@ -776,11 +681,11 @@ impl Backend for CudaBackend
                 let inner_g = mutex_lock(&self.inner)?;
                 let a_slice_g = mutex_lock(&a2.slice)?;
                 let mut b_slice_g = mutex_lock(&b2.slice)?;
-                match inner_g.device.dtod_copy(&(*a_slice_g), &mut (*b_slice_g)) {
+                match inner_g.stream.memcpy_dtod(&(*a_slice_g), &mut (*b_slice_g)) {
                     Ok(()) => (),
                     Err(err) => return Err(Error::Cuda(err)),
                 }
-                match inner_g.device.synchronize() {
+                match inner_g.context.synchronize() {
                     Ok(()) => (),
                     Err(err) => return Err(Error::Cuda(err)),
                 }
