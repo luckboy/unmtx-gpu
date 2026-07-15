@@ -105,4 +105,3 @@ fn bench_mul_at_bt()
     };
     frontend_g.as_ref().unwrap().mul(&a_g.as_ref().unwrap().t(), &b_g.as_ref().unwrap().t(), &c).unwrap();
 }
-
