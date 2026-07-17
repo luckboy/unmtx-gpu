@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2025 Łukasz Szpakowski
+// Copyright (c) 2025-2026 Łukasz Szpakowski
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -555,9 +555,7 @@ impl CudaBackend
                     a_param,
                     b_param,
                     n.as_kernel_param(),
-                    m.as_kernel_param(),
-                    ((config.block_dim.1) as usize).as_kernel_param(),
-                    ((config.block_dim.0) as usize).as_kernel_param()
+                    m.as_kernel_param()
                 ];
                 unsafe {
                     match kernel.launch(config, &mut params) {
