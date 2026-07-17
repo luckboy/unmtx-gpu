@@ -1,11 +1,11 @@
 //
-// Copyright (c) 2025 Łukasz Szpakowski
+// Copyright (c) 2025-2026 Łukasz Szpakowski
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-#define TILE_SIZE       1024
+#define TILE_SIZE       (1024 << 2)
 
 #define MTHREAD_SIZE    16
 #define MTILE_WIDTH     (MTHREAD_SIZE << 2)
@@ -15,82 +15,163 @@
 extern "C" {
   __global__ void transpose_a(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = a[n * j + i];
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = a[n * (j + 0) + i + 0];
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = a[n * (j + 1) + i + 0];
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = a[n * (j + 0) + i + 1];
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = a[n * (j + 1) + i + 1];
     }
   }
   
   __global__ void add_a_b(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = a[m * i + j] + b[m * i + j];
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = a[m * (i + 0) + j + 0] + b[m * (i + 0) + j + 0];
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = a[m * (i + 0) + j + 1] + b[m * (i + 0) + j + 1];
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = a[m * (i + 1) + j + 0] + b[m * (i + 1) + j + 0];
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = a[m * (i + 1) + j + 1] + b[m * (i + 1) + j + 1];
     }
   }
 
   __global__ void add_at_b(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = a[n * j + i] + b[m * i + j];
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = a[n * (j + 0) + i + 0] + b[m * (i + 0) + j + 0];
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = a[n * (j + 1) + i + 0] + b[m * (i + 0) + j + 1];
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = a[n * (j + 0) + i + 1] + b[m * (i + 1) + j + 0];
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = a[n * (j + 1) + i + 1] + b[m * (i + 1) + j + 1];
     }
   }
 
   __global__ void add_a_bt(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = a[m * i + j] + b[n * j + i];
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = a[m * (i + 0) + j + 0] + b[n * (j + 0) + i + 0];
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = a[m * (i + 0) + j + 1] + b[n * (j + 1) + i + 0];
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = a[m * (i + 1) + j + 0] + b[n * (j + 0) + i + 1];
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = a[m * (i + 1) + j + 1] + b[n * (j + 1) + i + 1];
     }
   }
 
   __global__ void add_at_bt(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = a[n * j + i] + b[n * j + i];
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = a[n * (j + 0) + i + 0] + b[n * (j + 0) + i + 0];
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = a[n * (j + 1) + i + 0] + b[n * (j + 1) + i + 0];
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = a[n * (j + 0) + i + 1] + b[n * (j + 0) + i + 1];
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = a[n * (j + 1) + i + 1] + b[n * (j + 1) + i + 1];
     }
   }
 
   __global__ void sub_a_b(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = a[m * i + j] - b[m * i + j];
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = a[m * (i + 0) + j + 0] - b[m * (i + 0) + j + 0];
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = a[m * (i + 0) + j + 1] - b[m * (i + 0) + j + 1];
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = a[m * (i + 1) + j + 0] - b[m * (i + 1) + j + 0];
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = a[m * (i + 1) + j + 1] - b[m * (i + 1) + j + 1];
     }
   }
 
   __global__ void sub_at_b(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = a[n * j + i] - b[m * i + j];
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = a[n * (j + 0) + i + 0] - b[m * (i + 0) + j + 0];
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = a[n * (j + 1) + i + 0] - b[m * (i + 0) + j + 1];
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = a[n * (j + 0) + i + 1] - b[m * (i + 1) + j + 0];
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = a[n * (j + 1) + i + 1] - b[m * (i + 1) + j + 1];
     }
   }
 
   __global__ void sub_a_bt(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = a[m * i + j] - b[n * j + i];
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j +  0 < m) {
+      c[m * (i + 0) + j + 0] = a[m * (i + 0) + j + 0] - b[n * (j + 0) + i + 0];
+    }
+    if(i + 0 < n && j +  1 < m) {
+      c[m * (i + 0) + j + 1] = a[m * (i + 0) + j + 1] - b[n * (j + 1) + i + 0];
+    }
+    if(i + 1 < n && j +  0 < m) {
+      c[m * (i + 1) + j + 0] = a[m * (i + 1) + j + 0] - b[n * (j + 0) + i + 1];
+    }
+    if(i + 1 < n && j +  1 < m) {
+      c[m * (i + 1) + j + 1] = a[m * (i + 1) + j + 1] - b[n * (j + 1) + i + 1];
     }
   }
 
   __global__ void sub_at_bt(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = a[n * j + i] - b[n * j + i];
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = a[n * (j + 0) + i + 0] - b[n * (j + 0) + i + 0];
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = a[n * (j + 1) + i + 0] - b[n * (j + 1) + i + 0];
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = a[n * (j + 0) + i + 1] - b[n * (j + 0) + i + 1];
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = a[n * (j + 1) + i + 1] - b[n * (j + 1) + i + 1];
     }
   }
 
@@ -985,965 +1066,1939 @@ extern "C" {
 
   __global__ void mul_a_b_for_elems(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = a[m * i + j] * b[m * i + j];
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = a[m * (i + 0) + j + 0] * b[m * (i + 0) + j + 0];
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = a[m * (i + 0) + j + 1] * b[m * (i + 0) + j + 1];
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = a[m * (i + 1) + j + 0] * b[m * (i + 1) + j + 0];
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = a[m * (i + 1) + j + 1] * b[m * (i + 1) + j + 1];
     }
   }
 
   __global__ void mul_at_b_for_elems(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = a[n * j + i] * b[m * i + j];
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = a[n * (j + 0) + i + 0] * b[m * (i + 0) + j + 0];
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = a[n * (j + 1) + i + 0] * b[m * (i + 0) + j + 1];
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = a[n * (j + 0) + i + 1] * b[m * (i + 1) + j + 0];
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = a[n * (j + 1) + i + 1] * b[m * (i + 1) + j + 1];
     }
   }
 
   __global__ void mul_a_bt_for_elems(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = a[m * i + j] * b[n * j + i];
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = a[m * (i + 0) + j + 0] * b[n * (j + 0) + i + 0];
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = a[m * (i + 0) + j + 1] * b[n * (j + 1) + i + 0];
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = a[m * (i + 1) + j + 0] * b[n * (j + 0) + i + 1];
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = a[m * (i + 1) + j + 1] * b[n * (j + 1) + i + 1];
     }
   }
 
   __global__ void mul_at_bt_for_elems(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = a[n * j + i] * b[n * j + i];
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = a[n * (j + 0) + i + 0] * b[n * (j + 0) + i + 0];
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = a[n * (j + 1) + i + 0] * b[n * (j + 1) + i + 0];
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = a[n * (j + 0) + i + 1] * b[n * (j + 0) + i + 1];
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = a[n * (j + 1) + i + 1] * b[n * (j + 1) + i + 1];
     }
   }
 
   __global__ void div_a_b_for_elems(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = a[m * i + j] / b[m * i + j];
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = a[m * (i + 0) + j + 0] / b[m * (i + 0) + j + 0];
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = a[m * (i + 0) + j + 1] / b[m * (i + 0) + j + 1];
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = a[m * (i + 1) + j + 0] / b[m * (i + 1) + j + 0];
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = a[m * (i + 1) + j + 1] / b[m * (i + 1) + j + 1];
     }
   }
 
   __global__ void div_at_b_for_elems(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = a[n * j + i] / b[m * i + j];
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = a[n * (j + 0) + i + 0] / b[m * (i + 0) + j + 0];
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = a[n * (j + 1) + i + 0] / b[m * (i + 0) + j + 1];
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = a[n * (j + 0) + i + 1] / b[m * (i + 1) + j + 0];
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = a[n * (j + 1) + i + 1] / b[m * (i + 1) + j + 1];
     }
   }
 
   __global__ void div_a_bt_for_elems(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = a[m * i + j] / b[n * j + i];
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = a[m * (i + 0) + j + 0] / b[n * (j + 0) + i + 0];
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = a[m * (i + 0) + j + 1] / b[n * (j + 1) + i + 0];
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = a[m * (i + 1) + j + 0] / b[n * (j + 0) + i + 1];
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = a[m * (i + 1) + j + 1] / b[n * (j + 1) + i + 1];
     }
   }
 
   __global__ void div_at_bt_for_elems(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = a[n * j + i] / b[n * j + i];
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = a[n * (j + 0) + i + 0] / b[n * (j + 0) + i + 0];
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = a[n * (j + 1) + i + 0] / b[n * (j + 1) + i + 0];
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = a[n * (j + 0) + i + 1] / b[n * (j + 0) + i + 1];
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = a[n * (j + 1) + i + 1] / b[n * (j + 1) + i + 1];
     }
   }
 
   __global__ void add_a_b_for_scalar(const float *a, float b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = a[m * i + j] + b;
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = a[m * (i + 0) + j + 0] + b;
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = a[m * (i + 0) + j + 1] + b;
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = a[m * (i + 1) + j + 0] + b;
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = a[m * (i + 1) + j + 1] + b;
     }
   }
 
   __global__ void add_at_b_for_scalar(const float *a, float b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = a[n * j + i] + b;
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = a[n * (j + 0) + i + 0] + b;
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = a[n * (j + 1) + i + 0] + b;
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = a[n * (j + 0) + i + 1] + b;
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = a[n * (j + 1) + i + 1] + b;
     }
   }
 
   __global__ void sub_a_b_for_scalar(const float *a, float b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = a[m * i + j] - b;
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = a[m * (i + 0) + j + 0] - b;
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = a[m * (i + 0) + j + 1] - b;
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = a[m * (i + 1) + j + 0] - b;
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = a[m * (i + 1) + j + 1] - b;
     }
   }
 
   __global__ void sub_at_b_for_scalar(const float *a, float b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = a[n * j + i] - b;
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = a[n * (j + 0) + i + 0] - b;
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = a[n * (j + 1) + i + 0] - b;
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = a[n * (j + 0) + i + 1] - b;
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = a[n * (j + 1) + i + 1] - b;
     }
   }
 
   __global__ void rsub_a_b_for_scalar(const float *a, float b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = b - a[m * i + j];
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = b - a[m * (i + 0) + j + 0];
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = b - a[m * (i + 0) + j + 1];
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = b - a[m * (i + 1) + j + 0];
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = b - a[m * (i + 1) + j + 1];
     }
   }
 
   __global__ void rsub_at_b_for_scalar(const float *a, float b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = b - a[n * j + i];
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = b - a[n * (j + 0) + i + 0];
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = b - a[n * (j + 1) + i + 0];
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = b - a[n * (j + 0) + i + 1];
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = b - a[n * (j + 1) + i + 1];
     }
   }
 
   __global__ void mul_a_b_for_scalar(const float *a, float b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = a[m * i + j] * b;
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = a[m * (i + 0) + j + 0] * b;
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = a[m * (i + 0) + j + 1] * b;
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = a[m * (i + 1) + j + 0] * b;
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = a[m * (i + 1) + j + 1] * b;
     }
   }
 
   __global__ void mul_at_b_for_scalar(const float *a, float b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = a[n * j + i] * b;
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = a[n * (j + 0) + i + 0] * b;
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = a[n * (j + 1) + i + 0] * b;
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = a[n * (j + 0) + i + 1] * b;
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = a[n * (j + 1) + i + 1] * b;
     }
   }
 
   __global__ void div_a_b_for_scalar(const float *a, float b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = a[m * i + j] / b;
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = a[m * (i + 0) + j + 0] / b;
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = a[m * (i + 0) + j + 1] / b;
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = a[m * (i + 1) + j + 0] / b;
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = a[m * (i + 1) + j + 1] / b;
     }
   }
 
   __global__ void div_at_b_for_scalar(const float *a, float b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = a[n * j + i] / b;
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = a[n * (j + 0) + i + 0] / b;
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = a[n * (j + 1) + i + 0] / b;
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = a[n * (j + 0) + i + 1] / b;
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = a[n * (j + 1) + i + 1] / b;
     }
   }
 
   __global__ void rdiv_a_b_for_scalar(const float *a, float b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = b / a[m * i + j];
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = b / a[m * (i + 0) + j + 0];
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = b / a[m * (i + 0) + j + 1];
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = b / a[m * (i + 1) + j + 0];
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = b / a[m * (i + 1) + j + 1];
     }
   }
 
   __global__ void rdiv_at_b_for_scalar(const float *a, float b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = b / a[n * j + i];
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = b / a[n * (j + 0) + i + 0];
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1]  = b / a[n * (j + 1) + i + 0];
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = b / a[n * (j + 0) + i + 1];
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = b / a[n * (j + 1) + i + 1];
     }
   }
 
   __global__ void sigmoid_a(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = 1.0f / (1.0f + expf(-a[m * i + j]));
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = 1.0f / (1.0f + expf(-a[m * (i + 0) + j + 0]));
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = 1.0f / (1.0f + expf(-a[m * (i + 0) + j + 1]));
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = 1.0f / (1.0f + expf(-a[m * (i + 1) + j + 0]));
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = 1.0f / (1.0f + expf(-a[m * (i + 1) + j + 1]));
     }
   }
 
   __global__ void sigmoid_at(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = 1.0f / (1.0f + expf(-a[n * j + i]));
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = 1.0f / (1.0f + expf(-a[n * (j + 0) + i + 0]));
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = 1.0f / (1.0f + expf(-a[n * (j + 1) + i + 0]));
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = 1.0f / (1.0f + expf(-a[n * (j + 0) + i + 1]));
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = 1.0f / (1.0f + expf(-a[n * (j + 1) + i + 1]));
     }
   }
 
   __global__ void tanh_a(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = tanhf(a[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = tanhf(a[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = tanhf(a[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = tanhf(a[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = tanhf(a[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void tanh_at(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = tanhf(a[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = tanhf(a[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = tanhf(a[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = tanhf(a[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = tanhf(a[n * (j + 1) + i + 1]);
     }
   }
 
   __global__ void swish_a(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = a[m * i + j] / (1.0f + expf(-a[m * i + j]));
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = a[m * (i + 0) + j + 0] / (1.0f + expf(-a[m * (i + 0) + j + 0]));
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = a[m * (i + 0) + j + 1] / (1.0f + expf(-a[m * (i + 0) + j + 1]));
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = a[m * (i + 1) + j + 0] / (1.0f + expf(-a[m * (i + 1) + j + 0]));
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = a[m * (i + 1) + j + 1] / (1.0f + expf(-a[m * (i + 1) + j + 1]));
     }
   }
 
   __global__ void swish_at(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = a[n * j + i] / (1.0f + expf(-a[n * j + i]));
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = a[n * (j + 0) + i + 0] / (1.0f + expf(-a[n * (j + 0) + i + 0]));
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = a[n * (j + 1) + i + 0] / (1.0f + expf(-a[n * (j + 1) + i + 0]));
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = a[n * (j + 0) + i + 1] / (1.0f + expf(-a[n * (j + 0) + i + 1]));
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = a[n * (j + 1) + i + 1] / (1.0f + expf(-a[n * (j + 1) + i + 1]));
     }
   }
 
   __global__ void softmax_a(const float *a, float *b, size_t n, size_t m)
   {
     __shared__ float es[TILE_SIZE];
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
     size_t k;
-    size_t tile_width = blockDim.y;
-    size_t tile_height = blockDim.x;
-    size_t ti = threadIdx.x;
-    size_t tj = threadIdx.y;
-    float sum = 0.0f;
+    size_t tile_width = blockDim.y << 1;
+    size_t tile_height = blockDim.x << 1;
+    size_t ti = threadIdx.x << 1;
+    size_t tj = threadIdx.y << 1;
+    float sum1 = 0.0f;
+    float sum2 = 0.0f;
     for(k = 0; k < n; k += tile_height) {
       size_t tk;
-      es[tile_width * ti + tj] = 0.0f;
-      if(j < m && k + ti < n) {
-        es[tile_width * ti + tj] = expf(a[m * (k + ti) + j]);
+      es[tile_width * (ti + 0) + tj + 0] = 0.0f;
+      if(j + 0 < m && k + ti + 0 < n) {
+        es[tile_width * (ti + 0) + tj + 0] = expf(a[m * (k + ti + 0) + j + 0]);
+      }
+      es[tile_width * (ti + 0) + tj + 1] = 0.0f;
+      if(j + 1 < m && k + ti + 0 < n) {
+        es[tile_width * (ti + 0) + tj + 1] = expf(a[m * (k + ti + 0) + j + 1]);
+      }
+      es[tile_width * (ti + 1) + tj + 0] = 0.0f;
+      if(j + 0 < m && k + ti + 1 < n) {
+        es[tile_width * (ti + 1) + tj + 0] = expf(a[m * (k + ti + 1) + j + 0]);
+      }
+      es[tile_width * (ti + 1) + tj + 1] = 0.0f;
+      if(j + 1 < m && k + ti + 1 < n) {
+        es[tile_width * (ti + 1) + tj + 1] = expf(a[m * (k + ti + 1) + j + 1]);
       }
       __syncthreads();
-      for(tk = 0; tk < tile_height; tk++) {
-        sum += es[tile_width * tk + tj];
+      for(tk = 0; tk < tile_height; tk += 2) {
+        sum1 += es[tile_width * (tk + 0) + tj + 0];
+        sum1 += es[tile_width * (tk + 1) + tj + 0];
+        sum2 += es[tile_width * (tk + 0) + tj + 1];
+        sum2 += es[tile_width * (tk + 1) + tj + 1];
       }
       __syncthreads();
     }
-    if(i < n && j < m) {
-      b[m * i + j] = expf(a[m * i + j]) / sum;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = expf(a[m * (i + 0) + j + 0]) / sum1;
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = expf(a[m * (i + 0) + j + 1]) / sum2;
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = expf(a[m * (i + 1) + j + 0]) / sum1;
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = expf(a[m * (i + 1) + j + 1]) / sum2;
     }
   }
 
   __global__ void softmax_at(const float *a, float *b, size_t n, size_t m)
   {
     __shared__ float es[TILE_SIZE];
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
     size_t k;
-    size_t tile_width = blockDim.y;
-    size_t tile_height = blockDim.x;
-    size_t ti = threadIdx.x;
-    size_t tj = threadIdx.y;
-    float sum = 0.0f;
+    size_t tile_width = blockDim.y << 1;
+    size_t tile_height = blockDim.x << 1;
+    size_t ti = threadIdx.x << 1;
+    size_t tj = threadIdx.y << 1;
+    float sum1 = 0.0f;
+    float sum2 = 0.0f;
     for(k = 0; k < n; k += tile_height) {
       size_t tk;
-      es[tile_width * ti + tj] = 0.0f;
-      if(j < m && k + ti < n) {
-        es[tile_width * ti + tj] = expf(a[n * j + k + ti]);
+      es[tile_width * (ti + 0) + tj + 0] = 0.0f;
+      if(j + 0 < m && k + ti + 0 < n) {
+        es[tile_width * (ti + 0) + tj + 0] = expf(a[n * (j + 0) + k + ti + 0]);
+      }
+      es[tile_width * (ti + 0) + tj + 1] = 0.0f;
+      if(j + 1 < m && k + ti + 0 < n) {
+        es[tile_width * (ti + 0) + tj + 1] = expf(a[n * (j + 1) + k + ti + 0]);
+      }
+      es[tile_width * (ti + 1) + tj + 0] = 0.0f;
+      if(j + 0 < m && k + ti + 1 < n) {
+        es[tile_width * (ti + 1) + tj + 0] = expf(a[n * (j + 0) + k + ti + 1]);
+      }
+      es[tile_width * (ti + 1) + tj + 1] = 0.0f;
+      if(j + 1 < m && k + ti + 1 < n) {
+        es[tile_width * (ti + 1) + tj + 1] = expf(a[n * (j + 1) + k + ti + 1]);
       }
       __syncthreads();
-      for(tk = 0; tk < tile_height; tk++) {
-        sum += es[tile_width * tk + tj];
+      for(tk = 0; tk < tile_height; tk += 2) {
+        sum1 += es[tile_width * (tk + 0) + tj + 0];
+        sum1 += es[tile_width * (tk + 1) + tj + 0];
+        sum2 += es[tile_width * (tk + 0) + tj + 1];
+        sum2 += es[tile_width * (tk + 1) + tj + 1];
       }
       __syncthreads();
     }
-    if(i < n && j < m) {
-      b[m * i + j] = expf(a[n * j + i]) / sum;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = expf(a[n * (j + 0) + i + 0]) / sum1;
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = expf(a[n * (j + 1) + i + 0]) / sum2;
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = expf(a[n * (j + 0) + i + 1]) / sum1;
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = expf(a[n * (j + 1) + i + 1]) / sum2;
     }
   }
 
   __global__ void sqrt_a(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = sqrtf(a[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = sqrtf(a[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = sqrtf(a[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = sqrtf(a[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = sqrtf(a[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void sqrt_at(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = sqrtf(a[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = sqrtf(a[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = sqrtf(a[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = sqrtf(a[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = sqrtf(a[n * (j + 1) + i + 1]);
     }
   }  
   
   __global__ void repeat_col_a(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = a[i];
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = a[i + 0];
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = a[i + 0];
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = a[i + 1];
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = a[i + 1];
     }
   }
 
   __global__ void repeat_row_a(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = a[j];
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = a[j + 0];
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = a[j + 1];
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = a[j + 0];
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = a[j + 1];
     }
   }
   
   __global__ void abs_a(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = fabsf(a[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = fabsf(a[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = fabsf(a[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = fabsf(a[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = fabsf(a[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void abs_at(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = fabsf(a[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = fabsf(a[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = fabsf(a[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = fabsf(a[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = fabsf(a[n * (j + 1) + i + 1]);
     }
   }
 
   __global__ void pow_a_b(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = powf(a[m * i + j], b[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = powf(a[m * (i + 0) + j + 0], b[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = powf(a[m * (i + 0) + j + 1], b[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = powf(a[m * (i + 1) + j + 0], b[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = powf(a[m * (i + 1) + j + 1], b[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void pow_at_b(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = powf(a[n * j + i], b[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = powf(a[n * (j + 0) + i + 0], b[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = powf(a[n * (j + 1) + i + 0], b[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = powf(a[n * (j + 0) + i + 1], b[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = powf(a[n * (j + 1) + i + 1], b[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void pow_a_bt(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = powf(a[m * i + j], b[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = powf(a[m * (i + 0) + j + 0], b[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = powf(a[m * (i + 0) + j + 1], b[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = powf(a[m * (i + 1) + j + 0], b[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = powf(a[m * (i + 1) + j + 1], b[n * (j + 1) + i + 1]);
     }
   }
 
   __global__ void pow_at_bt(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = powf(a[n * j + i], b[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = powf(a[n * (j + 0) + i + 0], b[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = powf(a[n * (j + 1) + i + 0], b[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = powf(a[n * (j + 0) + i + 1], b[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = powf(a[n * (j + 1) + i + 1], b[n * (j + 1) + i + 1]);
     }
   }
 
   __global__ void pow_a_b_for_scalar(const float *a, float b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = powf(a[m * i + j], b);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = powf(a[m * (i + 0) + j + 0], b);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = powf(a[m * (i + 0) + j + 1], b);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = powf(a[m * (i + 1) + j + 0], b);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = powf(a[m * (i + 1) + j + 1], b);
     }
   }
 
   __global__ void pow_at_b_for_scalar(const float *a, float b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = powf(a[n * j + i], b);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = powf(a[n * (j + 0) + i + 0], b);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = powf(a[n * (j + 1) + i + 0], b);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = powf(a[n * (j + 0) + i + 1], b);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = powf(a[n * (j + 1) + i + 1], b);
     }
   }
 
   __global__ void rpow_a_b_for_scalar(const float *a, float b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = powf(b, a[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = powf(b, a[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = powf(b, a[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = powf(b, a[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = powf(b, a[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void rpow_at_b_for_scalar(const float *a, float b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = powf(b, a[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = powf(b, a[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = powf(b, a[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = powf(b, a[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = powf(b, a[n * (j + 1) + i + 1]);
     }
   }
 
   __global__ void exp_a(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = expf(a[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = expf(a[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = expf(a[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = expf(a[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = expf(a[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void exp_at(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = expf(a[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = expf(a[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = expf(a[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = expf(a[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = expf(a[n * (j + 1) + i + 1]);
     }
   }
 
   __global__ void ln_a(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = logf(a[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = logf(a[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = logf(a[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = logf(a[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = logf(a[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void ln_at(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = logf(a[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = logf(a[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = logf(a[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = logf(a[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = logf(a[n * (j + 1) + i + 1]);
     }
   }
 
   __global__ void log2_a(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = log2f(a[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = log2f(a[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = log2f(a[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = log2f(a[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = log2f(a[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void log2_at(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = log2f(a[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = log2f(a[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = log2f(a[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = log2f(a[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = log2f(a[n * (j + 1) + i + 1]);
     }
   }
 
   __global__ void log10_a(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = log10f(a[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = log10f(a[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = log10f(a[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = log10f(a[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = log10f(a[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void log10_at(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = log10f(a[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = log10f(a[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = log10f(a[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = log10f(a[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = log10f(a[n * (j + 1) + i + 1]);
     }
   }
 
   __global__ void sin_a(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = sinf(a[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = sinf(a[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = sinf(a[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = sinf(a[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = sinf(a[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void sin_at(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = sinf(a[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = sinf(a[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = sinf(a[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = sinf(a[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = sinf(a[n * (j + 1) + i + 1]);
     }
   }
 
   __global__ void cos_a(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = cosf(a[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = cosf(a[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = cosf(a[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = cosf(a[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = cosf(a[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void cos_at(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = cosf(a[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = cosf(a[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = cosf(a[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = cosf(a[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = cosf(a[n * (j + 1) + i + 1]);
     }
   }
 
   __global__ void tan_a(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = tanf(a[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = tanf(a[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = tanf(a[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = tanf(a[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = tanf(a[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void tan_at(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = tanf(a[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = tanf(a[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = tanf(a[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = tanf(a[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = tanf(a[n * (j + 1) + i + 1]);
     }
   }
 
   __global__ void asin_a(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = asinf(a[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = asinf(a[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = asinf(a[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = asinf(a[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = asinf(a[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void asin_at(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = asinf(a[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = asinf(a[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = asinf(a[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = asinf(a[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = asinf(a[n * (j + 1) + i + 1]);
     }
   }
 
   __global__ void acos_a(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = acosf(a[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = acosf(a[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = acosf(a[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = acosf(a[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = acosf(a[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void acos_at(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = acosf(a[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = acosf(a[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = acosf(a[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = acosf(a[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = acosf(a[n * (j + 1) + i + 1]);
     }
   }
 
   __global__ void atan_a(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = atanf(a[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = atanf(a[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = atanf(a[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = atanf(a[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = atanf(a[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void atan_at(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = atanf(a[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = atanf(a[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = atanf(a[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = atanf(a[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = atanf(a[n * (j + 1) + i + 1]);
     }
   }
 
   __global__ void atan2_a_b(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = atan2f(a[m * i + j], b[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = atan2f(a[m * (i + 0) + j + 0], b[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = atan2f(a[m * (i + 0) + j + 1], b[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = atan2f(a[m * (i + 1) + j + 0], b[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = atan2f(a[m * (i + 1) + j + 1], b[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void atan2_at_b(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = atan2f(a[n * j + i], b[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = atan2f(a[n * (j + 0) + i + 0], b[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = atan2f(a[n * (j + 1) + i + 0], b[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = atan2f(a[n * (j + 0) + i + 1], b[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = atan2f(a[n * (j + 1) + i + 1], b[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void atan2_a_bt(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = atan2f(a[m * i + j], b[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = atan2f(a[m * (i + 0) + j + 0], b[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = atan2f(a[m * (i + 0) + j + 1], b[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = atan2f(a[m * (i + 1) + j + 0], b[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = atan2f(a[m * (i + 1) + j + 1], b[n * (j + 1) + i + 1]);
     }
   }
 
   __global__ void atan2_at_bt(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = atan2f(a[n * j + i], b[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = atan2f(a[n * (j + 0) + i + 0], b[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = atan2f(a[n * (j + 1) + i + 0], b[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = atan2f(a[n * (j + 0) + i + 1], b[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = atan2f(a[n * (j + 1) + i + 1], b[n * (j + 1) + i + 1]);
     }
   }
 
   __global__ void atan2_a_b_for_scalar(const float *a, float b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = atan2f(a[m * i + j], b);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = atan2f(a[m * (i + 0) + j + 0], b);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = atan2f(a[m * (i + 0) + j + 1], b);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = atan2f(a[m * (i + 1) + j + 0], b);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = atan2f(a[m * (i + 1) + j + 1], b);
     }
   }
 
   __global__ void atan2_at_b_for_scalar(const float *a, float b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = atan2f(a[n * j + i], b);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = atan2f(a[n * (j + 0) + i + 0], b);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = atan2f(a[n * (j + 1) + i + 0], b);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = atan2f(a[n * (j + 0) + i + 1], b);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = atan2f(a[n * (j + 1) + i + 1], b);
     }
   }
 
   __global__ void ratan2_a_b_for_scalar(const float *a, float b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = atan2f(b, a[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = atan2f(b, a[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = atan2f(b, a[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = atan2f(b, a[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = atan2f(b, a[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void ratan2_at_b_for_scalar(const float *a, float b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = atan2f(b, a[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = atan2f(b, a[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = atan2f(b, a[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = atan2f(b, a[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = atan2f(b, a[n * (j + 1) + i + 1]);
     }
   }
 
   __global__ void sinh_a(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = sinhf(a[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = sinhf(a[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = sinhf(a[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = sinhf(a[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = sinhf(a[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void sinh_at(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = sinhf(a[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = sinhf(a[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = sinhf(a[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = sinhf(a[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = sinhf(a[n * (j + 1) + i + 1]);
     }
   }
 
   __global__ void cosh_a(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = coshf(a[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = coshf(a[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = coshf(a[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = coshf(a[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = coshf(a[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void cosh_at(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = coshf(a[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = coshf(a[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = coshf(a[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = coshf(a[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = coshf(a[n * (j + 1) + i + 1]);
     }
   }
 
   __global__ void asinh_a(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = asinhf(a[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = asinhf(a[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = asinhf(a[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = asinhf(a[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = asinhf(a[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void asinh_at(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = asinhf(a[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = asinhf(a[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = asinhf(a[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = asinhf(a[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = asinhf(a[n * (j + 1) + i + 1]);
     }
   }
 
   __global__ void acosh_a(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = acoshf(a[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = acoshf(a[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = acoshf(a[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = acoshf(a[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = acoshf(a[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void acosh_at(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = acoshf(a[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = acoshf(a[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = acoshf(a[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = acoshf(a[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = acoshf(a[n * (j + 1) + i + 1]);
     }
   }
 
   __global__ void atanh_a(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = atanhf(a[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = atanhf(a[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = atanhf(a[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = atanhf(a[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = atanhf(a[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void atanh_at(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = atanhf(a[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = atanhf(a[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = atanhf(a[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = atanhf(a[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = atanhf(a[n * (j + 1) + i + 1]);
     }
   }
 
   __global__ void signum_a(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      if(!isnan(a[m * i + j])) {
-        b[m * i + j] = (signbit(a[m * i + j]) ? -1.0 : 1.0);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      if(!isnan(a[m * (i + 0) + j + 0])) {
+        b[m * (i + 0) + j + 0] = (signbit(a[m * (i + 0) + j + 0]) ? -1.0 : 1.0);
       } else {
-        b[m * i + j] = a[m * i + j];
+        b[m * (i + 0) + j + 0] = a[m * (i + 0) + j + 0];
+      }
+    }
+    if(i + 0 < n && j + 1 < m) {
+      if(!isnan(a[m * (i + 0) + j + 1])) {
+        b[m * (i + 0) + j + 1] = (signbit(a[m * (i + 0) + j + 1]) ? -1.0 : 1.0);
+      } else {
+        b[m * (i + 0) + j + 1] = a[m * (i + 0) + j + 1];
+      }
+    }
+    if(i + 1 < n && j + 0 < m) {
+      if(!isnan(a[m * (i + 1) + j + 0])) {
+        b[m * (i + 1) + j + 0] = (signbit(a[m * (i + 1) + j + 0]) ? -1.0 : 1.0);
+      } else {
+        b[m * (i + 1) + j + 0] = a[m * (i + 1) + j + 0];
+      }
+    }
+    if(i + 1 < n && j + 1 < m) {
+      if(!isnan(a[m * (i + 1) + j + 1])) {
+        b[m * (i + 1) + j + 1] = (signbit(a[m * (i + 1) + j + 1]) ? -1.0 : 1.0);
+      } else {
+        b[m * (i + 1) + j + 1] = a[m * (i + 1) + j + 1];
       }
     }
   }
 
   __global__ void signum_at(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      if(!isnan(a[n * j + i])) {
-        b[m * i + j] = (signbit(a[n * j + i]) ? -1.0 : 1.0);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      if(!isnan(a[n * (j + 0) + i + 0])) {
+        b[m * (i + 0) + j + 0] = (signbit(a[n * (j + 0) + i + 0]) ? -1.0 : 1.0);
       } else {
-        b[m * i + j] = a[n * j + i];
+        b[m * (i + 0) + j + 0] = a[n * (j + 0) + i + 0];
+      }
+    }
+    if(i + 0 < n && j + 1 < m) {
+      if(!isnan(a[n * (j + 1) + i + 0])) {
+        b[m * (i + 0) + j + 1] = (signbit(a[n * (j + 1) + i + 0]) ? -1.0 : 1.0);
+      } else {
+        b[m * (i + 0) + j + 1] = a[n * (j + 1) + i + 0];
+      }
+    }
+    if(i + 1 < n && j + 0 < m) {
+      if(!isnan(a[n * (j + 0) + i + 1])) {
+        b[m * (i + 1) + j + 0] = (signbit(a[n * (j + 0) + i + 1]) ? -1.0 : 1.0);
+      } else {
+        b[m * (i + 1) + j + 0] = a[n * (j + 0) + i + 1];
+      }
+    }
+    if(i + 1 < n && j + 1 < m) {
+      if(!isnan(a[n * (j + 1) + i + 1])) {
+        b[m * (i + 1) + j + 1] = (signbit(a[n * (j + 1) + i + 1]) ? -1.0 : 1.0);
+      } else {
+        b[m * (i + 1) + j + 1] = a[n * (j + 1) + i + 1];
       }
     }
   }
 
   __global__ void ceil_a(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = ceilf(a[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = ceilf(a[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = ceilf(a[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = ceilf(a[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = ceilf(a[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void ceil_at(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = ceilf(a[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = ceilf(a[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = ceilf(a[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = ceilf(a[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = ceilf(a[n * (j + 1) + i + 1]);
     }
   }
   
   __global__ void floor_a(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = floorf(a[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = floorf(a[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = floorf(a[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = floorf(a[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = floorf(a[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void floor_at(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = floorf(a[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = floorf(a[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = floorf(a[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = floorf(a[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = floorf(a[n * (j + 1) + i + 1]);
     }
   }
 
   __global__ void round_a(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = roundf(a[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = roundf(a[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = roundf(a[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = roundf(a[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = roundf(a[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void round_at(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = roundf(a[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = roundf(a[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = roundf(a[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = roundf(a[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = roundf(a[n * (j + 1) + i + 1]);
     }
   }
 
   __global__ void trunc_a(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = truncf(a[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = truncf(a[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = truncf(a[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = truncf(a[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = truncf(a[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void trunc_at(const float *a, float *b, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      b[m * i + j] = truncf(a[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      b[m * (i + 0) + j + 0] = truncf(a[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      b[m * (i + 0) + j + 1] = truncf(a[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      b[m * (i + 1) + j + 0] = truncf(a[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      b[m * (i + 1) + j + 1] = truncf(a[n * (j + 1) + i + 1]);
     }
   }
 
   __global__ void max_a_b(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = fmaxf(a[m * i + j], b[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = fmaxf(a[m * (i + 0) + j + 0], b[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = fmaxf(a[m * (i + 0) + j + 1], b[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = fmaxf(a[m * (i + 1) + j + 0], b[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = fmaxf(a[m * (i + 1) + j + 1], b[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void max_at_b(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = fmaxf(a[n * j + i], b[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = fmaxf(a[n * (j + 0) + i + 0], b[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = fmaxf(a[n * (j + 1) + i + 0], b[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = fmaxf(a[n * (j + 0) + i + 1], b[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = fmaxf(a[n * (j + 1) + i + 1], b[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void max_a_bt(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = fmaxf(a[m * i + j], b[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = fmaxf(a[m * (i + 0) + j + 0], b[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = fmaxf(a[m * (i + 0) + j + 1], b[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = fmaxf(a[m * (i + 1) + j + 0], b[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = fmaxf(a[m * (i + 1) + j + 1], b[n * (j + 1) + i + 1]);
     }
   }
 
   __global__ void max_at_bt(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = fmaxf(a[n * j + i], b[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = fmaxf(a[n * (j + 0) + i + 0], b[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = fmaxf(a[n * (j + 1) + i + 0], b[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = fmaxf(a[n * (j + 0) + i + 1], b[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = fmaxf(a[n * (j + 1) + i + 1], b[n * (j + 1) + i + 1]);
     }
   }
 
   __global__ void max_a_b_for_scalar(const float *a, float b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = fmaxf(a[m * i + j], b);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = fmaxf(a[m * (i + 0) + j + 0], b);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = fmaxf(a[m * (i + 0) + j + 1], b);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = fmaxf(a[m * (i + 1) + j + 0], b);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = fmaxf(a[m * (i + 1) + j + 1], b);
     }
   }
 
   __global__ void max_at_b_for_scalar(const float *a, float b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = fmaxf(a[n * j + i], b);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = fmaxf(a[n * (j + 0) + i + 0], b);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = fmaxf(a[n * (j + 1) + i + 0], b);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = fmaxf(a[n * (j + 0) + i + 1], b);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = fmaxf(a[n * (j + 1) + i + 1], b);
     }
   }
 
   __global__ void min_a_b(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = fminf(a[m * i + j], b[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = fminf(a[m * (i + 0) + j + 0], b[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = fminf(a[m * (i + 0) + j + 1], b[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = fminf(a[m * (i + 1) + j + 0], b[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = fminf(a[m * (i + 1) + j + 1], b[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void min_at_b(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = fminf(a[n * j + i], b[m * i + j]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = fminf(a[n * (j + 0) + i + 0], b[m * (i + 0) + j + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = fminf(a[n * (j + 1) + i + 0], b[m * (i + 0) + j + 1]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = fminf(a[n * (j + 0) + i + 1], b[m * (i + 1) + j + 0]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = fminf(a[n * (j + 1) + i + 1], b[m * (i + 1) + j + 1]);
     }
   }
 
   __global__ void min_a_bt(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = fminf(a[m * i + j], b[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = fminf(a[m * (i + 0) + j + 0], b[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = fminf(a[m * (i + 0) + j + 1], b[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = fminf(a[m * (i + 1) + j + 0], b[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = fminf(a[m * (i + 1) + j + 1], b[n * (j + 1) + i + 1]);
     }
   }
 
   __global__ void min_at_bt(const float *a, const float *b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = fminf(a[n * j + i], b[n * j + i]);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = fminf(a[n * (j + 0) + i + 0], b[n * (j + 0) + i + 0]);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = fminf(a[n * (j + 1) + i + 0], b[n * (j + 1) + i + 0]);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = fminf(a[n * (j + 0) + i + 1], b[n * (j + 0) + i + 1]);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = fminf(a[n * (j + 1) + i + 1], b[n * (j + 1) + i + 1]);
     }
   }
 
   __global__ void min_a_b_for_scalar(const float *a, float b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = fminf(a[m * i + j], b);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = fminf(a[m * (i + 0) + j + 0], b);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = fminf(a[m * (i + 0) + j + 1], b);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = fminf(a[m * (i + 1) + j + 0], b);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = fminf(a[m * (i + 1) + j + 1], b);
     }
   }
 
   __global__ void min_at_b_for_scalar(const float *a, float b, float *c, size_t n, size_t m)
   {
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    if(i < n && j < m) {
-      c[m * i + j] = fminf(a[n * j + i], b);
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
+    if(i + 0 < n && j + 0 < m) {
+      c[m * (i + 0) + j + 0] = fminf(a[n * (j + 0) + i + 0], b);
+    }
+    if(i + 0 < n && j + 1 < m) {
+      c[m * (i + 0) + j + 1] = fminf(a[n * (j + 1) + i + 0], b);
+    }
+    if(i + 1 < n && j + 0 < m) {
+      c[m * (i + 1) + j + 0] = fminf(a[n * (j + 0) + i + 1], b);
+    }
+    if(i + 1 < n && j + 1 < m) {
+      c[m * (i + 1) + j + 1] = fminf(a[n * (j + 1) + i + 1], b);
     }
   }
 }
