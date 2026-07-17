@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2025 Łukasz Szpakowski
+// Copyright (c) 2025-2026 Łukasz Szpakowski
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -97,7 +97,12 @@ pub(crate) fn fixture_a_b_for_pow(n1: usize, m1: usize, n2: usize, m2: usize) ->
     let mut b = vec![0.0f32; n2 * m2];
     for i in 0..n2 {
         for j in 0..m2 {
-            b[m2 * i + j] = (i as f32) + (j as f32) * 2.0 + 1.0;
+            let b_elem: f32 = ((i as f32) + (j as f32) * 2.0) + 1.0;
+            if b_elem < 6.0 {
+                b[m2 * i + j] = b_elem;
+            } else {
+                b[m2 * i + j] = 6.0;
+            }
         }
     }
     (a, b)
