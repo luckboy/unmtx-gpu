@@ -70,21 +70,21 @@ pub struct ClBackend
     inner: Mutex<ClInnerBackend>,
 }
 
-fn preferred_work_sizes(n: usize, m: usize, group_size_for_1d: usize, group_size_for_2d: usize, is_mul: bool) -> (usize, usize, usize, usize)
+fn preferred_work_sizes(n: usize, m: usize, group_size_for_1d: usize, group_size_for_2d: usize, item_row_count: usize, item_col_count: usize, is_mul: bool) -> (usize, usize, usize, usize)
 {
-    if m == 1 && !is_mul {
-        let n2 = ((n + group_size_for_1d - 1) / group_size_for_1d) * group_size_for_1d;
+    if m <= item_col_count && !is_mul {
+        let n2 = (((n + item_row_count - 1) / item_row_count + group_size_for_1d - 1) / group_size_for_1d) * group_size_for_1d;
         (group_size_for_1d, 1, n2, 1)
-    } else if n == 1 && !is_mul {
-        let m2 = ((m + group_size_for_1d - 1) / group_size_for_1d) * group_size_for_1d;
+    } else if n <= item_row_count && !is_mul {
+        let m2 = (((m + item_col_count - 1) / item_col_count + group_size_for_1d - 1) / group_size_for_1d) * group_size_for_1d;
         (1, group_size_for_1d, 1, m2)
     } else if is_mul {
         let n2 = (((n + 3) / 4 + ((group_size_for_2d + 1) / 2) - 1) / ((group_size_for_2d + 1) / 2)) * ((group_size_for_2d + 1) / 2);
         let m2 = (((m + 3) / 4 + ((group_size_for_2d + 1) / 2) - 1) / ((group_size_for_2d + 1) / 2)) * ((group_size_for_2d + 1) / 2);
         ((group_size_for_2d + 1) / 2, (group_size_for_2d + 1) / 2, n2, m2)
     } else {
-        let n2 = ((n + group_size_for_2d - 1) / group_size_for_2d) * group_size_for_2d;
-        let m2 = ((m + group_size_for_2d - 1) / group_size_for_2d) * group_size_for_2d;
+        let n2 = (((n + item_row_count - 1) / item_row_count + group_size_for_2d - 1) / group_size_for_2d) * group_size_for_2d;
+        let m2 = (((m + item_col_count - 1) / item_col_count + group_size_for_2d - 1) / group_size_for_2d) * group_size_for_2d;
         (group_size_for_2d, group_size_for_2d, n2, m2)
     }
 }
@@ -223,7 +223,7 @@ impl ClBackend
         }
     }
     
-    fn check_and_enqueue_nd_range_for_fun(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    fn check_and_enqueue_nd_range_for_fun(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, n: usize, m: usize, item_row_count: usize, item_col_count: usize) -> Result<()>
     {
         self.check_and_enqueue_nd_range2(kernel_name, a, b, |a2, b2| {
                 if a2.len != n * m {
@@ -236,7 +236,7 @@ impl ClBackend
         }, |inner, kernel, a_mem, b_mem| {
                 let n2 = n as u64;
                 let m2 = m as u64;
-                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, false);
+                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, item_row_count, item_col_count, false);
                 unsafe {
                     let res = ExecuteKernel::new(kernel)
                     .set_arg(&a_mem)
@@ -254,7 +254,7 @@ impl ClBackend
         })
     }
 
-    fn check_and_enqueue_nd_range_for_op(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
+    fn check_and_enqueue_nd_range_for_op(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, item_row_count: usize, item_col_count: usize) -> Result<()>
     {
         self.check_and_enqueue_nd_range3(kernel_name, a, b, c, |a2, b2, c2| {
                 if a2.len != n * m {
@@ -270,7 +270,7 @@ impl ClBackend
         }, |inner, kernel, a_mem, b_mem, c_mem| {
                 let n2 = n as u64;
                 let m2 = m as u64;
-                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, false);
+                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, item_row_count, item_col_count, false);
                 unsafe {
                     let res = ExecuteKernel::new(kernel)
                     .set_arg(&a_mem)
@@ -306,7 +306,7 @@ impl ClBackend
                 let n2 = n as u64;
                 let m2 = m as u64;
                 let l2 = l as u64;
-                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, true);
+                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, 1, 1, true);
                 unsafe {
                     let res = ExecuteKernel::new(kernel)
                     .set_arg(&a_mem)
@@ -328,7 +328,7 @@ impl ClBackend
         })
     }
 
-    fn check_and_enqueue_nd_range_for_scalar(&self, kernel_name: &str, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
+    fn check_and_enqueue_nd_range_for_scalar(&self, kernel_name: &str, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize, item_row_count: usize, item_col_count: usize) -> Result<()>
     {
         self.check_and_enqueue_nd_range2(kernel_name, a, c, |a2, c2| {
                 if a2.len != n * m  {
@@ -341,7 +341,7 @@ impl ClBackend
         }, |inner, kernel, a_mem, c_mem| {
                 let n2 = n as u64;
                 let m2 = m as u64;
-                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, false);
+                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, item_row_count, item_col_count, false);
                 unsafe {
                     let res = ExecuteKernel::new(kernel)
                     .set_arg(&a_mem)
@@ -360,7 +360,7 @@ impl ClBackend
         })
     }
 
-    fn check_and_enqueue_nd_range_for_fun_and_tiles(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    fn check_and_enqueue_nd_range_for_fun_and_tiles(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, n: usize, m: usize, item_row_count: usize, item_col_count: usize) -> Result<()>
     {
         self.check_and_enqueue_nd_range2(kernel_name, a, b, |a2, b2| {
                 if a2.len != n * m {
@@ -373,12 +373,12 @@ impl ClBackend
         }, |inner, kernel, a_mem, b_mem| {
                 let n2 = n as u64;
                 let m2 = m as u64;
-                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, false);
+                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, item_row_count, item_col_count, false);
                 unsafe {
                     let res = ExecuteKernel::new(kernel)
                     .set_arg(&a_mem)
                     .set_arg(&b_mem)
-                    .set_arg_local_buffer(n3 * m3 *size_of::<f32>())
+                    .set_arg_local_buffer(n3 * item_row_count * m3 * item_col_count * size_of::<f32>())
                     .set_arg(&n2)
                     .set_arg(&m2)
                     .set_local_work_sizes(&[n3, m3])
@@ -392,7 +392,7 @@ impl ClBackend
         })
     }
 
-    fn check_and_enqueue_nd_range_for_repeat_col(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    fn check_and_enqueue_nd_range_for_repeat_col(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, n: usize, m: usize, item_row_count: usize, item_col_count: usize) -> Result<()>
     {
         self.check_and_enqueue_nd_range2(kernel_name, a, b, |a2, b2| {
                 if a2.len != n {
@@ -405,7 +405,7 @@ impl ClBackend
         }, |inner, kernel, a_mem, b_mem| {
                 let n2 = n as u64;
                 let m2 = m as u64;
-                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, false);
+                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, item_row_count, item_col_count, false);
                 unsafe {
                     let res = ExecuteKernel::new(kernel)
                     .set_arg(&a_mem)
@@ -423,7 +423,7 @@ impl ClBackend
         })
     }
 
-    fn check_and_enqueue_nd_range_for_repeat_row(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
+    fn check_and_enqueue_nd_range_for_repeat_row(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, n: usize, m: usize, item_row_count: usize, item_col_count: usize) -> Result<()>
     {
         self.check_and_enqueue_nd_range2(kernel_name, a, b, |a2, b2| {
                 if a2.len != m {
@@ -436,7 +436,7 @@ impl ClBackend
         }, |inner, kernel, a_mem, b_mem| {
                 let n2 = n as u64;
                 let m2 = m as u64;
-                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, false);
+                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, item_row_count, item_col_count, false);
                 unsafe {
                     let res = ExecuteKernel::new(kernel)
                     .set_arg(&a_mem)
@@ -589,31 +589,31 @@ impl Backend for ClBackend
     }
 
     fn transpose_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("transpose_a", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("transpose_a", a, b, n, m, 1, 1) }
 
     fn add_a_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("add_a_b", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("add_a_b", a, b, c, n, m, 1, 1) }
 
     fn add_at_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("add_at_b", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("add_at_b", a, b, c, n, m, 1, 1) }
     
     fn add_a_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("add_a_bt", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("add_a_bt", a, b, c, n, m, 1, 1) }
 
     fn add_at_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("add_at_bt", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("add_at_bt", a, b, c, n, m, 1, 1) }
 
     fn sub_a_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("sub_a_b", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("sub_a_b", a, b, c, n, m, 1, 1) }
 
     fn sub_at_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("sub_at_b", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("sub_at_b", a, b, c, n, m, 1, 1) }
     
     fn sub_a_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("sub_a_bt", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("sub_a_bt", a, b, c, n, m, 1, 1) }
 
     fn sub_at_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>    
-    { self.check_and_enqueue_nd_range_for_op("sub_at_bt", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("sub_at_bt", a, b, c, n, m, 1, 1) }
     
     fn mul_a_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize) -> Result<()>
     { self.check_and_enqueue_nd_range_for_mul("mul_a_b", a, b, c, n, m, l) }
@@ -628,310 +628,310 @@ impl Backend for ClBackend
     { self.check_and_enqueue_nd_range_for_mul("mul_at_bt", a, b, c, n, m, l) }
 
     fn mul_a_b_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("mul_a_b_for_elems", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("mul_a_b_for_elems", a, b, c, n, m, 1, 1) }
 
     fn mul_at_b_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("mul_at_b_for_elems", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("mul_at_b_for_elems", a, b, c, n, m, 1, 1) }
     
     fn mul_a_bt_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("mul_a_bt_for_elems", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("mul_a_bt_for_elems", a, b, c, n, m, 1, 1) }
     
     fn mul_at_bt_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("mul_at_bt_for_elems", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("mul_at_bt_for_elems", a, b, c, n, m, 1, 1) }
 
     fn div_a_b_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("div_a_b_for_elems", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("div_a_b_for_elems", a, b, c, n, m, 1, 1) }
 
     fn div_at_b_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("div_at_b_for_elems", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("div_at_b_for_elems", a, b, c, n, m, 1, 1) }
     
     fn div_a_bt_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("div_a_bt_for_elems", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("div_a_bt_for_elems", a, b, c, n, m, 1, 1) }
     
     fn div_at_bt_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("div_at_bt_for_elems", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("div_at_bt_for_elems", a, b, c, n, m, 1, 1) }
 
     fn add_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_scalar("add_a_b_for_scalar", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_scalar("add_a_b_for_scalar", a, b, c, n, m, 1, 1) }
 
     fn add_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_scalar("add_at_b_for_scalar", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_scalar("add_at_b_for_scalar", a, b, c, n, m, 1, 1) }
 
     fn sub_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_scalar("sub_a_b_for_scalar", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_scalar("sub_a_b_for_scalar", a, b, c, n, m, 1, 1) }
 
     fn sub_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_scalar("sub_at_b_for_scalar", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_scalar("sub_at_b_for_scalar", a, b, c, n, m, 1, 1) }
 
     fn rsub_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_scalar("rsub_a_b_for_scalar", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_scalar("rsub_a_b_for_scalar", a, b, c, n, m, 1, 1) }
 
     fn rsub_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_scalar("rsub_at_b_for_scalar", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_scalar("rsub_at_b_for_scalar", a, b, c, n, m, 1, 1) }
     
     fn mul_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_scalar("mul_a_b_for_scalar", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_scalar("mul_a_b_for_scalar", a, b, c, n, m, 1, 1) }
 
     fn mul_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_scalar("mul_at_b_for_scalar", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_scalar("mul_at_b_for_scalar", a, b, c, n, m, 1, 1) }
 
     fn div_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_scalar("div_a_b_for_scalar", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_scalar("div_a_b_for_scalar", a, b, c, n, m, 1, 1) }
 
     fn div_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_scalar("div_at_b_for_scalar", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_scalar("div_at_b_for_scalar", a, b, c, n, m, 1, 1) }
 
     fn rdiv_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_scalar("rdiv_a_b_for_scalar", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_scalar("rdiv_a_b_for_scalar", a, b, c, n, m, 1, 1) }
 
     fn rdiv_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_scalar("rdiv_at_b_for_scalar", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_scalar("rdiv_at_b_for_scalar", a, b, c, n, m, 1, 1) }
 
     fn sigmoid_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("sigmoid_a", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("sigmoid_a", a, b, n, m, 1, 1) }
 
     fn sigmoid_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("sigmoid_at", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("sigmoid_at", a, b, n, m, 1, 1) }
 
     fn tanh_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("tanh_a", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("tanh_a", a, b, n, m, 1, 1) }
 
     fn tanh_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("tanh_at", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("tanh_at", a, b, n, m, 1, 1) }
 
     fn swish_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("swish_a", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("swish_a", a, b, n, m, 1, 1) }
 
     fn swish_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("swish_at", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("swish_at", a, b, n, m, 1, 1) }
 
     fn softmax_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun_and_tiles("softmax_a", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun_and_tiles("softmax_a", a, b, n, m, 1, 1) }
 
     fn softmax_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun_and_tiles("softmax_at", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun_and_tiles("softmax_at", a, b, n, m, 1, 1) }
 
     fn sqrt_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("sqrt_a", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("sqrt_a", a, b, n, m, 1, 1) }
 
     fn sqrt_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("sqrt_at", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("sqrt_at", a, b, n, m, 1, 1) }
     
     fn repeat_col_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_repeat_col("repeat_col_a", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_repeat_col("repeat_col_a", a, b, n, m, 1, 1) }
 
     fn repeat_row_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_repeat_row("repeat_row_a", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_repeat_row("repeat_row_a", a, b, n, m, 1, 1) }
 
     fn abs_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("abs_a", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("abs_a", a, b, n, m, 1, 1) }
 
     fn abs_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("abs_at", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("abs_at", a, b, n, m, 1, 1) }
 
     fn pow_a_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("pow_a_b", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("pow_a_b", a, b, c, n, m, 1, 1) }
 
     fn pow_at_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("pow_at_b", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("pow_at_b", a, b, c, n, m, 1, 1) }
     
     fn pow_a_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("pow_a_bt", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("pow_a_bt", a, b, c, n, m, 1, 1) }
     
     fn pow_at_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("pow_at_bt", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("pow_at_bt", a, b, c, n, m, 1, 1) }
 
     fn pow_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_scalar("pow_a_b_for_scalar", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_scalar("pow_a_b_for_scalar", a, b, c, n, m, 1, 1) }
 
     fn pow_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_scalar("pow_at_b_for_scalar", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_scalar("pow_at_b_for_scalar", a, b, c, n, m, 1, 1) }
 
     fn rpow_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_scalar("rpow_a_b_for_scalar", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_scalar("rpow_a_b_for_scalar", a, b, c, n, m, 1, 1) }
 
     fn rpow_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_scalar("rpow_at_b_for_scalar", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_scalar("rpow_at_b_for_scalar", a, b, c, n, m, 1, 1) }
 
     fn exp_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("exp_a", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("exp_a", a, b, n, m, 1, 1) }
 
     fn exp_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("exp_at", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("exp_at", a, b, n, m, 1, 1) }
 
     fn ln_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("ln_a", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("ln_a", a, b, n, m, 1, 1) }
 
     fn ln_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("ln_at", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("ln_at", a, b, n, m, 1, 1) }
 
     fn log2_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("log2_a", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("log2_a", a, b, n, m, 1, 1) }
 
     fn log2_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("log2_at", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("log2_at", a, b, n, m, 1, 1) }
 
     fn log10_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("log10_a", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("log10_a", a, b, n, m, 1, 1) }
 
     fn log10_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("log10_at", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("log10_at", a, b, n, m, 1, 1) }
 
     fn sin_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("sin_a", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("sin_a", a, b, n, m, 1, 1) }
 
     fn sin_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("sin_at", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("sin_at", a, b, n, m, 1, 1) }
 
     fn cos_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("cos_a", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("cos_a", a, b, n, m, 1, 1) }
 
     fn cos_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("cos_at", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("cos_at", a, b, n, m, 1, 1) }
 
     fn tan_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("tan_a", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("tan_a", a, b, n, m, 1, 1) }
 
     fn tan_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("tan_at", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("tan_at", a, b, n, m, 1, 1) }
 
     fn asin_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("asin_a", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("asin_a", a, b, n, m, 1, 1) }
 
     fn asin_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("asin_at", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("asin_at", a, b, n, m, 1, 1) }
 
     fn acos_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("acos_a", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("acos_a", a, b, n, m, 1, 1) }
 
     fn acos_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("acos_at", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("acos_at", a, b, n, m, 1, 1) }
 
     fn atan_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("atan_a", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("atan_a", a, b, n, m, 1, 1) }
 
     fn atan_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("atan_at", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("atan_at", a, b, n, m, 1, 1) }
 
     fn atan2_a_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("atan2_a_b", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("atan2_a_b", a, b, c, n, m, 1, 1) }
 
     fn atan2_at_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("atan2_at_b", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("atan2_at_b", a, b, c, n, m, 1, 1) }
     
     fn atan2_a_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("atan2_a_bt", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("atan2_a_bt", a, b, c, n, m, 1, 1) }
     
     fn atan2_at_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("atan2_at_bt", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("atan2_at_bt", a, b, c, n, m, 1, 1) }
 
     fn atan2_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_scalar("atan2_a_b_for_scalar", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_scalar("atan2_a_b_for_scalar", a, b, c, n, m, 1, 1) }
 
     fn atan2_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_scalar("atan2_at_b_for_scalar", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_scalar("atan2_at_b_for_scalar", a, b, c, n, m, 1, 1) }
 
     fn ratan2_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_scalar("ratan2_a_b_for_scalar", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_scalar("ratan2_a_b_for_scalar", a, b, c, n, m, 1, 1) }
 
     fn ratan2_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_scalar("ratan2_at_b_for_scalar", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_scalar("ratan2_at_b_for_scalar", a, b, c, n, m, 1, 1) }
 
     fn sinh_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("sinh_a", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("sinh_a", a, b, n, m, 1, 1) }
 
     fn sinh_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("sinh_at", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("sinh_at", a, b, n, m, 1, 1) }
 
     fn cosh_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("cosh_a", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("cosh_a", a, b, n, m, 1, 1) }
 
     fn cosh_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("cosh_at", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("cosh_at", a, b, n, m, 1, 1) }
 
     fn asinh_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("asinh_a", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("asinh_a", a, b, n, m, 1, 1) }
 
     fn asinh_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("asinh_at", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("asinh_at", a, b, n, m, 1, 1) }
 
     fn acosh_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("acosh_a", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("acosh_a", a, b, n, m, 1, 1) }
 
     fn acosh_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("acosh_at", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("acosh_at", a, b, n, m, 1, 1) }
 
     fn atanh_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("atanh_a", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("atanh_a", a, b, n, m, 1, 1) }
 
     fn atanh_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("atanh_at", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("atanh_at", a, b, n, m, 1, 1) }
 
     fn signum_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("signum_a", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("signum_a", a, b, n, m, 1, 1) }
 
     fn signum_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("signum_at", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("signum_at", a, b, n, m, 1, 1) }
 
     fn ceil_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("ceil_a", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("ceil_a", a, b, n, m, 1, 1) }
 
     fn ceil_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("ceil_at", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("ceil_at", a, b, n, m, 1, 1) }
 
     fn floor_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("floor_a", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("floor_a", a, b, n, m, 1, 1) }
 
     fn floor_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("floor_at", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("floor_at", a, b, n, m, 1, 1) }
 
     fn round_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("round_a", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("round_a", a, b, n, m, 1, 1) }
 
     fn round_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("round_at", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("round_at", a, b, n, m, 1, 1) }
 
     fn trunc_a(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("trunc_a", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("trunc_a", a, b, n, m, 1, 1) }
 
     fn trunc_at(&self, a: &BackendArray, b: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_fun("trunc_at", a, b, n, m) }
+    { self.check_and_enqueue_nd_range_for_fun("trunc_at", a, b, n, m, 1, 1) }
 
     fn max_a_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("max_a_b", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("max_a_b", a, b, c, n, m, 1, 1) }
 
     fn max_at_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("max_at_b", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("max_at_b", a, b, c, n, m, 1, 1) }
     
     fn max_a_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("max_a_bt", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("max_a_bt", a, b, c, n, m, 1, 1) }
     
     fn max_at_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("max_at_bt", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("max_at_bt", a, b, c, n, m, 1, 1) }
 
     fn max_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_scalar("max_a_b_for_scalar", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_scalar("max_a_b_for_scalar", a, b, c, n, m, 1, 1) }
 
     fn max_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_scalar("max_at_b_for_scalar", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_scalar("max_at_b_for_scalar", a, b, c, n, m, 1, 1) }
 
     fn min_a_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("min_a_b", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("min_a_b", a, b, c, n, m, 1, 1) }
 
     fn min_at_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("min_at_b", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("min_at_b", a, b, c, n, m, 1, 1) }
     
     fn min_a_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("min_a_bt", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("min_a_bt", a, b, c, n, m, 1, 1) }
     
     fn min_at_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_op("min_at_bt", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_op("min_at_bt", a, b, c, n, m, 1, 1) }
 
     fn min_a_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_scalar("min_a_b_for_scalar", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_scalar("min_a_b_for_scalar", a, b, c, n, m, 1, 1) }
 
     fn min_at_b_for_scalar(&self, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_scalar("min_at_b_for_scalar", a, b, c, n, m) }
+    { self.check_and_enqueue_nd_range_for_scalar("min_at_b_for_scalar", a, b, c, n, m, 1, 1) }
 }
 
 #[cfg(test)]
