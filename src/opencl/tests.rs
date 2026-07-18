@@ -99,9 +99,14 @@ fn test_cl_backend_transpose_a_transposes_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a(3, 2);
-            match backend_transpose_a(&backend, a.as_slice(), 2, 3) {
-                Ok(c) => assert_eq!(expected_transpose_a(a.as_slice(), 2, 3), c),
+            let a1 = fixture_a(3, 2);
+            match backend_transpose_a(&backend, a1.as_slice(), 2, 3) {
+                Ok(c1) => assert_eq!(expected_transpose_a(a1.as_slice(), 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a(5, 4);
+            match backend_transpose_a(&backend, a2.as_slice(), 4, 5) {
+                Ok(c2) => assert_eq!(expected_transpose_a(a2.as_slice(), 4, 5), c2),
                 Err(_) => assert!(false),
             }
         },
@@ -114,9 +119,14 @@ fn test_cl_backend_add_a_b_adds_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b(2, 3, 2, 3);
-            match backend_add_a_b(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => assert_eq!(expected_add_a_b(a.as_slice(), b.as_slice(), 2, 3), c),
+            let (a1, b1) = fixture_a_b(2, 3, 2, 3);
+            match backend_add_a_b(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => assert_eq!(expected_add_a_b(a1.as_slice(), b1.as_slice(), 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b(4, 5, 4, 5);
+            match backend_add_a_b(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => assert_eq!(expected_add_a_b(a2.as_slice(), b2.as_slice(), 4, 5), c2),
                 Err(_) => assert!(false),
             }
         },
@@ -129,9 +139,14 @@ fn test_cl_backend_add_at_b_adds_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b(3, 2, 2, 3);
-            match backend_add_at_b(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => assert_eq!(expected_add_at_b(a.as_slice(), b.as_slice(), 2, 3), c),
+            let (a1, b1) = fixture_a_b(3, 2, 2, 3);
+            match backend_add_at_b(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => assert_eq!(expected_add_at_b(a1.as_slice(), b1.as_slice(), 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b(5, 4, 4, 5);
+            match backend_add_at_b(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => assert_eq!(expected_add_at_b(a2.as_slice(), b2.as_slice(), 4, 5), c2),
                 Err(_) => assert!(false),
             }
         },
@@ -144,9 +159,14 @@ fn test_cl_backend_add_a_bt_adds_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b(2, 3, 3, 2);
-            match backend_add_a_bt(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => assert_eq!(expected_add_a_bt(a.as_slice(), b.as_slice(), 2, 3), c),
+            let (a1, b1) = fixture_a_b(2, 3, 3, 2);
+            match backend_add_a_bt(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => assert_eq!(expected_add_a_bt(a1.as_slice(), b1.as_slice(), 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b(4, 5, 5, 4);
+            match backend_add_a_bt(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => assert_eq!(expected_add_a_bt(a2.as_slice(), b2.as_slice(), 4, 5), c2),
                 Err(_) => assert!(false),
             }
         },
@@ -159,9 +179,14 @@ fn test_cl_backend_add_at_bt_adds_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b(3, 2, 3, 2);
-            match backend_add_at_bt(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => assert_eq!(expected_add_at_bt(a.as_slice(), b.as_slice(), 2, 3), c),
+            let (a1, b1) = fixture_a_b(3, 2, 3, 2);
+            match backend_add_at_bt(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => assert_eq!(expected_add_at_bt(a1.as_slice(), b1.as_slice(), 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b(5, 4, 5, 4);
+            match backend_add_at_bt(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => assert_eq!(expected_add_at_bt(a2.as_slice(), b2.as_slice(), 4, 5), c2),
                 Err(_) => assert!(false),
             }
         },
@@ -174,9 +199,14 @@ fn test_cl_backend_sub_a_b_subtracts_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b(2, 3, 2, 3);
-            match backend_sub_a_b(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => assert_eq!(expected_sub_a_b(a.as_slice(), b.as_slice(), 2, 3), c),
+            let (a1, b1) = fixture_a_b(2, 3, 2, 3);
+            match backend_sub_a_b(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => assert_eq!(expected_sub_a_b(a1.as_slice(), b1.as_slice(), 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b(4, 5, 4, 5);
+            match backend_sub_a_b(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => assert_eq!(expected_sub_a_b(a2.as_slice(), b2.as_slice(), 4, 5), c2),
                 Err(_) => assert!(false),
             }
         },
@@ -189,9 +219,14 @@ fn test_cl_backend_sub_at_b_subtracts_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b(3, 2, 2, 3);
-            match backend_sub_at_b(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => assert_eq!(expected_sub_at_b(a.as_slice(), b.as_slice(), 2, 3), c),
+            let (a1, b1) = fixture_a_b(3, 2, 2, 3);
+            match backend_sub_at_b(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => assert_eq!(expected_sub_at_b(a1.as_slice(), b1.as_slice(), 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b(5, 4, 4, 5);
+            match backend_sub_at_b(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => assert_eq!(expected_sub_at_b(a2.as_slice(), b2.as_slice(), 4, 5), c2),
                 Err(_) => assert!(false),
             }
         },
@@ -204,9 +239,14 @@ fn test_cl_backend_sub_a_bt_subtracts_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b(2, 3, 3, 2);
-            match backend_sub_a_bt(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => assert_eq!(expected_sub_a_bt(a.as_slice(), b.as_slice(), 2, 3), c),
+            let (a1, b1) = fixture_a_b(2, 3, 3, 2);
+            match backend_sub_a_bt(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => assert_eq!(expected_sub_a_bt(a1.as_slice(), b1.as_slice(), 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b(4, 5, 5, 4);
+            match backend_sub_a_bt(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => assert_eq!(expected_sub_a_bt(a2.as_slice(), b2.as_slice(), 4, 5), c2),
                 Err(_) => assert!(false),
             }
         },
@@ -219,9 +259,14 @@ fn test_cl_backend_sub_at_bt_subtracts_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b(3, 2, 3, 2);
-            match backend_sub_at_bt(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => assert_eq!(expected_sub_at_bt(a.as_slice(), b.as_slice(), 2, 3), c),
+            let (a1, b1) = fixture_a_b(3, 2, 3, 2);
+            match backend_sub_at_bt(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => assert_eq!(expected_sub_at_bt(a1.as_slice(), b1.as_slice(), 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b(5, 4, 5, 4);
+            match backend_sub_at_bt(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => assert_eq!(expected_sub_at_bt(a2.as_slice(), b2.as_slice(), 4, 5), c2),
                 Err(_) => assert!(false),
             }
         },
@@ -394,9 +439,14 @@ fn test_cl_backend_mul_a_b_for_elems_multiplies_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b(2, 3, 2, 3);
-            match backend_mul_a_b_for_elems(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => assert_eq!(expected_mul_a_b_for_elems(a.as_slice(), b.as_slice(), 2, 3), c),
+            let (a1, b1) = fixture_a_b(2, 3, 2, 3);
+            match backend_mul_a_b_for_elems(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => assert_eq!(expected_mul_a_b_for_elems(a1.as_slice(), b1.as_slice(), 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b(4, 5, 4, 5);
+            match backend_mul_a_b_for_elems(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => assert_eq!(expected_mul_a_b_for_elems(a2.as_slice(), b2.as_slice(), 4, 5), c2),
                 Err(_) => assert!(false),
             }
         },
@@ -409,9 +459,14 @@ fn test_cl_backend_mul_at_b_for_elems_multiplies_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b(3, 2, 2, 3);
-            match backend_mul_at_b_for_elems(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => assert_eq!(expected_mul_at_b_for_elems(a.as_slice(), b.as_slice(), 2, 3), c),
+            let (a1, b1) = fixture_a_b(3, 2, 2, 3);
+            match backend_mul_at_b_for_elems(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => assert_eq!(expected_mul_at_b_for_elems(a1.as_slice(), b1.as_slice(), 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b(5, 4, 4, 5);
+            match backend_mul_at_b_for_elems(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => assert_eq!(expected_mul_at_b_for_elems(a2.as_slice(), b2.as_slice(), 4, 5), c2),
                 Err(_) => assert!(false),
             }
         },
@@ -424,9 +479,14 @@ fn test_cl_backend_mul_a_bt_for_elems_multiplies_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b(2, 3, 3, 2);
-            match backend_mul_a_bt_for_elems(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => assert_eq!(expected_mul_a_bt_for_elems(a.as_slice(), b.as_slice(), 2, 3), c),
+            let (a1, b1) = fixture_a_b(2, 3, 3, 2);
+            match backend_mul_a_bt_for_elems(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => assert_eq!(expected_mul_a_bt_for_elems(a1.as_slice(), b1.as_slice(), 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b(4, 5, 5, 4);
+            match backend_mul_a_bt_for_elems(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => assert_eq!(expected_mul_a_bt_for_elems(a2.as_slice(), b2.as_slice(), 4, 5), c2),
                 Err(_) => assert!(false),
             }
         },
@@ -439,9 +499,14 @@ fn test_cl_backend_mul_at_bt_for_elems_multiplies_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b(3, 2, 3, 2);
-            match backend_mul_at_bt_for_elems(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => assert_eq!(expected_mul_at_bt_for_elems(a.as_slice(), b.as_slice(), 2, 3), c),
+            let (a1, b1) = fixture_a_b(3, 2, 3, 2);
+            match backend_mul_at_bt_for_elems(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => assert_eq!(expected_mul_at_bt_for_elems(a1.as_slice(), b1.as_slice(), 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b(4, 5, 4, 5);
+            match backend_mul_at_bt_for_elems(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => assert_eq!(expected_mul_at_bt_for_elems(a2.as_slice(), b2.as_slice(), 4, 5), c2),
                 Err(_) => assert!(false),
             }
         },
@@ -454,13 +519,24 @@ fn test_cl_backend_div_a_b_for_elems_divides_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b(2, 3, 2, 3);
-            match backend_div_a_b_for_elems(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => {
-                    let expected_c = expected_div_a_b_for_elems(a.as_slice(), b.as_slice(), 2, 3);
-                    assert_eq!(expected_c.len(), c.len());
+            let (a1, b1) = fixture_a_b(2, 3, 2, 3);
+            match backend_div_a_b_for_elems(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => {
+                    let expected_c1 = expected_div_a_b_for_elems(a1.as_slice(), b1.as_slice(), 2, 3);
+                    assert_eq!(expected_c1.len(), c1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                        assert!((expected_c1[i] - c1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b(4, 5, 4, 5);
+            match backend_div_a_b_for_elems(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => {
+                    let expected_c2 = expected_div_a_b_for_elems(a2.as_slice(), b2.as_slice(), 4, 5);
+                    assert_eq!(expected_c2.len(), c2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_c2[i] - c2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -475,13 +551,24 @@ fn test_cl_backend_div_at_b_for_elems_divides_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b(3, 2, 2, 3);
-            match backend_div_at_b_for_elems(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => {
-                    let expected_c = expected_div_at_b_for_elems(a.as_slice(), b.as_slice(), 2, 3);
-                    assert_eq!(expected_c.len(), c.len());
+            let (a1, b1) = fixture_a_b(3, 2, 2, 3);
+            match backend_div_at_b_for_elems(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => {
+                    let expected_c1 = expected_div_at_b_for_elems(a1.as_slice(), b1.as_slice(), 2, 3);
+                    assert_eq!(expected_c1.len(), c1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                        assert!((expected_c1[i] - c1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b(5, 4, 4, 5);
+            match backend_div_at_b_for_elems(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => {
+                    let expected_c2 = expected_div_at_b_for_elems(a2.as_slice(), b2.as_slice(), 4, 5);
+                    assert_eq!(expected_c2.len(), c2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_c2[i] - c2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -496,13 +583,24 @@ fn test_cl_backend_div_a_bt_for_elems_divides_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b(2, 3, 3, 2);
-            match backend_div_a_bt_for_elems(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => {
-                    let expected_c = expected_div_a_bt_for_elems(a.as_slice(), b.as_slice(), 2, 3);
-                    assert_eq!(expected_c.len(), c.len());
+            let (a1, b1) = fixture_a_b(2, 3, 3, 2);
+            match backend_div_a_bt_for_elems(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => {
+                    let expected_c1 = expected_div_a_bt_for_elems(a1.as_slice(), b1.as_slice(), 2, 3);
+                    assert_eq!(expected_c1.len(), c1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                        assert!((expected_c1[i] - c1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b(4, 5, 4, 5);
+            match backend_div_a_bt_for_elems(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => {
+                    let expected_c2 = expected_div_a_bt_for_elems(a2.as_slice(), b2.as_slice(), 4, 5);
+                    assert_eq!(expected_c2.len(), c2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_c2[i] - c2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -517,13 +615,24 @@ fn test_cl_backend_div_at_bt_for_elems_divides_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b(3, 2, 3, 2);
-            match backend_div_at_bt_for_elems(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => {
-                    let expected_c = expected_div_at_bt_for_elems(a.as_slice(), b.as_slice(), 2, 3);
-                    assert_eq!(expected_c.len(), c.len());
+            let (a1, b1) = fixture_a_b(3, 2, 3, 2);
+            match backend_div_at_bt_for_elems(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => {
+                    let expected_c1 = expected_div_at_bt_for_elems(a1.as_slice(), b1.as_slice(), 2, 3);
+                    assert_eq!(expected_c1.len(), c1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                        assert!((expected_c1[i] - c1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b(5, 4, 5, 4);
+            match backend_div_at_bt_for_elems(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => {
+                    let expected_c2 = expected_div_at_bt_for_elems(a2.as_slice(), b2.as_slice(), 4, 5);
+                    assert_eq!(expected_c2.len(), c2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_c2[i] - c2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -538,9 +647,14 @@ fn test_cl_backend_add_a_b_for_scalar_adds_backend_array_and_scalar()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a(2, 3);
-            match backend_add_a_b_for_scalar(&backend, a.as_slice(), 10.5, 2, 3) {
-                Ok(c) => assert_eq!(expected_add_a_b_for_scalar(a.as_slice(), 10.5, 2, 3), c),
+            let a1 = fixture_a(2, 3);
+            match backend_add_a_b_for_scalar(&backend, a1.as_slice(), 10.5, 2, 3) {
+                Ok(c1) => assert_eq!(expected_add_a_b_for_scalar(a1.as_slice(), 10.5, 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a(4, 5);
+            match backend_add_a_b_for_scalar(&backend, a2.as_slice(), 10.5, 4, 5) {
+                Ok(c2) => assert_eq!(expected_add_a_b_for_scalar(a2.as_slice(), 10.5, 4, 5), c2),
                 Err(_) => assert!(false),
             }
         },
@@ -553,9 +667,14 @@ fn test_cl_backend_add_at_b_for_scalar_adds_backend_array_and_scalar()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a(3, 2);
-            match backend_add_at_b_for_scalar(&backend, a.as_slice(), 10.5, 2, 3) {
-                Ok(c) => assert_eq!(expected_add_at_b_for_scalar(a.as_slice(), 10.5, 2, 3), c),
+            let a1 = fixture_a(3, 2);
+            match backend_add_at_b_for_scalar(&backend, a1.as_slice(), 10.5, 2, 3) {
+                Ok(c1) => assert_eq!(expected_add_at_b_for_scalar(a1.as_slice(), 10.5, 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a(5, 4);
+            match backend_add_at_b_for_scalar(&backend, a2.as_slice(), 10.5, 4, 5) {
+                Ok(c2) => assert_eq!(expected_add_at_b_for_scalar(a2.as_slice(), 10.5, 4, 5), c2),
                 Err(_) => assert!(false),
             }
         },
@@ -568,9 +687,14 @@ fn test_cl_backend_sub_a_b_for_scalar_subtracts_backend_array_and_scalar()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a(2, 3);
-            match backend_sub_a_b_for_scalar(&backend, a.as_slice(), 10.5, 2, 3) {
-                Ok(c) => assert_eq!(expected_sub_a_b_for_scalar(a.as_slice(), 10.5, 2, 3), c),
+            let a1 = fixture_a(2, 3);
+            match backend_sub_a_b_for_scalar(&backend, a1.as_slice(), 10.5, 2, 3) {
+                Ok(c1) => assert_eq!(expected_sub_a_b_for_scalar(a1.as_slice(), 10.5, 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a(4, 5);
+            match backend_sub_a_b_for_scalar(&backend, a2.as_slice(), 10.5, 4, 5) {
+                Ok(c2) => assert_eq!(expected_sub_a_b_for_scalar(a2.as_slice(), 10.5, 4, 5), c2),
                 Err(_) => assert!(false),
             }
         },
@@ -583,9 +707,14 @@ fn test_cl_backend_sub_at_b_for_scalar_subtracts_backend_array_and_scalar()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a(3, 2);
-            match backend_sub_at_b_for_scalar(&backend, a.as_slice(), 10.5, 2, 3) {
-                Ok(c) => assert_eq!(expected_sub_at_b_for_scalar(a.as_slice(), 10.5, 2, 3), c),
+            let a1 = fixture_a(3, 2);
+            match backend_sub_at_b_for_scalar(&backend, a1.as_slice(), 10.5, 2, 3) {
+                Ok(c1) => assert_eq!(expected_sub_at_b_for_scalar(a1.as_slice(), 10.5, 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a(4, 5);
+            match backend_sub_at_b_for_scalar(&backend, a2.as_slice(), 10.5, 4, 5) {
+                Ok(c2) => assert_eq!(expected_sub_at_b_for_scalar(a2.as_slice(), 10.5, 4, 5), c2),
                 Err(_) => assert!(false),
             }
         },
@@ -598,9 +727,14 @@ fn test_cl_backend_rsub_a_b_for_scalar_subtracts_backend_array_and_scalar()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a(2, 3);
-            match backend_rsub_a_b_for_scalar(&backend, a.as_slice(), 10.5, 2, 3) {
-                Ok(c) => assert_eq!(expected_rsub_a_b_for_scalar(a.as_slice(), 10.5, 2, 3), c),
+            let a1 = fixture_a(2, 3);
+            match backend_rsub_a_b_for_scalar(&backend, a1.as_slice(), 10.5, 2, 3) {
+                Ok(c1) => assert_eq!(expected_rsub_a_b_for_scalar(a1.as_slice(), 10.5, 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a(4, 5);
+            match backend_rsub_a_b_for_scalar(&backend, a2.as_slice(), 10.5, 4, 5) {
+                Ok(c2) => assert_eq!(expected_rsub_a_b_for_scalar(a2.as_slice(), 10.5, 4, 5), c2),
                 Err(_) => assert!(false),
             }
         },
@@ -618,6 +752,11 @@ fn test_cl_backend_rsub_at_b_for_scalar_subtracts_backend_array_and_scalar()
                 Ok(c) => assert_eq!(expected_rsub_at_b_for_scalar(a.as_slice(), 10.5, 2, 3), c),
                 Err(_) => assert!(false),
             }
+            let a2 = fixture_a(5, 4);
+            match backend_rsub_at_b_for_scalar(&backend, a2.as_slice(), 10.5, 4, 5) {
+                Ok(c2) => assert_eq!(expected_rsub_at_b_for_scalar(a2.as_slice(), 10.5, 4, 5), c2),
+                Err(_) => assert!(false),
+            }
         },
         Err(_) => assert!(false),
     }
@@ -628,9 +767,14 @@ fn test_cl_backend_mul_a_b_for_scalar_multiplies_backend_array_and_scalar()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a(2, 3);
-            match backend_mul_a_b_for_scalar(&backend, a.as_slice(), 10.5, 2, 3) {
-                Ok(c) => assert_eq!(expected_mul_a_b_for_scalar(a.as_slice(), 10.5, 2, 3), c),
+            let a1 = fixture_a(2, 3);
+            match backend_mul_a_b_for_scalar(&backend, a1.as_slice(), 10.5, 2, 3) {
+                Ok(c1) => assert_eq!(expected_mul_a_b_for_scalar(a1.as_slice(), 10.5, 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a(4, 5);
+            match backend_mul_a_b_for_scalar(&backend, a2.as_slice(), 10.5, 4, 5) {
+                Ok(c2) => assert_eq!(expected_mul_a_b_for_scalar(a2.as_slice(), 10.5, 4, 5), c2),
                 Err(_) => assert!(false),
             }
         },
@@ -643,9 +787,14 @@ fn test_cl_backend_mul_at_b_for_scalar_multiplies_backend_array_and_scalar()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a(3, 2);
-            match backend_mul_at_b_for_scalar(&backend, a.as_slice(), 10.5, 2, 3) {
-                Ok(c) => assert_eq!(expected_mul_at_b_for_scalar(a.as_slice(), 10.5, 2, 3), c),
+            let a1 = fixture_a(3, 2);
+            match backend_mul_at_b_for_scalar(&backend, a1.as_slice(), 10.5, 2, 3) {
+                Ok(c1) => assert_eq!(expected_mul_at_b_for_scalar(a1.as_slice(), 10.5, 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a(5, 4);
+            match backend_mul_at_b_for_scalar(&backend, a2.as_slice(), 10.5, 4, 5) {
+                Ok(c2) => assert_eq!(expected_mul_at_b_for_scalar(a2.as_slice(), 10.5, 4, 5), c2),
                 Err(_) => assert!(false),
             }
         },
@@ -658,13 +807,24 @@ fn test_cl_backend_div_a_b_for_scalar_divides_backend_array_and_scalar()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a(2, 3);
-            match backend_div_a_b_for_scalar(&backend, a.as_slice(), 10.5, 2, 3) {
-                Ok(c) => {
-                    let expected_c = expected_div_a_b_for_scalar(a.as_slice(), 10.5, 2, 3);
-                    assert_eq!(expected_c.len(), c.len());
+            let a1 = fixture_a(2, 3);
+            match backend_div_a_b_for_scalar(&backend, a1.as_slice(), 10.5, 2, 3) {
+                Ok(c1) => {
+                    let expected_c1 = expected_div_a_b_for_scalar(a1.as_slice(), 10.5, 2, 3);
+                    assert_eq!(expected_c1.len(), c1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                        assert!((expected_c1[i] - c1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a(4, 5);
+            match backend_div_a_b_for_scalar(&backend, a2.as_slice(), 10.5, 4, 5) {
+                Ok(c2) => {
+                    let expected_c2 = expected_div_a_b_for_scalar(a2.as_slice(), 10.5, 4, 5);
+                    assert_eq!(expected_c2.len(), c2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_c2[i] - c2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -679,13 +839,24 @@ fn test_cl_backend_div_at_b_for_scalar_divides_backend_array_and_scalar()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a(3, 2);
-            match backend_div_at_b_for_scalar(&backend, a.as_slice(), 10.5, 2, 3) {
-                Ok(c) => {
-                    let expected_c = expected_div_at_b_for_scalar(a.as_slice(), 10.5, 2, 3);
-                    assert_eq!(expected_c.len(), c.len());
+            let a1 = fixture_a(3, 2);
+            match backend_div_at_b_for_scalar(&backend, a1.as_slice(), 10.5, 2, 3) {
+                Ok(c1) => {
+                    let expected_c1 = expected_div_at_b_for_scalar(a1.as_slice(), 10.5, 2, 3);
+                    assert_eq!(expected_c1.len(), c1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                        assert!((expected_c1[i] - c1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a(5, 4);
+            match backend_div_at_b_for_scalar(&backend, a2.as_slice(), 10.5, 4, 5) {
+                Ok(c2) => {
+                    let expected_c2 = expected_div_at_b_for_scalar(a2.as_slice(), 10.5, 4, 5);
+                    assert_eq!(expected_c2.len(), c2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_c2[i] - c2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -700,13 +871,24 @@ fn test_cl_backend_rdiv_a_b_for_scalar_divides_backend_array_and_scalar()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a(2, 3);
-            match backend_rdiv_a_b_for_scalar(&backend, a.as_slice(), 10.5, 2, 3) {
-                Ok(c) => {
-                    let expected_c = expected_rdiv_a_b_for_scalar(a.as_slice(), 10.5, 2, 3);
-                    assert_eq!(expected_c.len(), c.len());
+            let a1 = fixture_a(2, 3);
+            match backend_rdiv_a_b_for_scalar(&backend, a1.as_slice(), 10.5, 2, 3) {
+                Ok(c1) => {
+                    let expected_c1 = expected_rdiv_a_b_for_scalar(a1.as_slice(), 10.5, 2, 3);
+                    assert_eq!(expected_c1.len(), c1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                        assert!((expected_c1[i] - c1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a(4, 5);
+            match backend_rdiv_a_b_for_scalar(&backend, a2.as_slice(), 10.5, 4, 5) {
+                Ok(c2) => {
+                    let expected_c2 = expected_rdiv_a_b_for_scalar(a2.as_slice(), 10.5, 4, 5);
+                    assert_eq!(expected_c2.len(), c2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_c2[i] - c2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -721,13 +903,24 @@ fn test_cl_backend_rdiv_at_b_for_scalar_divides_backend_array_and_scalar()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a(3, 2);
-            match backend_rdiv_at_b_for_scalar(&backend, a.as_slice(), 10.5, 2, 3) {
-                Ok(c) => {
-                    let expected_c = expected_rdiv_at_b_for_scalar(a.as_slice(), 10.5, 2, 3);
-                    assert_eq!(expected_c.len(), c.len());
+            let a1 = fixture_a(3, 2);
+            match backend_rdiv_at_b_for_scalar(&backend, a1.as_slice(), 10.5, 2, 3) {
+                Ok(c1) => {
+                    let expected_c1 = expected_rdiv_at_b_for_scalar(a1.as_slice(), 10.5, 2, 3);
+                    assert_eq!(expected_c1.len(), c1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                        assert!((expected_c1[i] - c1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a(5, 4);
+            match backend_rdiv_at_b_for_scalar(&backend, a2.as_slice(), 10.5, 4, 5) {
+                Ok(c2) => {
+                    let expected_c2 = expected_rdiv_at_b_for_scalar(a2.as_slice(), 10.5, 4, 5);
+                    assert_eq!(expected_c2.len(), c2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_c2[i] - c2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -742,13 +935,24 @@ fn test_cl_backend_sigmoid_a_calculates_sigmoid_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_activation_fun(2, 3);
-            match backend_sigmoid_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_sigmoid_a(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_activation_fun(2, 3);
+            match backend_sigmoid_a(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_sigmoid_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_activation_fun(4, 5);
+            match backend_sigmoid_a(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_sigmoid_a(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -763,13 +967,24 @@ fn test_cl_backend_sigmoid_at_calculates_sigmoid_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_activation_fun(3, 2);
-            match backend_sigmoid_at(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_sigmoid_at(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_activation_fun(3, 2);
+            match backend_sigmoid_at(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_sigmoid_at(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_activation_fun(5, 4);
+            match backend_sigmoid_at(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_sigmoid_at(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -784,13 +999,24 @@ fn test_cl_backend_tanh_a_calculates_tanh_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_activation_fun(2, 3);
-            match backend_tanh_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_tanh_a(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_activation_fun(2, 3);
+            match backend_tanh_a(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_tanh_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_activation_fun(4, 5);
+            match backend_tanh_a(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_tanh_a(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -805,13 +1031,24 @@ fn test_cl_backend_tanh_at_calculates_tanh_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_activation_fun(3, 2);
-            match backend_tanh_at(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_tanh_at(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_activation_fun(3, 2);
+            match backend_tanh_at(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_tanh_at(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_activation_fun(5, 4);
+            match backend_tanh_at(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_tanh_at(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -826,13 +1063,24 @@ fn test_cl_backend_swish_a_calculates_swish_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_activation_fun(2, 3);
-            match backend_swish_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_swish_a(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_activation_fun(2, 3);
+            match backend_swish_a(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_swish_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_activation_fun(4, 5);
+            match backend_swish_a(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_swish_a(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -847,13 +1095,24 @@ fn test_cl_backend_swish_at_calculates_swish_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_activation_fun(3, 2);
-            match backend_swish_at(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_swish_at(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_activation_fun(3, 2);
+            match backend_swish_at(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_swish_at(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_activation_fun(5, 4);
+            match backend_swish_at(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_swish_at(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1042,13 +1301,24 @@ fn test_cl_backend_sqrt_a_calculates_sqrt_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a(2, 3);
-            match backend_sqrt_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_sqrt_a(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a(2, 3);
+            match backend_sqrt_a(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_sqrt_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a(4, 5);
+            match backend_sqrt_a(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_sqrt_a(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1063,13 +1333,24 @@ fn test_cl_backend_sqrt_at_calculates_sqrt_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a(3, 2);
-            match backend_sqrt_at(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_sqrt_at(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a(3, 2);
+            match backend_sqrt_at(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_sqrt_at(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a(5, 4);
+            match backend_sqrt_a(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_sqrt_a(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1084,9 +1365,14 @@ fn test_cl_backend_repeat_col_a_repeats_column_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a(2, 1);
-            match backend_repeat_col_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => assert_eq!(expected_repeat_col_a(a.as_slice(), 2, 3), b),
+            let a1 = fixture_a(2, 1);
+            match backend_repeat_col_a(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => assert_eq!(expected_repeat_col_a(a1.as_slice(), 2, 3), b1),
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a(4, 1);
+            match backend_repeat_col_a(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => assert_eq!(expected_repeat_col_a(a2.as_slice(), 4, 5), b2),
                 Err(_) => assert!(false),
             }
         },
@@ -1099,9 +1385,14 @@ fn test_cl_backend_repeat_row_a_repeats_row_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a(1, 3);
-            match backend_repeat_row_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => assert_eq!(expected_repeat_row_a(a.as_slice(), 2, 3), b),
+            let a1 = fixture_a(1, 3);
+            match backend_repeat_row_a(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => assert_eq!(expected_repeat_row_a(a1.as_slice(), 2, 3), b1),
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a(1, 5);
+            match backend_repeat_row_a(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => assert_eq!(expected_repeat_row_a(a2.as_slice(), 4, 5), b2),
                 Err(_) => assert!(false),
             }
         },
@@ -1210,9 +1501,14 @@ fn test_cl_backend_abs_a_calculates_abs_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_common_math_fun(2, 3);
-            match backend_abs_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => assert_eq!(expected_abs_a(a.as_slice(), 2, 3), b),
+            let a1 = fixture_a_for_common_math_fun(2, 3);
+            match backend_abs_a(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => assert_eq!(expected_abs_a(a1.as_slice(), 2, 3), b1),
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(4, 5);
+            match backend_abs_a(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => assert_eq!(expected_abs_a(a2.as_slice(), 4, 5), b2),
                 Err(_) => assert!(false),
             }
         },
@@ -1225,9 +1521,14 @@ fn test_cl_backend_abs_at_calculates_abs_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_common_math_fun(3, 2);
-            match backend_abs_at(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => assert_eq!(expected_abs_at(a.as_slice(), 2, 3), b),
+            let a1 = fixture_a_for_common_math_fun(3, 2);
+            match backend_abs_at(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => assert_eq!(expected_abs_at(a1.as_slice(), 2, 3), b1),
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(5, 4);
+            match backend_abs_at(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => assert_eq!(expected_abs_at(a2.as_slice(), 4, 5), b2),
                 Err(_) => assert!(false),
             }
         },
@@ -1240,13 +1541,24 @@ fn test_cl_backend_pow_a_b_calculates_pow_for_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b_for_pow(2, 3, 2, 3);
-            match backend_pow_a_b(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => {
-                    let expected_c = expected_pow_a_b(a.as_slice(), b.as_slice(), 2, 3);
-                    assert_eq!(expected_c.len(), c.len());
+            let (a1, b1) = fixture_a_b_for_pow(2, 3, 2, 3);
+            match backend_pow_a_b(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => {
+                    let expected_c1 = expected_pow_a_b(a1.as_slice(), b1.as_slice(), 2, 3);
+                    assert_eq!(expected_c1.len(), c1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                        assert!((expected_c1[i] - c1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b_for_pow(4, 5, 4, 5);
+            match backend_pow_a_b(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => {
+                    let expected_c2 = expected_pow_a_b(a2.as_slice(), b2.as_slice(), 4, 5);
+                    assert_eq!(expected_c2.len(), c2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_c2[i] - c2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1261,13 +1573,24 @@ fn test_cl_backend_pow_at_b_calculates_pow_for_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b_for_pow(3, 2, 2, 3);
-            match backend_pow_at_b(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => {
-                    let expected_c = expected_pow_at_b(a.as_slice(), b.as_slice(), 2, 3);
-                    assert_eq!(expected_c.len(), c.len());
+            let (a1, b1) = fixture_a_b_for_pow(3, 2, 2, 3);
+            match backend_pow_at_b(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => {
+                    let expected_c1 = expected_pow_at_b(a1.as_slice(), b1.as_slice(), 2, 3);
+                    assert_eq!(expected_c1.len(), c1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                        assert!((expected_c1[i] - c1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b_for_pow(5, 4, 4, 5);
+            match backend_pow_at_b(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => {
+                    let expected_c2 = expected_pow_at_b(a2.as_slice(), b2.as_slice(), 4, 5);
+                    assert_eq!(expected_c2.len(), c2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_c2[i] - c2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1282,13 +1605,24 @@ fn test_cl_backend_pow_a_bt_calculates_pow_for_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b_for_pow(2, 3, 3, 2);
-            match backend_pow_a_bt(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => {
-                    let expected_c = expected_pow_a_bt(a.as_slice(), b.as_slice(), 2, 3);
-                    assert_eq!(expected_c.len(), c.len());
+            let (a1, b1) = fixture_a_b_for_pow(2, 3, 3, 2);
+            match backend_pow_a_bt(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => {
+                    let expected_c1 = expected_pow_a_bt(a1.as_slice(), b1.as_slice(), 2, 3);
+                    assert_eq!(expected_c1.len(), c1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                        assert!((expected_c1[i] - c1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b_for_pow(4, 5, 5, 4);
+            match backend_pow_a_bt(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => {
+                    let expected_c2 = expected_pow_a_bt(a2.as_slice(), b2.as_slice(), 4, 5);
+                    assert_eq!(expected_c2.len(), c2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_c2[i] - c2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1303,13 +1637,24 @@ fn test_cl_backend_pow_at_bt_calculates_pow_for_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b_for_pow(3, 2, 3, 2);
-            match backend_pow_at_bt(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => {
-                    let expected_c = expected_pow_at_bt(a.as_slice(), b.as_slice(), 2, 3);
-                    assert_eq!(expected_c.len(), c.len());
+            let (a1, b1) = fixture_a_b_for_pow(3, 2, 3, 2);
+            match backend_pow_at_bt(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => {
+                    let expected_c1 = expected_pow_at_bt(a1.as_slice(), b1.as_slice(), 2, 3);
+                    assert_eq!(expected_c1.len(), c1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                        assert!((expected_c1[i] - c1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b_for_pow(5, 4, 5, 4);
+            match backend_pow_at_bt(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => {
+                    let expected_c2 = expected_pow_at_bt(a2.as_slice(), b2.as_slice(), 4, 5);
+                    assert_eq!(expected_c2.len(), c2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_c2[i] - c2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1324,13 +1669,24 @@ fn test_cl_backend_pow_a_b_for_scalar_calculates_pow_for_backend_array_and_scala
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_pow(2, 3);
-            match backend_pow_a_b_for_scalar(&backend, a.as_slice(), 2.5, 2, 3) {
-                Ok(c) => {
-                    let expected_c = expected_pow_a_b_for_scalar(a.as_slice(), 2.5, 2, 3);
-                    assert_eq!(expected_c.len(), c.len());
+            let a1 = fixture_a_for_pow(2, 3);
+            match backend_pow_a_b_for_scalar(&backend, a1.as_slice(), 2.5, 2, 3) {
+                Ok(c1) => {
+                    let expected_c1 = expected_pow_a_b_for_scalar(a1.as_slice(), 2.5, 2, 3);
+                    assert_eq!(expected_c1.len(), c1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                        assert!((expected_c1[i] - c1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_pow(4, 5);
+            match backend_pow_a_b_for_scalar(&backend, a2.as_slice(), 2.5, 4, 5) {
+                Ok(c2) => {
+                    let expected_c2 = expected_pow_a_b_for_scalar(a2.as_slice(), 2.5, 4, 5);
+                    assert_eq!(expected_c2.len(), c2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_c2[i] - c2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1345,13 +1701,24 @@ fn test_cl_backend_pow_at_b_for_scalar_calculates_pow_for_backend_array_and_scal
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_pow(3, 2);
-            match backend_pow_at_b_for_scalar(&backend, a.as_slice(), 2.5, 2, 3) {
-                Ok(c) => {
-                    let expected_c = expected_pow_at_b_for_scalar(a.as_slice(), 2.5, 2, 3);
-                    assert_eq!(expected_c.len(), c.len());
+            let a1 = fixture_a_for_pow(3, 2);
+            match backend_pow_at_b_for_scalar(&backend, a1.as_slice(), 2.5, 2, 3) {
+                Ok(c1) => {
+                    let expected_c1 = expected_pow_at_b_for_scalar(a1.as_slice(), 2.5, 2, 3);
+                    assert_eq!(expected_c1.len(), c1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                        assert!((expected_c1[i] - c1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_pow(5, 4);
+            match backend_pow_at_b_for_scalar(&backend, a2.as_slice(), 2.5, 4, 5) {
+                Ok(c2) => {
+                    let expected_c2 = expected_pow_at_b_for_scalar(a2.as_slice(), 2.5, 4, 5);
+                    assert_eq!(expected_c2.len(), c2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_c2[i] - c2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1366,13 +1733,24 @@ fn test_cl_backend_rpow_a_b_for_scalar_calculates_pow_for_backend_array_and_scal
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_common_math_fun(2, 3);
-            match backend_rpow_a_b_for_scalar(&backend, a.as_slice(), 10.5, 2, 3) {
-                Ok(c) => {
-                    let expected_c = expected_rpow_a_b_for_scalar(a.as_slice(), 10.5, 2, 3);
-                    assert_eq!(expected_c.len(), c.len());
+            let a1 = fixture_a_for_common_math_fun(2, 3);
+            match backend_rpow_a_b_for_scalar(&backend, a1.as_slice(), 10.5, 2, 3) {
+                Ok(c1) => {
+                    let expected_c1 = expected_rpow_a_b_for_scalar(a1.as_slice(), 10.5, 2, 3);
+                    assert_eq!(expected_c1.len(), c1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                        assert!((expected_c1[i] - c1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(4, 5);
+            match backend_rpow_a_b_for_scalar(&backend, a2.as_slice(), 10.5, 4, 5) {
+                Ok(c2) => {
+                    let expected_c2 = expected_rpow_a_b_for_scalar(a2.as_slice(), 10.5, 4, 5);
+                    assert_eq!(expected_c2.len(), c2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_c2[i] - c2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1387,13 +1765,24 @@ fn test_cl_backend_rpow_at_b_for_scalar_calculates_pow_backend_array_and_scalar(
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_common_math_fun(3, 2);
-            match backend_rpow_at_b_for_scalar(&backend, a.as_slice(), 10.5, 2, 3) {
-                Ok(c) => {
-                    let expected_c = expected_rpow_at_b_for_scalar(a.as_slice(), 10.5, 2, 3);
-                    assert_eq!(expected_c.len(), c.len());
+            let a1 = fixture_a_for_common_math_fun(3, 2);
+            match backend_rpow_at_b_for_scalar(&backend, a1.as_slice(), 10.5, 2, 3) {
+                Ok(c1) => {
+                    let expected_c1 = expected_rpow_at_b_for_scalar(a1.as_slice(), 10.5, 2, 3);
+                    assert_eq!(expected_c1.len(), c1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                        assert!((expected_c1[i] - c1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(5, 4);
+            match backend_rpow_at_b_for_scalar(&backend, a2.as_slice(), 10.5, 4, 5) {
+                Ok(c2) => {
+                    let expected_c2 = expected_rpow_at_b_for_scalar(a2.as_slice(), 10.5, 4, 5);
+                    assert_eq!(expected_c2.len(), c2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_c2[i] - c2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1408,13 +1797,24 @@ fn test_cl_backend_exp_a_calculates_exp_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_common_math_fun(2, 3);
-            match backend_exp_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_exp_a(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_common_math_fun(2, 3);
+            match backend_exp_a(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_exp_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(4, 5);
+            match backend_exp_a(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_exp_a(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1429,13 +1829,24 @@ fn test_cl_backend_exp_at_calculates_exp_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_common_math_fun(3, 2);
-            match backend_exp_at(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_exp_at(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_common_math_fun(3, 2);
+            match backend_exp_at(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_exp_at(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(5, 4);
+            match backend_exp_at(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_exp_at(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1450,13 +1861,24 @@ fn test_cl_backend_ln_a_calculates_ln_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_log(2, 3);
-            match backend_ln_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_ln_a(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_log(2, 3);
+            match backend_ln_a(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_ln_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_log(4, 5);
+            match backend_ln_a(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_ln_a(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1482,6 +1904,17 @@ fn test_cl_backend_ln_at_calculates_ln_for_backend_array()
                 },
                 Err(_) => assert!(false),
             }
+            let a2 = fixture_a_for_log(5, 4);
+            match backend_ln_at(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_ln_at(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
         },
         Err(_) => assert!(false),
     }
@@ -1492,13 +1925,24 @@ fn test_cl_backend_log2_a_calculates_log2_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_log(2, 3);
-            match backend_log2_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_log2_a(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_log(2, 3);
+            match backend_log2_a(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_log2_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_log(4, 5);
+            match backend_log2_a(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_log2_a(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1513,13 +1957,24 @@ fn test_cl_backend_log2_at_calculates_log2_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_log(3, 2);
-            match backend_log2_at(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_log2_at(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_log(3, 2);
+            match backend_log2_at(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_log2_at(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_log(5, 4);
+            match backend_log2_at(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_log2_at(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1534,13 +1989,24 @@ fn test_cl_backend_log10_a_calculates_log10_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_log(2, 3);
-            match backend_log10_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_log10_a(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_log(2, 3);
+            match backend_log10_a(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_log10_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_log(4, 5);
+            match backend_log10_a(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_log10_a(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1555,13 +2021,24 @@ fn test_cl_backend_log10_at_calculates_log10_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_log(3, 2);
-            match backend_log10_at(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_log10_at(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_log(3, 2);
+            match backend_log10_at(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_log10_at(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_log(4, 5);
+            match backend_log10_a(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_log10_a(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1576,13 +2053,24 @@ fn test_cl_backend_sin_a_calculates_sin_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_common_math_fun(2, 3);
-            match backend_sin_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_sin_a(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_common_math_fun(2, 3);
+            match backend_sin_a(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_sin_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(4, 5);
+            match backend_sin_a(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_sin_a(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1597,13 +2085,24 @@ fn test_cl_backend_sin_at_calculates_sin_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_common_math_fun(3, 2);
-            match backend_sin_at(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_sin_at(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_common_math_fun(3, 2);
+            match backend_sin_at(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_sin_at(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(5, 4);
+            match backend_sin_at(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_sin_at(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1618,13 +2117,24 @@ fn test_cl_backend_cos_a_calculates_cos_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_common_math_fun(2, 3);
-            match backend_cos_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_cos_a(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_common_math_fun(2, 3);
+            match backend_cos_a(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_cos_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(4, 5);
+            match backend_cos_a(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_cos_a(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1639,13 +2149,24 @@ fn test_cl_backend_cos_at_calculates_cos_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_common_math_fun(3, 2);
-            match backend_cos_at(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_cos_at(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_common_math_fun(3, 2);
+            match backend_cos_at(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_cos_at(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(5, 4);
+            match backend_cos_at(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_cos_at(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1660,13 +2181,24 @@ fn test_cl_backend_tan_a_calculates_tan_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_common_math_fun(2, 3);
-            match backend_tan_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_tan_a(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_common_math_fun(2, 3);
+            match backend_tan_a(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_tan_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(4, 5);
+            match backend_tan_a(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_tan_a(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1681,13 +2213,24 @@ fn test_cl_backend_tan_at_calculates_tan_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_common_math_fun(3, 2);
-            match backend_tan_at(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_tan_at(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_common_math_fun(3, 2);
+            match backend_tan_at(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_tan_at(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(5, 4);
+            match backend_tan_at(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_tan_at(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1702,13 +2245,24 @@ fn test_cl_backend_asin_a_calculates_asin_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_asin_or_acos(2, 3);
-            match backend_asin_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_asin_a(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_asin_or_acos(2, 3);
+            match backend_asin_a(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_asin_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_asin_or_acos(4, 5);
+            match backend_asin_a(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_asin_a(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1723,13 +2277,24 @@ fn test_cl_backend_asin_at_calculates_asin_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_asin_or_acos(3, 2);
-            match backend_asin_at(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_asin_at(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_asin_or_acos(3, 2);
+            match backend_asin_at(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_asin_at(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_asin_or_acos(5, 4);
+            match backend_asin_at(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_asin_at(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1744,13 +2309,24 @@ fn test_cl_backend_acos_a_calculates_acos_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_asin_or_acos(2, 3);
-            match backend_acos_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_acos_a(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_asin_or_acos(2, 3);
+            match backend_acos_a(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_acos_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_asin_or_acos(4, 5);
+            match backend_acos_a(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_acos_a(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1765,13 +2341,24 @@ fn test_cl_backend_acos_at_calculates_acos_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_asin_or_acos(3, 2);
-            match backend_acos_at(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_acos_at(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_asin_or_acos(3, 2);
+            match backend_acos_at(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_acos_at(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_asin_or_acos(5, 4);
+            match backend_acos_at(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_acos_at(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1786,13 +2373,24 @@ fn test_cl_backend_atan_a_calculates_atan_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_common_math_fun(2, 3);
-            match backend_atan_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_atan_a(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_common_math_fun(2, 3);
+            match backend_atan_a(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_atan_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(4, 5);
+            match backend_atan_a(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_atan_a(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1807,13 +2405,24 @@ fn test_cl_backend_atan_at_calculates_atan_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_common_math_fun(3, 2);
-            match backend_atan_at(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_atan_at(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_common_math_fun(3, 2);
+            match backend_atan_at(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_atan_at(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(5, 4);
+            match backend_atan_at(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_atan_at(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1828,13 +2437,24 @@ fn test_cl_backend_atan2_a_b_calculates_atan2_for_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b_for_common_math_fun(2, 3, 2, 3);
-            match backend_atan2_a_b(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => {
-                    let expected_c = expected_atan2_a_b(a.as_slice(), b.as_slice(), 2, 3);
-                    assert_eq!(expected_c.len(), c.len());
+            let (a1, b1) = fixture_a_b_for_common_math_fun(2, 3, 2, 3);
+            match backend_atan2_a_b(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => {
+                    let expected_c1 = expected_atan2_a_b(a1.as_slice(), b1.as_slice(), 2, 3);
+                    assert_eq!(expected_c1.len(), c1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                        assert!((expected_c1[i] - c1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b_for_common_math_fun(4, 5, 4, 5);
+            match backend_atan2_a_b(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => {
+                    let expected_c2 = expected_atan2_a_b(a2.as_slice(), b2.as_slice(), 4, 5);
+                    assert_eq!(expected_c2.len(), c2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_c2[i] - c2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1849,13 +2469,24 @@ fn test_cl_backend_atan2_at_b_calculates_atan2_for_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b_for_common_math_fun(3, 2, 2, 3);
-            match backend_atan2_at_b(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => {
-                    let expected_c = expected_atan2_at_b(a.as_slice(), b.as_slice(), 2, 3);
-                    assert_eq!(expected_c.len(), c.len());
+            let (a1, b1) = fixture_a_b_for_common_math_fun(3, 2, 2, 3);
+            match backend_atan2_at_b(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => {
+                    let expected_c1 = expected_atan2_at_b(a1.as_slice(), b1.as_slice(), 2, 3);
+                    assert_eq!(expected_c1.len(), c1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                        assert!((expected_c1[i] - c1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b_for_common_math_fun(5, 4, 4, 5);
+            match backend_atan2_at_b(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => {
+                    let expected_c2 = expected_atan2_at_b(a2.as_slice(), b2.as_slice(), 4, 5);
+                    assert_eq!(expected_c2.len(), c2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_c2[i] - c2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1870,13 +2501,24 @@ fn test_cl_backend_atan2_a_bt_calculates_atan2_for_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b_for_common_math_fun(2, 3, 3, 2);
-            match backend_atan2_a_bt(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => {
-                    let expected_c = expected_atan2_a_bt(a.as_slice(), b.as_slice(), 2, 3);
-                    assert_eq!(expected_c.len(), c.len());
+            let (a1, b1) = fixture_a_b_for_common_math_fun(2, 3, 3, 2);
+            match backend_atan2_a_bt(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => {
+                    let expected_c1 = expected_atan2_a_bt(a1.as_slice(), b1.as_slice(), 2, 3);
+                    assert_eq!(expected_c1.len(), c1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                        assert!((expected_c1[i] - c1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b_for_common_math_fun(4, 5, 5, 4);
+            match backend_atan2_a_bt(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => {
+                    let expected_c2 = expected_atan2_a_bt(a2.as_slice(), b2.as_slice(), 4, 5);
+                    assert_eq!(expected_c2.len(), c2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_c2[i] - c2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1891,13 +2533,24 @@ fn test_cl_backend_atan2_at_bt_calculates_atan2_for_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b_for_common_math_fun(3, 2, 3, 2);
-            match backend_atan2_at_bt(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => {
-                    let expected_c = expected_atan2_at_bt(a.as_slice(), b.as_slice(), 2, 3);
-                    assert_eq!(expected_c.len(), c.len());
+            let (a1, b1) = fixture_a_b_for_common_math_fun(3, 2, 3, 2);
+            match backend_atan2_at_bt(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => {
+                    let expected_c1 = expected_atan2_at_bt(a1.as_slice(), b1.as_slice(), 2, 3);
+                    assert_eq!(expected_c1.len(), c1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                        assert!((expected_c1[i] - c1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b_for_common_math_fun(5, 4, 5, 4);
+            match backend_atan2_at_bt(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => {
+                    let expected_c2 = expected_atan2_at_bt(a2.as_slice(), b2.as_slice(), 4, 5);
+                    assert_eq!(expected_c2.len(), c2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_c2[i] - c2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1912,13 +2565,24 @@ fn test_cl_backend_atan2_a_b_for_scalar_calculates_atan2_for_backend_array_and_s
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_common_math_fun(2, 3);
-            match backend_atan2_a_b_for_scalar(&backend, a.as_slice(), 10.5, 2, 3) {
-                Ok(c) => {
-                    let expected_c = expected_atan2_a_b_for_scalar(a.as_slice(), 10.5, 2, 3);
-                    assert_eq!(expected_c.len(), c.len());
+            let a1 = fixture_a_for_common_math_fun(2, 3);
+            match backend_atan2_a_b_for_scalar(&backend, a1.as_slice(), 10.5, 2, 3) {
+                Ok(c1) => {
+                    let expected_c1 = expected_atan2_a_b_for_scalar(a1.as_slice(), 10.5, 2, 3);
+                    assert_eq!(expected_c1.len(), c1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                        assert!((expected_c1[i] - c1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(4, 5);
+            match backend_atan2_a_b_for_scalar(&backend, a2.as_slice(), 10.5, 4, 5) {
+                Ok(c2) => {
+                    let expected_c2 = expected_atan2_a_b_for_scalar(a2.as_slice(), 10.5, 4, 5);
+                    assert_eq!(expected_c2.len(), c2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_c2[i] - c2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1933,13 +2597,24 @@ fn test_cl_backend_atan2_at_b_for_scalar_calculates_atan2_for_backend_array_and_
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_common_math_fun(3, 2);
-            match backend_atan2_at_b_for_scalar(&backend, a.as_slice(), 10.5, 2, 3) {
-                Ok(c) => {
-                    let expected_c = expected_atan2_at_b_for_scalar(a.as_slice(), 10.5, 2, 3);
-                    assert_eq!(expected_c.len(), c.len());
+            let a1 = fixture_a_for_common_math_fun(3, 2);
+            match backend_atan2_at_b_for_scalar(&backend, a1.as_slice(), 10.5, 2, 3) {
+                Ok(c1) => {
+                    let expected_c1 = expected_atan2_at_b_for_scalar(a1.as_slice(), 10.5, 2, 3);
+                    assert_eq!(expected_c1.len(), c1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                        assert!((expected_c1[i] - c1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(5, 4);
+            match backend_atan2_at_b_for_scalar(&backend, a2.as_slice(), 10.5, 4, 5) {
+                Ok(c2) => {
+                    let expected_c2 = expected_atan2_at_b_for_scalar(a2.as_slice(), 10.5, 4, 5);
+                    assert_eq!(expected_c2.len(), c2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_c2[i] - c2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1954,13 +2629,24 @@ fn test_cl_backend_ratan2_a_b_for_scalar_calculates_atan2_for_backend_array_and_
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_common_math_fun(2, 3);
-            match backend_ratan2_a_b_for_scalar(&backend, a.as_slice(), 10.5, 2, 3) {
-                Ok(c) => {
-                    let expected_c = expected_ratan2_a_b_for_scalar(a.as_slice(), 10.5, 2, 3);
-                    assert_eq!(expected_c.len(), c.len());
+            let a1 = fixture_a_for_common_math_fun(2, 3);
+            match backend_ratan2_a_b_for_scalar(&backend, a1.as_slice(), 10.5, 2, 3) {
+                Ok(c1) => {
+                    let expected_c1 = expected_ratan2_a_b_for_scalar(a1.as_slice(), 10.5, 2, 3);
+                    assert_eq!(expected_c1.len(), c1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                        assert!((expected_c1[i] - c1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(4, 5);
+            match backend_ratan2_a_b_for_scalar(&backend, a2.as_slice(), 10.5, 4, 5) {
+                Ok(c2) => {
+                    let expected_c2 = expected_ratan2_a_b_for_scalar(a2.as_slice(), 10.5, 4, 5);
+                    assert_eq!(expected_c2.len(), c2.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c2[i] - c2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1975,13 +2661,24 @@ fn test_cl_backend_ratan2_at_b_for_scalar_calculates_atan2_backend_array_and_sca
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_common_math_fun(3, 2);
-            match backend_ratan2_at_b_for_scalar(&backend, a.as_slice(), 10.5, 2, 3) {
-                Ok(c) => {
-                    let expected_c = expected_ratan2_at_b_for_scalar(a.as_slice(), 10.5, 2, 3);
-                    assert_eq!(expected_c.len(), c.len());
+            let a1 = fixture_a_for_common_math_fun(3, 2);
+            match backend_ratan2_at_b_for_scalar(&backend, a1.as_slice(), 10.5, 2, 3) {
+                Ok(c1) => {
+                    let expected_c1 = expected_ratan2_at_b_for_scalar(a1.as_slice(), 10.5, 2, 3);
+                    assert_eq!(expected_c1.len(), c1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_c[i] - c[i]).abs() < 0.001);
+                        assert!((expected_c1[i] - c1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(5, 4);
+            match backend_ratan2_at_b_for_scalar(&backend, a2.as_slice(), 10.5, 4, 5) {
+                Ok(c2) => {
+                    let expected_c2 = expected_ratan2_at_b_for_scalar(a2.as_slice(), 10.5, 4, 5);
+                    assert_eq!(expected_c2.len(), c2.len());
+                    for i in 0usize..(2usize * 3usize) {
+                        assert!((expected_c2[i] - c2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -1996,13 +2693,24 @@ fn test_cl_backend_sinh_a_calculates_sinh_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_common_math_fun(2, 3);
-            match backend_sinh_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_sinh_a(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_common_math_fun(2, 3);
+            match backend_sinh_a(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_sinh_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(4, 5);
+            match backend_sinh_a(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_sinh_a(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -2017,13 +2725,24 @@ fn test_cl_backend_sinh_at_calculates_sinh_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_common_math_fun(3, 2);
-            match backend_sinh_at(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_sinh_at(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_common_math_fun(3, 2);
+            match backend_sinh_at(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_sinh_at(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(5, 4);
+            match backend_sinh_at(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_sinh_at(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -2038,13 +2757,24 @@ fn test_cl_backend_cosh_a_calculates_cosh_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_common_math_fun(2, 3);
-            match backend_cosh_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_cosh_a(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_common_math_fun(2, 3);
+            match backend_cosh_a(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_cosh_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(4, 5);
+            match backend_cosh_a(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_cosh_a(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -2059,13 +2789,24 @@ fn test_cl_backend_cosh_at_calculates_cosh_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_common_math_fun(3, 2);
-            match backend_cosh_at(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_cosh_at(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_common_math_fun(3, 2);
+            match backend_cosh_at(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_cosh_at(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(5, 4);
+            match backend_cosh_at(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_cosh_at(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -2080,13 +2821,24 @@ fn test_cl_backend_asinh_a_calculates_asinh_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_common_math_fun(2, 3);
-            match backend_asinh_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_asinh_a(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_common_math_fun(2, 3);
+            match backend_asinh_a(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_asinh_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(4, 5);
+            match backend_asinh_a(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_asinh_a(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -2101,13 +2853,24 @@ fn test_cl_backend_asinh_at_calculates_asinh_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_common_math_fun(3, 2);
-            match backend_asinh_at(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_asinh_at(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_common_math_fun(3, 2);
+            match backend_asinh_at(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_asinh_at(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(5, 4);
+            match backend_asinh_at(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_asinh_at(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -2122,13 +2885,24 @@ fn test_cl_backend_acosh_a_calculates_acosh_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_log(2, 3);
-            match backend_acosh_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_acosh_a(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_log(2, 3);
+            match backend_acosh_a(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_acosh_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_log(4, 5);
+            match backend_acosh_a(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_acosh_a(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -2143,13 +2917,24 @@ fn test_cl_backend_acosh_at_calculates_acosh_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_log(3, 2);
-            match backend_acosh_at(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_acosh_at(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_log(3, 2);
+            match backend_acosh_at(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_acosh_at(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_log(5, 4);
+            match backend_acosh_at(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_acosh_at(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -2164,13 +2949,24 @@ fn test_cl_backend_atanh_a_calculates_atanh_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_asin_or_acos(2, 3);
-            match backend_atanh_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_atanh_a(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_asin_or_acos(2, 3);
+            match backend_atanh_a(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_atanh_a(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_asin_or_acos(4, 5);
+            match backend_atanh_a(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_atanh_a(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -2185,13 +2981,24 @@ fn test_cl_backend_atanh_at_calculates_atanh_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_asin_or_acos(3, 2);
-            match backend_atanh_at(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => {
-                    let expected_b = expected_atanh_at(a.as_slice(), 2, 3);
-                    assert_eq!(expected_b.len(), b.len());
+            let a1 = fixture_a_for_asin_or_acos(3, 2);
+            match backend_atanh_at(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => {
+                    let expected_b1 = expected_atanh_at(a1.as_slice(), 2, 3);
+                    assert_eq!(expected_b1.len(), b1.len());
                     for i in 0usize..(2usize * 3usize) {
-                        assert!((expected_b[i] - b[i]).abs() < 0.001);
+                        assert!((expected_b1[i] - b1[i]).abs() < 0.001);
+                    }
+                },
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_asin_or_acos(5, 4);
+            match backend_atanh_at(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => {
+                    let expected_b2 = expected_atanh_at(a2.as_slice(), 4, 5);
+                    assert_eq!(expected_b2.len(), b2.len());
+                    for i in 0usize..(4usize * 5usize) {
+                        assert!((expected_b2[i] - b2[i]).abs() < 0.001);
                     }
                 },
                 Err(_) => assert!(false),
@@ -2206,9 +3013,14 @@ fn test_cl_backend_signum_a_calculates_signum_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_common_math_fun(2, 3);
-            match backend_signum_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => assert_eq!(expected_signum_a(a.as_slice(), 2, 3), b),
+            let a1 = fixture_a_for_common_math_fun(2, 3);
+            match backend_signum_a(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => assert_eq!(expected_signum_a(a1.as_slice(), 2, 3), b1),
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(4, 5);
+            match backend_signum_a(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => assert_eq!(expected_signum_a(a2.as_slice(), 4, 5), b2),
                 Err(_) => assert!(false),
             }
         },
@@ -2221,9 +3033,14 @@ fn test_cl_backend_signum_at_calculates_signum_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_common_math_fun(3, 2);
-            match backend_signum_at(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => assert_eq!(expected_signum_at(a.as_slice(), 2, 3), b),
+            let a1 = fixture_a_for_common_math_fun(3, 2);
+            match backend_signum_at(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => assert_eq!(expected_signum_at(a1.as_slice(), 2, 3), b1),
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(5, 4);
+            match backend_signum_at(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => assert_eq!(expected_signum_at(a2.as_slice(), 4, 5), b2),
                 Err(_) => assert!(false),
             }
         },
@@ -2236,9 +3053,14 @@ fn test_cl_backend_ceil_a_calculates_ceil_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_rounding(2, 3);
-            match backend_ceil_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => assert_eq!(expected_ceil_a(a.as_slice(), 2, 3), b),
+            let a1 = fixture_a_for_rounding(2, 3);
+            match backend_ceil_a(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => assert_eq!(expected_ceil_a(a1.as_slice(), 2, 3), b1),
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_rounding(4, 5);
+            match backend_ceil_a(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => assert_eq!(expected_ceil_a(a2.as_slice(), 4, 5), b2),
                 Err(_) => assert!(false),
             }
         },
@@ -2251,9 +3073,14 @@ fn test_cl_backend_ceil_at_calculates_ceil_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_rounding(3, 2);
-            match backend_ceil_at(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => assert_eq!(expected_ceil_at(a.as_slice(), 2, 3), b),
+            let a1 = fixture_a_for_rounding(3, 2);
+            match backend_ceil_at(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => assert_eq!(expected_ceil_at(a1.as_slice(), 2, 3), b1),
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_rounding(5, 4);
+            match backend_ceil_at(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => assert_eq!(expected_ceil_at(a2.as_slice(), 4, 5), b2),
                 Err(_) => assert!(false),
             }
         },
@@ -2266,9 +3093,14 @@ fn test_cl_backend_floor_a_calculates_floor_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_rounding(2, 3);
-            match backend_floor_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => assert_eq!(expected_floor_a(a.as_slice(), 2, 3), b),
+            let a1 = fixture_a_for_rounding(2, 3);
+            match backend_floor_a(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => assert_eq!(expected_floor_a(a1.as_slice(), 2, 3), b1),
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_rounding(4, 5);
+            match backend_floor_a(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => assert_eq!(expected_floor_a(a2.as_slice(), 4, 5), b2),
                 Err(_) => assert!(false),
             }
         },
@@ -2281,9 +3113,14 @@ fn test_cl_backend_floor_at_calculates_floor_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_rounding(3, 2);
-            match backend_floor_at(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => assert_eq!(expected_floor_at(a.as_slice(), 2, 3), b),
+            let a1 = fixture_a_for_rounding(3, 2);
+            match backend_floor_at(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => assert_eq!(expected_floor_at(a1.as_slice(), 2, 3), b1),
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_rounding(5, 4);
+            match backend_floor_at(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => assert_eq!(expected_floor_at(a2.as_slice(), 4, 5), b2),
                 Err(_) => assert!(false),
             }
         },
@@ -2296,9 +3133,14 @@ fn test_cl_backend_round_a_calculates_round_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_rounding(2, 3);
-            match backend_round_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => assert_eq!(expected_round_a(a.as_slice(), 2, 3), b),
+            let a1 = fixture_a_for_rounding(2, 3);
+            match backend_round_a(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => assert_eq!(expected_round_a(a1.as_slice(), 2, 3), b1),
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_rounding(4, 5);
+            match backend_round_a(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => assert_eq!(expected_round_a(a2.as_slice(), 4, 5), b2),
                 Err(_) => assert!(false),
             }
         },
@@ -2311,9 +3153,14 @@ fn test_cl_backend_round_at_calculates_round_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_rounding(3, 2);
-            match backend_round_at(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => assert_eq!(expected_round_at(a.as_slice(), 2, 3), b),
+            let a1 = fixture_a_for_rounding(3, 2);
+            match backend_round_at(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => assert_eq!(expected_round_at(a1.as_slice(), 2, 3), b1),
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_rounding(5, 4);
+            match backend_round_at(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => assert_eq!(expected_round_at(a2.as_slice(), 4, 5), b2),
                 Err(_) => assert!(false),
             }
         },
@@ -2326,9 +3173,14 @@ fn test_cl_backend_trunc_a_calculates_trunc_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_rounding(2, 3);
-            match backend_trunc_a(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => assert_eq!(expected_trunc_a(a.as_slice(), 2, 3), b),
+            let a1 = fixture_a_for_rounding(2, 3);
+            match backend_trunc_a(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => assert_eq!(expected_trunc_a(a1.as_slice(), 2, 3), b1),
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_rounding(4, 5);
+            match backend_trunc_a(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => assert_eq!(expected_trunc_a(a2.as_slice(), 4, 5), b2),
                 Err(_) => assert!(false),
             }
         },
@@ -2341,9 +3193,14 @@ fn test_cl_backend_trunc_at_calculates_trunc_for_backend_array()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_rounding(3, 2);
-            match backend_trunc_at(&backend, a.as_slice(), 2, 3) {
-                Ok(b) => assert_eq!(expected_trunc_at(a.as_slice(), 2, 3), b),
+            let a1 = fixture_a_for_rounding(3, 2);
+            match backend_trunc_at(&backend, a1.as_slice(), 2, 3) {
+                Ok(b1) => assert_eq!(expected_trunc_at(a1.as_slice(), 2, 3), b1),
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_rounding(5, 4);
+            match backend_trunc_at(&backend, a2.as_slice(), 4, 5) {
+                Ok(b2) => assert_eq!(expected_trunc_at(a2.as_slice(), 4, 5), b2),
                 Err(_) => assert!(false),
             }
         },
@@ -2356,9 +3213,14 @@ fn test_cl_backend_max_a_b_calculates_max_for_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b_for_common_math_fun(2, 3, 2, 3);
-            match backend_max_a_b(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => assert_eq!(expected_max_a_b(a.as_slice(), b.as_slice(), 2, 3), c), 
+            let (a1, b1) = fixture_a_b_for_common_math_fun(2, 3, 2, 3);
+            match backend_max_a_b(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => assert_eq!(expected_max_a_b(a1.as_slice(), b1.as_slice(), 2, 3), c1), 
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b_for_common_math_fun(4, 5, 4, 5);
+            match backend_max_a_b(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => assert_eq!(expected_max_a_b(a2.as_slice(), b2.as_slice(), 4, 5), c2), 
                 Err(_) => assert!(false),
             }
         },
@@ -2371,9 +3233,14 @@ fn test_cl_backend_max_at_b_calculates_max_for_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b_for_common_math_fun(3, 2, 2, 3);
-            match backend_max_at_b(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => assert_eq!(expected_max_at_b(a.as_slice(), b.as_slice(), 2, 3), c),
+            let (a1, b1) = fixture_a_b_for_common_math_fun(3, 2, 2, 3);
+            match backend_max_at_b(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => assert_eq!(expected_max_at_b(a1.as_slice(), b1.as_slice(), 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b_for_common_math_fun(5, 4, 4, 5);
+            match backend_max_at_b(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => assert_eq!(expected_max_at_b(a2.as_slice(), b2.as_slice(), 4, 5), c2), 
                 Err(_) => assert!(false),
             }
         },
@@ -2386,9 +3253,14 @@ fn test_cl_backend_max_a_bt_calculates_max_for_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b_for_common_math_fun(2, 3, 3, 2);
-            match backend_max_a_bt(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => assert_eq!(expected_max_a_bt(a.as_slice(), b.as_slice(), 2, 3), c),
+            let (a1, b1) = fixture_a_b_for_common_math_fun(2, 3, 3, 2);
+            match backend_max_a_bt(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => assert_eq!(expected_max_a_bt(a1.as_slice(), b1.as_slice(), 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b_for_common_math_fun(4, 5, 5, 4);
+            match backend_max_a_bt(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => assert_eq!(expected_max_a_bt(a2.as_slice(), b2.as_slice(), 4, 5), c2), 
                 Err(_) => assert!(false),
             }
         },
@@ -2401,9 +3273,14 @@ fn test_cl_backend_max_at_bt_calculates_max_for_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b_for_common_math_fun(3, 2, 3, 2);
-            match backend_max_at_bt(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => assert_eq!(expected_max_at_bt(a.as_slice(), b.as_slice(), 2, 3), c),
+            let (a1, b1) = fixture_a_b_for_common_math_fun(3, 2, 3, 2);
+            match backend_max_at_bt(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => assert_eq!(expected_max_at_bt(a1.as_slice(), b1.as_slice(), 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b_for_common_math_fun(5, 4, 5, 4);
+            match backend_max_at_bt(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => assert_eq!(expected_max_at_bt(a2.as_slice(), b2.as_slice(), 4, 5), c2), 
                 Err(_) => assert!(false),
             }
         },
@@ -2416,9 +3293,14 @@ fn test_cl_backend_max_a_b_for_scalar_calculates_max_for_backend_array_and_scala
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_common_math_fun(2, 3);
-            match backend_max_a_b_for_scalar(&backend, a.as_slice(), 0.0, 2, 3) {
-                Ok(c) => assert_eq!(expected_max_a_b_for_scalar(a.as_slice(), 0.0, 2, 3), c),
+            let a1 = fixture_a_for_common_math_fun(2, 3);
+            match backend_max_a_b_for_scalar(&backend, a1.as_slice(), 0.0, 2, 3) {
+                Ok(c1) => assert_eq!(expected_max_a_b_for_scalar(a1.as_slice(), 0.0, 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(4, 5);
+            match backend_max_a_b_for_scalar(&backend, a2.as_slice(), 0.0, 4, 5) {
+                Ok(c2) => assert_eq!(expected_max_a_b_for_scalar(a2.as_slice(), 0.0, 4, 5), c2),
                 Err(_) => assert!(false),
             }
         },
@@ -2431,9 +3313,14 @@ fn test_cl_backend_max_at_b_for_scalar_calculates_max_for_backend_array_and_scal
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_common_math_fun(3, 2);
-            match backend_max_at_b_for_scalar(&backend, a.as_slice(), 0.0, 2, 3) {
-                Ok(c) => assert_eq!(expected_max_at_b_for_scalar(a.as_slice(), 0.0, 2, 3), c),
+            let a1 = fixture_a_for_common_math_fun(3, 2);
+            match backend_max_at_b_for_scalar(&backend, a1.as_slice(), 0.0, 2, 3) {
+                Ok(c1) => assert_eq!(expected_max_at_b_for_scalar(a1.as_slice(), 0.0, 2, 3), c1),
+                Err(_) => assert!(false)
+            }
+            let a2 = fixture_a_for_common_math_fun(5, 4);
+            match backend_max_at_b_for_scalar(&backend, a2.as_slice(), 0.0, 4, 5) {
+                Ok(c2) => assert_eq!(expected_max_at_b_for_scalar(a2.as_slice(), 0.0, 4, 5), c2),
                 Err(_) => assert!(false),
             }
         },
@@ -2446,9 +3333,14 @@ fn test_cl_backend_min_a_b_calculates_min_for_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b_for_common_math_fun(2, 3, 2, 3);
-            match backend_min_a_b(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => assert_eq!(expected_min_a_b(a.as_slice(), b.as_slice(), 2, 3), c), 
+            let (a1, b1) = fixture_a_b_for_common_math_fun(2, 3, 2, 3);
+            match backend_min_a_b(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => assert_eq!(expected_min_a_b(a1.as_slice(), b1.as_slice(), 2, 3), c1), 
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b_for_common_math_fun(4, 5, 4, 5);
+            match backend_min_a_b(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => assert_eq!(expected_min_a_b(a2.as_slice(), b2.as_slice(), 4, 5), c2), 
                 Err(_) => assert!(false),
             }
         },
@@ -2461,9 +3353,14 @@ fn test_cl_backend_min_at_b_calculates_min_for_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b_for_common_math_fun(3, 2, 2, 3);
-            match backend_min_at_b(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => assert_eq!(expected_min_at_b(a.as_slice(), b.as_slice(), 2, 3), c),
+            let (a1, b1) = fixture_a_b_for_common_math_fun(3, 2, 2, 3);
+            match backend_min_at_b(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => assert_eq!(expected_min_at_b(a1.as_slice(), b1.as_slice(), 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b_for_common_math_fun(5, 4, 4, 5);
+            match backend_min_at_b(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => assert_eq!(expected_min_at_b(a2.as_slice(), b2.as_slice(), 4, 5), c2), 
                 Err(_) => assert!(false),
             }
         },
@@ -2476,9 +3373,14 @@ fn test_cl_backend_min_a_bt_calculates_min_for_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b_for_common_math_fun(2, 3, 3, 2);
-            match backend_min_a_bt(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => assert_eq!(expected_min_a_bt(a.as_slice(), b.as_slice(), 2, 3), c),
+            let (a1, b1) = fixture_a_b_for_common_math_fun(2, 3, 3, 2);
+            match backend_min_a_bt(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => assert_eq!(expected_min_a_bt(a1.as_slice(), b1.as_slice(), 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b_for_common_math_fun(4, 5, 5, 4);
+            match backend_min_a_bt(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => assert_eq!(expected_min_a_bt(a2.as_slice(), b2.as_slice(), 4, 5), c2), 
                 Err(_) => assert!(false),
             }
         },
@@ -2491,9 +3393,14 @@ fn test_cl_backend_min_at_bt_calculates_min_for_backend_arrays()
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let (a, b) = fixture_a_b_for_common_math_fun(3, 2, 3, 2);
-            match backend_min_at_bt(&backend, a.as_slice(), b.as_slice(), 2, 3) {
-                Ok(c) => assert_eq!(expected_min_at_bt(a.as_slice(), b.as_slice(), 2, 3), c),
+            let (a1, b1) = fixture_a_b_for_common_math_fun(3, 2, 3, 2);
+            match backend_min_at_bt(&backend, a1.as_slice(), b1.as_slice(), 2, 3) {
+                Ok(c1) => assert_eq!(expected_min_at_bt(a1.as_slice(), b1.as_slice(), 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let (a2, b2) = fixture_a_b_for_common_math_fun(5, 4, 5, 4);
+            match backend_min_at_bt(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
+                Ok(c2) => assert_eq!(expected_min_at_bt(a2.as_slice(), b2.as_slice(), 4, 5), c2), 
                 Err(_) => assert!(false),
             }
         },
@@ -2506,9 +3413,14 @@ fn test_cl_backend_min_a_b_for_scalar_calculates_min_for_backend_array_and_scala
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_common_math_fun(2, 3);
-            match backend_min_a_b_for_scalar(&backend, a.as_slice(), 0.0, 2, 3) {
-                Ok(c) => assert_eq!(expected_min_a_b_for_scalar(a.as_slice(), 0.0, 2, 3), c),
+            let a1 = fixture_a_for_common_math_fun(2, 3);
+            match backend_min_a_b_for_scalar(&backend, a1.as_slice(), 0.0, 2, 3) {
+                Ok(c1) => assert_eq!(expected_min_a_b_for_scalar(a1.as_slice(), 0.0, 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(4, 5);
+            match backend_min_a_b_for_scalar(&backend, a2.as_slice(), 0.0, 4, 5) {
+                Ok(c2) => assert_eq!(expected_min_a_b_for_scalar(a2.as_slice(), 0.0, 4, 5), c2),
                 Err(_) => assert!(false),
             }
         },
@@ -2521,10 +3433,15 @@ fn test_cl_backend_min_at_b_for_scalar_calculates_min_for_backend_array_and_scal
 {
     match ClBackend::new() {
         Ok(backend) => {
-            let a = fixture_a_for_common_math_fun(3, 2);
-            match backend_min_at_b_for_scalar(&backend, a.as_slice(), 0.0, 2, 3) {
-                Ok(c) => assert_eq!(expected_min_at_b_for_scalar(a.as_slice(), 0.0, 2, 3), c),
-                Err(_) => assert!(false)
+            let a1 = fixture_a_for_common_math_fun(3, 2);
+            match backend_min_at_b_for_scalar(&backend, a1.as_slice(), 0.0, 2, 3) {
+                Ok(c1) => assert_eq!(expected_min_at_b_for_scalar(a1.as_slice(), 0.0, 2, 3), c1),
+                Err(_) => assert!(false),
+            }
+            let a2 = fixture_a_for_common_math_fun(5, 4);
+            match backend_min_at_b_for_scalar(&backend, a2.as_slice(), 0.0, 4, 5) {
+                Ok(c2) => assert_eq!(expected_min_at_b_for_scalar(a2.as_slice(), 0.0, 4, 5), c2),
+                Err(_) => assert!(false),
             }
         },
         Err(_) => assert!(false),
