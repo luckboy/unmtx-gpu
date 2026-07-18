@@ -473,7 +473,7 @@ extern "C" {
   __global__ void mul_a_b(const float *a, const float *b, float *c, size_t n, size_t m, size_t l)
   {
     __shared__ float as[MTILE_WIDTH][MTHREAD_SIZE];
-    __shared__ float bs[MTHREAD_SIZE][MTILE_WIDTH];
+    __shared__ float bs[MTILE_WIDTH][MTHREAD_SIZE];
     size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 2;
     size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 2;
     size_t k;
@@ -481,6 +481,16 @@ extern "C" {
     size_t tj = threadIdx.y;
     size_t bi = ti << 2;
     size_t bj = tj << 2;
+    size_t ii = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
+    size_t ii1 = (ii + 0) & 3;
+    size_t ii2 = (ii + 1) & 3;
+    size_t ii3 = (ii + 2) & 3;
+    size_t ii4 = (ii + 3) & 3;
+    size_t jj = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
+    size_t jj1 = (jj + 0) & 3;
+    size_t jj2 = (jj + 1) & 3;
+    size_t jj3 = (jj + 2) & 3;
+    size_t jj4 = (jj + 3) & 3;
     float ar1;
     float ar2;
     float ar3;
@@ -507,48 +517,48 @@ extern "C" {
     float cr44 = 0.0f;
     for(k = 0; k < l; k += MTHREAD_SIZE) {
       size_t tk;
-      as[bi + 0][tj] = 0.0f;
+      as[bi + ii1][tj] = 0.0f;
       if(i + 0 < n && k + tj < l) {
-        as[bi + 0][tj] = a[l * (i + 0) + k + tj];
+        as[bi + ii1][tj] = a[l * (i + 0) + k + tj];
       }
-      as[bi + 1][tj] = 0.0f;
+      as[bi + ii2][tj] = 0.0f;
       if(i + 1 < n && k + tj < l) {
-        as[bi + 1][tj] = a[l * (i + 1) + k + tj];
+        as[bi + ii2][tj] = a[l * (i + 1) + k + tj];
       }
-      as[bi + 2][tj] = 0.0f;
+      as[bi + ii3][tj] = 0.0f;
       if(i + 2 < n && k + tj < l) {
-        as[bi + 2][tj] = a[l * (i + 2) + k + tj];
+        as[bi + ii3][tj] = a[l * (i + 2) + k + tj];
       }
-      as[bi + 3][tj] = 0.0f;
+      as[bi + ii4][tj] = 0.0f;
       if(i + 3 < n && k + tj < l) {
-        as[bi + 3][tj] = a[l * (i + 3) + k + tj];
+        as[bi + ii4][tj] = a[l * (i + 3) + k + tj];
       }
-      bs[ti][bj + 0] = 0.0f;
+      bs[bj + jj1][ti] = 0.0f;
       if(j + 0 < m && k + ti < l) {
-        bs[ti][bj + 0] = b[m * (k + ti) + j + 0];
+        bs[bj + jj1][ti] = b[m * (k + ti) + j + 0];
       }
-      bs[ti][bj + 1] = 0.0f;
+      bs[bj + jj2][ti] = 0.0f;
       if(j + 1 < m && k + ti < l) {
-        bs[ti][bj + 1] = b[m * (k + ti) + j + 1];
+        bs[bj + jj2][ti] = b[m * (k + ti) + j + 1];
       }
-      bs[ti][bj + 2] = 0.0f;
+      bs[bj + jj3][ti] = 0.0f;
       if(j + 2 < m && k + ti < l) {
-        bs[ti][bj + 2] = b[m * (k + ti) + j + 2];
+        bs[bj + jj3][ti] = b[m * (k + ti) + j + 2];
       }
-      bs[ti][bj + 3] = 0.0f;
+      bs[bj + jj4][ti] = 0.0f;
       if(j + 3 < m && k + ti < l) {
-        bs[ti][bj + 3] = b[m * (k + ti) + j + 3];
+        bs[bj + jj4][ti] = b[m * (k + ti) + j + 3];
       }
       __syncthreads();
       for(tk = 0; tk < MTHREAD_SIZE; tk++) {
-        ar1 = as[bi + 0][tk];
-        ar2 = as[bi + 1][tk];
-        ar3 = as[bi + 2][tk];
-        ar4 = as[bi + 3][tk];
-        br1 = bs[tk][bj + 0];
-        br2 = bs[tk][bj + 1];
-        br3 = bs[tk][bj + 2];
-        br4 = bs[tk][bj + 3];
+        ar1 = as[bi + ii1][tk];
+        ar2 = as[bi + ii2][tk];
+        ar3 = as[bi + ii3][tk];
+        ar4 = as[bi + ii4][tk];
+        br1 = bs[bj + jj1][tk];
+        br2 = bs[bj + jj2][tk];
+        br3 = bs[bj + jj3][tk];
+        br4 = bs[bj + jj4][tk];
         cr11 += ar1 * br1;
         cr12 += ar1 * br2;
         cr13 += ar1 * br3;
@@ -621,7 +631,7 @@ extern "C" {
   __global__ void mul_at_b(const float *a, const float *b, float *c, size_t n, size_t m, size_t l)
   {
     __shared__ float as[MTILE_WIDTH][MTHREAD_SIZE];
-    __shared__ float bs[MTHREAD_SIZE][MTILE_WIDTH];
+    __shared__ float bs[MTILE_WIDTH][MTHREAD_SIZE];
     size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 2;
     size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 2;
     size_t k;
@@ -629,6 +639,16 @@ extern "C" {
     size_t tj = threadIdx.y;
     size_t bi = ti << 2;
     size_t bj = tj << 2;
+    size_t ii = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
+    size_t ii1 = (ii + 0) & 3;
+    size_t ii2 = (ii + 1) & 3;
+    size_t ii3 = (ii + 2) & 3;
+    size_t ii4 = (ii + 3) & 3;
+    size_t jj = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
+    size_t jj1 = (jj + 0) & 3;
+    size_t jj2 = (jj + 1) & 3;
+    size_t jj3 = (jj + 2) & 3;
+    size_t jj4 = (jj + 3) & 3;
     float ar1;
     float ar2;
     float ar3;
@@ -655,48 +675,48 @@ extern "C" {
     float cr44 = 0.0f;
     for(k = 0; k < l; k += MTHREAD_SIZE) {
       size_t tk;
-      as[bi + 0][tj] = 0.0f;
+      as[bi + ii1][tj] = 0.0f;
       if(i + 0 < n && k + tj < l) {
-        as[bi + 0][tj] = a[n * (k + tj) + i + 0];
+        as[bi + ii1][tj] = a[n * (k + tj) + i + 0];
       }
-      as[bi + 1][tj] = 0.0f;
+      as[bi + ii2][tj] = 0.0f;
       if(i + 1 < n && k + tj < l) {
-        as[bi + 1][tj] = a[n * (k + tj) + i + 1];
+        as[bi + ii2][tj] = a[n * (k + tj) + i + 1];
       }
-      as[bi + 2][tj] = 0.0f;
+      as[bi + ii3][tj] = 0.0f;
       if(i + 2 < n && k + tj < l) {
-        as[bi + 2][tj] = a[n * (k + tj) + i + 2];
+        as[bi + ii3][tj] = a[n * (k + tj) + i + 2];
       }
-      as[bi + 3][tj] = 0.0f;
+      as[bi + ii4][tj] = 0.0f;
       if(i + 3 < n && k + tj < l) {
-        as[bi + 3][tj] = a[n * (k + tj) + i + 3];
+        as[bi + ii4][tj] = a[n * (k + tj) + i + 3];
       }
-      bs[ti][bj + 0] = 0.0f;
+      bs[bj + jj1][ti] = 0.0f;
       if(j + 0 < m && k + ti < l) {
-        bs[ti][bj + 0] = b[m * (k + ti) + j + 0];
+        bs[bj + jj1][ti] = b[m * (k + ti) + j + 0];
       }
-      bs[ti][bj + 1] = 0.0f;
+      bs[bj + jj2][ti] = 0.0f;
       if(j + 1 < m && k + ti < l) {
-        bs[ti][bj + 1] = b[m * (k + ti) + j + 1];
+        bs[bj + jj2][ti] = b[m * (k + ti) + j + 1];
       }
-      bs[ti][bj + 2] = 0.0f;
+      bs[bj + jj3][ti] = 0.0f;
       if(j + 2 < m && k + ti < l) {
-        bs[ti][bj + 2] = b[m * (k + ti) + j + 2];
+        bs[bj + jj3][ti] = b[m * (k + ti) + j + 2];
       }
-      bs[ti][bj + 3] = 0.0f;
+      bs[bj + jj4][ti] = 0.0f;
       if(j + 3 < m && k + ti < l) {
-        bs[ti][bj + 3] = b[m * (k + ti) + j + 3];
+        bs[bj + jj4][ti] = b[m * (k + ti) + j + 3];
       }
       __syncthreads();
       for(tk = 0; tk < MTHREAD_SIZE; tk++) {
-        ar1 = as[bi + 0][tk];
-        ar2 = as[bi + 1][tk];
-        ar3 = as[bi + 2][tk];
-        ar4 = as[bi + 3][tk];
-        br1 = bs[tk][bj + 0];
-        br2 = bs[tk][bj + 1];
-        br3 = bs[tk][bj + 2];
-        br4 = bs[tk][bj + 3];
+        ar1 = as[bi + ii1][tk];
+        ar2 = as[bi + ii2][tk];
+        ar3 = as[bi + ii3][tk];
+        ar4 = as[bi + ii4][tk];
+        br1 = bs[bj + jj1][tk];
+        br2 = bs[bj + jj2][tk];
+        br3 = bs[bj + jj3][tk];
+        br4 = bs[bj + jj4][tk];
         cr11 += ar1 * br1;
         cr12 += ar1 * br2;
         cr13 += ar1 * br3;
@@ -769,7 +789,7 @@ extern "C" {
   __global__ void mul_a_bt(const float *a, const float *b, float *c, size_t n, size_t m, size_t l)
   {
     __shared__ float as[MTILE_WIDTH][MTHREAD_SIZE];
-    __shared__ float bs[MTHREAD_SIZE][MTILE_WIDTH];
+    __shared__ float bs[MTILE_WIDTH][MTHREAD_SIZE];
     size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 2;
     size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 2;
     size_t k;
@@ -777,6 +797,16 @@ extern "C" {
     size_t tj = threadIdx.y;
     size_t bi = ti << 2;
     size_t bj = tj << 2;
+    size_t ii = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
+    size_t ii1 = (ii + 0) & 3;
+    size_t ii2 = (ii + 1) & 3;
+    size_t ii3 = (ii + 2) & 3;
+    size_t ii4 = (ii + 3) & 3;
+    size_t jj = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
+    size_t jj1 = (jj + 0) & 3;
+    size_t jj2 = (jj + 1) & 3;
+    size_t jj3 = (jj + 2) & 3;
+    size_t jj4 = (jj + 3) & 3;
     float ar1;
     float ar2;
     float ar3;
@@ -803,48 +833,48 @@ extern "C" {
     float cr44 = 0.0f;
     for(k = 0; k < l; k += MTHREAD_SIZE) {
       size_t tk;
-      as[bi + 0][tj] = 0.0f;
+      as[bi + ii1][tj] = 0.0f;
       if(i + 0 < n && k + tj < l) {
-        as[bi + 0][tj] = a[l * (i + 0) + k + tj];
+        as[bi + ii1][tj] = a[l * (i + 0) + k + tj];
       }
-      as[bi + 1][tj] = 0.0f;
+      as[bi + ii2][tj] = 0.0f;
       if(i + 1 < n && k + tj < l) {
-        as[bi + 1][tj] = a[l * (i + 1) + k + tj];
+        as[bi + ii2][tj] = a[l * (i + 1) + k + tj];
       }
-      as[bi + 2][tj] = 0.0f;
+      as[bi + ii3][tj] = 0.0f;
       if(i + 2 < n && k + tj < l) {
-        as[bi + 2][tj] = a[l * (i + 2) + k + tj];
+        as[bi + ii3][tj] = a[l * (i + 2) + k + tj];
       }
-      as[bi + 3][tj] = 0.0f;
+      as[bi + ii4][tj] = 0.0f;
       if(i + 3 < n && k + tj < l) {
-        as[bi + 3][tj] = a[l * (i + 3) + k + tj];
+        as[bi + ii4][tj] = a[l * (i + 3) + k + tj];
       }
-      bs[ti][bj + 0] = 0.0f;
+      bs[bj + jj1][ti] = 0.0f;
       if(j + 0 < m && k + ti < l) {
-        bs[ti][bj + 0] = b[l * (j + 0) + k + ti];
+        bs[bj + jj1][ti] = b[l * (j + 0) + k + ti];
       }
-      bs[ti][bj + 1] = 0.0f;
+      bs[bj + jj2][ti] = 0.0f;
       if(j + 1 < m && k + ti < l) {
-        bs[ti][bj + 1] = b[l * (j + 1) + k + ti];
+        bs[bj + jj2][ti] = b[l * (j + 1) + k + ti];
       }
-      bs[ti][bj + 2] = 0.0f;
+      bs[bj + jj3][ti] = 0.0f;
       if(j + 2 < m && k + ti < l) {
-        bs[ti][bj + 2] = b[l * (j + 2) + k + ti];
+        bs[bj + jj3][ti] = b[l * (j + 2) + k + ti];
       }
-      bs[ti][bj + 3] = 0.0f;
+      bs[bj + jj4][ti] = 0.0f;
       if(j + 3 < m && k + ti < l) {
-        bs[ti][bj + 3] = b[l * (j + 3) + k + ti];
+        bs[bj + jj4][ti] = b[l * (j + 3) + k + ti];
       }
       __syncthreads();
       for(tk = 0; tk < MTHREAD_SIZE; tk++) {
-        ar1 = as[bi + 0][tk];
-        ar2 = as[bi + 1][tk];
-        ar3 = as[bi + 2][tk];
-        ar4 = as[bi + 3][tk];
-        br1 = bs[tk][bj + 0];
-        br2 = bs[tk][bj + 1];
-        br3 = bs[tk][bj + 2];
-        br4 = bs[tk][bj + 3];
+        ar1 = as[bi + ii1][tk];
+        ar2 = as[bi + ii2][tk];
+        ar3 = as[bi + ii3][tk];
+        ar4 = as[bi + ii4][tk];
+        br1 = bs[bj + jj1][tk];
+        br2 = bs[bj + jj2][tk];
+        br3 = bs[bj + jj3][tk];
+        br4 = bs[bj + jj4][tk];
         cr11 += ar1 * br1;
         cr12 += ar1 * br2;
         cr13 += ar1 * br3;
@@ -917,7 +947,7 @@ extern "C" {
   __global__ void mul_at_bt(const float *a, const float *b, float *c, size_t n, size_t m, size_t l)
   {
     __shared__ float as[MTILE_WIDTH][MTHREAD_SIZE];
-    __shared__ float bs[MTHREAD_SIZE][MTILE_WIDTH];
+    __shared__ float bs[MTILE_WIDTH][MTHREAD_SIZE];
     size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 2;
     size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 2;
     size_t k;
@@ -925,6 +955,16 @@ extern "C" {
     size_t tj = threadIdx.y;
     size_t bi = ti << 2;
     size_t bj = tj << 2;
+    size_t ii = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
+    size_t ii1 = (ii + 0) & 3;
+    size_t ii2 = (ii + 1) & 3;
+    size_t ii3 = (ii + 2) & 3;
+    size_t ii4 = (ii + 3) & 3;
+    size_t jj = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
+    size_t jj1 = (jj + 0) & 3;
+    size_t jj2 = (jj + 1) & 3;
+    size_t jj3 = (jj + 2) & 3;
+    size_t jj4 = (jj + 3) & 3;
     float ar1;
     float ar2;
     float ar3;
@@ -951,48 +991,48 @@ extern "C" {
     float cr44 = 0.0f;
     for(k = 0; k < l; k += MTHREAD_SIZE) {
       size_t tk;
-      as[bi + 0][tj] = 0.0f;
+      as[bi + ii1][tj] = 0.0f;
       if(i + 0 < n && k + tj < l) {
-        as[bi + 0][tj] = a[n * (k + tj) + i + 0];
+        as[bi + ii1][tj] = a[n * (k + tj) + i + 0];
       }
-      as[bi + 1][tj] = 0.0f;
+      as[bi + ii2][tj] = 0.0f;
       if(i + 1 < n && k + tj < l) {
-        as[bi + 1][tj] = a[n * (k + tj) + i + 1];
+        as[bi + ii2][tj] = a[n * (k + tj) + i + 1];
       }
-      as[bi + 2][tj] = 0.0f;
+      as[bi + ii3][tj] = 0.0f;
       if(i + 2 < n && k + tj < l) {
-        as[bi + 2][tj] = a[n * (k + tj) + i + 2];
+        as[bi + ii3][tj] = a[n * (k + tj) + i + 2];
       }
-      as[bi + 3][tj] = 0.0f;
+      as[bi + ii4][tj] = 0.0f;
       if(i + 3 < n && k + tj < l) {
-        as[bi + 3][tj] = a[n * (k + tj) + i + 3];
+        as[bi + ii4][tj] = a[n * (k + tj) + i + 3];
       }
-      bs[ti][bj + 0] = 0.0f;
+      bs[bj + jj1][ti] = 0.0f;
       if(j + 0 < m && k + ti < l) {
-        bs[ti][bj + 0] = b[l * (j + 0) + k + ti];
+        bs[bj + jj1][ti] = b[l * (j + 0) + k + ti];
       }
-      bs[ti][bj + 1] = 0.0f;
+      bs[bj + jj2][ti] = 0.0f;
       if(j + 1 < m && k + ti < l) {
-        bs[ti][bj + 1] = b[l * (j + 1) + k + ti];
+        bs[bj + jj2][ti] = b[l * (j + 1) + k + ti];
       }
-      bs[ti][bj + 2] = 0.0f;
+      bs[bj + jj3][ti] = 0.0f;
       if(j + 2 < m && k + ti < l) {
-        bs[ti][bj + 2] = b[l * (j + 2) + k + ti];
+        bs[bj + jj3][ti] = b[l * (j + 2) + k + ti];
       }
-      bs[ti][bj + 3] = 0.0f;
+      bs[bj + jj4][ti] = 0.0f;
       if(j + 3 < m && k + ti < l) {
-        bs[ti][bj + 3] = b[l * (j + 3) + k + ti];
+        bs[bj + jj4][ti] = b[l * (j + 3) + k + ti];
       }
       __syncthreads();
       for(tk = 0; tk < MTHREAD_SIZE; tk++) {
-        ar1 = as[bi + 0][tk];
-        ar2 = as[bi + 1][tk];
-        ar3 = as[bi + 2][tk];
-        ar4 = as[bi + 3][tk];
-        br1 = bs[tk][bj + 0];
-        br2 = bs[tk][bj + 1];
-        br3 = bs[tk][bj + 2];
-        br4 = bs[tk][bj + 3];
+        ar1 = as[bi + ii1][tk];
+        ar2 = as[bi + ii2][tk];
+        ar3 = as[bi + ii3][tk];
+        ar4 = as[bi + ii4][tk];
+        br1 = bs[bj + jj1][tk];
+        br2 = bs[bj + jj2][tk];
+        br3 = bs[bj + jj3][tk];
+        br4 = bs[bj + jj4][tk];
         cr11 += ar1 * br1;
         cr12 += ar1 * br2;
         cr13 += ar1 * br3;
