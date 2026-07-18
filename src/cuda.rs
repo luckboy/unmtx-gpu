@@ -65,17 +65,17 @@ pub struct CudaBackend
     has_mma: bool,
 }
 
-fn preferred_launch_config(n: usize, m: usize, item_width: usize, item_height: usize, is_mul: bool, is_mma: bool) -> LaunchConfig
+fn preferred_launch_config(n: usize, m: usize, item_row_count: usize, item_col_count: usize, is_mul: bool, is_mma: bool) -> LaunchConfig
 {
-    if m <= item_height && !is_mul {
-        let n2 = (((n + item_width - 1) / item_width + 1023) / 1024) as u32;
+    if m <= item_col_count && !is_mul {
+        let n2 = (((n + item_row_count - 1) / item_row_count + 1023) / 1024) as u32;
         LaunchConfig {
             grid_dim: (n2, 1, 1),
             block_dim: (1024, 1, 1),
             shared_mem_bytes: 0,
         }
-    } else if n <= item_width && !is_mul {
-        let m2 = (((m + item_height - 1) / item_height + 1023) / 1024) as u32;
+    } else if n <= item_row_count && !is_mul {
+        let m2 = (((m + item_col_count - 1) / item_col_count + 1023) / 1024) as u32;
         LaunchConfig {
             grid_dim: (1, m2, 1),
             block_dim: (1, 1024, 1),
@@ -100,8 +100,8 @@ fn preferred_launch_config(n: usize, m: usize, item_width: usize, item_height: u
             }
         }
     } else {
-        let n2 = (((n + item_width - 1) / item_width + 31) / 32) as u32;
-        let m2 = (((m + item_height - 1) / item_height + 31) / 32) as u32;
+        let n2 = (((n + item_row_count - 1) / item_row_count + 31) / 32) as u32;
+        let m2 = (((m + item_col_count - 1) / item_col_count + 31) / 32) as u32;
         LaunchConfig {
             grid_dim: (n2, m2, 1),
             block_dim: (32, 32, 1),
@@ -315,7 +315,7 @@ impl CudaBackend
         }
     }
     
-    fn check_and_launch_for_fun(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, n: usize, m: usize, item_width: usize, item_height: usize) -> Result<()>
+    fn check_and_launch_for_fun(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, n: usize, m: usize, item_row_count: usize, item_col_count: usize) -> Result<()>
     {
         let is_mma = self.has_mma;
         self.check_and_launch2(kernel_name, a, b, |a2, b2| {
@@ -327,7 +327,7 @@ impl CudaBackend
                 }
                 Ok(())
         }, |inner_g, kernel, a_param, b_param| {
-                let config = preferred_launch_config(n, m, item_width, item_height, false, is_mma);
+                let config = preferred_launch_config(n, m, item_row_count, item_col_count, false, is_mma);
                 let mut launch_args = inner_g.stream.launch_builder(&kernel);
                 launch_args.arg(&a_param)
                     .arg(&b_param)
@@ -342,7 +342,7 @@ impl CudaBackend
         })
     }
 
-    fn check_and_launch_for_op(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, item_width: usize, item_height: usize) -> Result<()>
+    fn check_and_launch_for_op(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, item_row_count: usize, item_col_count: usize) -> Result<()>
     {
         let is_mma = self.has_mma;
         self.check_and_launch3(kernel_name, a, b, c, |a2, b2, c2| {
@@ -357,7 +357,7 @@ impl CudaBackend
                 }
                 Ok(())
         }, |inner_g, kernel, a_param, b_param, c_param| {
-                let config = preferred_launch_config(n, m, item_width, item_height, false, is_mma);
+                let config = preferred_launch_config(n, m, item_row_count, item_col_count, false, is_mma);
                 let mut launch_args = inner_g.stream.launch_builder(&kernel);
                 launch_args.arg(&a_param)
                     .arg(&b_param)
@@ -405,7 +405,7 @@ impl CudaBackend
         })
     }
 
-    fn check_and_launch_for_scalar(&self, kernel_name: &str, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize, item_width: usize, item_height: usize) -> Result<()>
+    fn check_and_launch_for_scalar(&self, kernel_name: &str, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize, item_row_count: usize, item_col_count: usize) -> Result<()>
     {
         let is_mma = self.has_mma;
         self.check_and_launch2(kernel_name, a, c, |a2, c2| {
@@ -417,7 +417,7 @@ impl CudaBackend
                 }
                 Ok(())
         }, |inner_g, kernel, a_param, c_param| {
-                let config = preferred_launch_config(n, m, item_width, item_height, false, is_mma);
+                let config = preferred_launch_config(n, m, item_row_count, item_col_count, false, is_mma);
                 let mut launch_args = inner_g.stream.launch_builder(&kernel);
                 launch_args.arg(&a_param)
                     .arg(&b)
@@ -433,7 +433,7 @@ impl CudaBackend
         })
     }
 
-    fn check_and_launch_for_fun_and_tiles(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, n: usize, m: usize, item_width: usize, item_height: usize) -> Result<()>
+    fn check_and_launch_for_fun_and_tiles(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, n: usize, m: usize, item_row_count: usize, item_col_count: usize) -> Result<()>
     {
         let is_mma = self.has_mma;
         self.check_and_launch2(kernel_name, a, b, |a2, b2| {
@@ -445,7 +445,7 @@ impl CudaBackend
                 }
                 Ok(())
         }, |inner_g, kernel, a_param, b_param| {
-                let config = preferred_launch_config(n, m, item_width, item_height, false, is_mma);
+                let config = preferred_launch_config(n, m, item_row_count, item_col_count, false, is_mma);
                 let mut launch_args = inner_g.stream.launch_builder(&kernel);
                 launch_args.arg(&a_param)
                     .arg(&b_param)
@@ -460,7 +460,7 @@ impl CudaBackend
         })
     }
 
-    fn check_and_launch_for_repeat_col(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, n: usize, m: usize, item_width: usize, item_height: usize) -> Result<()>
+    fn check_and_launch_for_repeat_col(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, n: usize, m: usize, item_row_count: usize, item_col_count: usize) -> Result<()>
     {
         let is_mma = self.has_mma;
         self.check_and_launch2(kernel_name, a, b, |a2, b2| {
@@ -472,7 +472,7 @@ impl CudaBackend
                 }
                 Ok(())
         }, |inner_g, kernel, a_param, b_param| {
-                let config = preferred_launch_config(n, m, item_width, item_height, false, is_mma);
+                let config = preferred_launch_config(n, m, item_row_count, item_col_count, false, is_mma);
                 let mut launch_args = inner_g.stream.launch_builder(&kernel);
                 launch_args.arg(&a_param)
                     .arg(&b_param)
@@ -487,7 +487,7 @@ impl CudaBackend
         })
     }
 
-    fn check_and_launch_for_repeat_row(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, n: usize, m: usize, item_width: usize, item_height: usize) -> Result<()>
+    fn check_and_launch_for_repeat_row(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, n: usize, m: usize, item_row_count: usize, item_col_count: usize) -> Result<()>
     {
         let is_mma = self.has_mma;
         self.check_and_launch2(kernel_name, a, b, |a2, b2| {
@@ -499,7 +499,7 @@ impl CudaBackend
                 }
                 Ok(())
         }, |inner_g, kernel, a_param, b_param| {
-                let config = preferred_launch_config(n, m, item_width, item_height, false, is_mma);
+                let config = preferred_launch_config(n, m, item_row_count, item_col_count, false, is_mma);
                 let mut launch_args = inner_g.stream.launch_builder(&kernel);
                 launch_args.arg(&a_param)
                     .arg(&b_param)
