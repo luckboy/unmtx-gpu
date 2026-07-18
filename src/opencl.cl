@@ -9,10 +9,19 @@ __kernel void transpose_a(__global const float *a, __global float *b, ulong n, u
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = a[n2 * j + i];
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = a[n2 * (j + 0) + i + 0];
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = a[n2 * (j + 1) + i + 0];
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = a[n2 * (j + 0) + i + 1];
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = a[n2 * (j + 1) + i + 1];
   }
 }
 
@@ -20,10 +29,19 @@ __kernel void add_a_b(__global const float *a, __global const float *b, __global
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = a[m2 * i + j] + b[m2 * i + j];
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = a[m2 * (i + 0) + j + 0] + b[m2 * (i + 0) + j + 0];
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = a[m2 * (i + 0) + j + 1] + b[m2 * (i + 0) + j + 1];
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = a[m2 * (i + 1) + j + 0] + b[m2 * (i + 1) + j + 0];
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = a[m2 * (i + 1) + j + 1] + b[m2 * (i + 1) + j + 1];
   }
 }
 
@@ -31,10 +49,19 @@ __kernel void add_at_b(__global const float *a, __global const float *b, __globa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = a[n2 * j + i] + b[m2 * i + j];
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = a[n2 * (j + 0) + i + 0] + b[m2 * (i + 0) + j + 0];
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = a[n2 * (j + 1) + i + 0] + b[m2 * (i + 0) + j + 1];
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = a[n2 * (j + 0) + i + 1] + b[m2 * (i + 1) + j + 0];
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = a[n2 * (j + 1) + i + 1] + b[m2 * (i + 1) + j + 1];
   }
 }
 
@@ -42,10 +69,19 @@ __kernel void add_a_bt(__global const float *a, __global const float *b, __globa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = a[m2 * i + j] + b[n2 * j + i];
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = a[m2 * (i + 0) + j + 0] + b[n2 * (j + 0) + i + 0];
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = a[m2 * (i + 0) + j + 1] + b[n2 * (j + 1) + i + 0];
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = a[m2 * (i + 1) + j + 0] + b[n2 * (j + 0) + i + 1];
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = a[m2 * (i + 1) + j + 1] + b[n2 * (j + 1) + i + 1];
   }
 }
 
@@ -53,10 +89,19 @@ __kernel void add_at_bt(__global const float *a, __global const float *b, __glob
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = a[n2 * j + i] + b[n2 * j + i];
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = a[n2 * (j + 0) + i + 0] + b[n2 * (j + 0) + i + 0];
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = a[n2 * (j + 1) + i + 0] + b[n2 * (j + 1) + i + 0];
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = a[n2 * (j + 0) + i + 1] + b[n2 * (j + 0) + i + 1];
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = a[n2 * (j + 1) + i + 1] + b[n2 * (j + 1) + i + 1];
   }
 }
 
@@ -64,10 +109,19 @@ __kernel void sub_a_b(__global const float *a, __global const float *b, __global
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = a[m2 * i + j] - b[m2 * i + j];
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = a[m2 * (i + 0) + j + 0] - b[m2 * (i + 0) + j + 0];
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = a[m2 * (i + 0) + j + 1] - b[m2 * (i + 0) + j + 1];
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = a[m2 * (i + 1) + j + 0] - b[m2 * (i + 1) + j + 0];
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = a[m2 * (i + 1) + j + 1] - b[m2 * (i + 1) + j + 1];
   }
 }
 
@@ -75,10 +129,19 @@ __kernel void sub_at_b(__global const float *a, __global const float *b, __globa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = a[n2 * j + i] - b[m2 * i + j];
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = a[n2 * (j + 0) + i + 0] - b[m2 * (i + 0) + j + 0];
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = a[n2 * (j + 1) + i + 0] - b[m2 * (i + 0) + j + 1];
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = a[n2 * (j + 0) + i + 1] - b[m2 * (i + 1) + j + 0];
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = a[n2 * (j + 1) + i + 1] - b[m2 * (i + 1) + j + 1];
   }
 }
 
@@ -86,10 +149,19 @@ __kernel void sub_a_bt(__global const float *a, __global const float *b, __globa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = a[m2 * i + j] - b[n2 * j + i];
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = a[m2 * (i + 0) + j + 0] - b[n2 * (j + 0) + i + 0];
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = a[m2 * (i + 0) + j + 1] - b[n2 * (j + 1) + i + 0];
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = a[m2 * (i + 1) + j + 0] - b[n2 * (j + 0) + i + 1];
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = a[m2 * (i + 1) + j + 1] - b[n2 * (j + 1) + i + 1];
   }
 }
 
@@ -97,10 +169,19 @@ __kernel void sub_at_bt(__global const float *a, __global const float *b, __glob
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = a[n2 * j + i] - b[n2 * j + i];
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = a[n2 * (j + 0) + i + 0] - b[n2 * (j + 0) + i + 0];
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = a[n2 * (j + 1) + i + 0] - b[n2 * (j + 1) + i + 0];
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = a[n2 * (j + 0) + i + 1] - b[n2 * (j + 0) + i + 1];
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = a[n2 * (j + 1) + i + 1] - b[n2 * (j + 1) + i + 1];
   }
 }
 
@@ -712,10 +793,19 @@ __kernel void mul_a_b_for_elems(__global const float *a, __global const float *b
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = a[m2 * i + j] * b[m2 * i + j];
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = a[m2 * (i + 0) + j + 0] * b[m2 * (i + 0) + j + 0];
+  }
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 1] = a[m2 * (i + 0) + j + 1] * b[m2 * (i + 0) + j + 1];
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = a[m2 * (i + 1) + j + 0] * b[m2 * (i + 1) + j + 0];
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = a[m2 * (i + 1) + j + 1] * b[m2 * (i + 1) + j + 1];
   }
 }
 
@@ -723,10 +813,19 @@ __kernel void mul_at_b_for_elems(__global const float *a, __global const float *
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = a[n2 * j + i] * b[m2 * i + j];
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = a[n2 * (j + 0) + i + 0] * b[m2 * (i + 0) + j + 0];
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = a[n2 * (j + 1) + i + 0] * b[m2 * (i + 0) + j + 1];
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = a[n2 * (j + 0) + i + 1] * b[m2 * (i + 1) + j + 0];
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = a[n2 * (j + 1) + i + 1] * b[m2 * (i + 1) + j + 1];
   }
 }
 
@@ -734,10 +833,19 @@ __kernel void mul_a_bt_for_elems(__global const float *a, __global const float *
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = a[m2 * i + j] * b[n2 * j + i];
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = a[m2 * (i + 0) + j + 0] * b[n2 * (j + 0) + i + 0];
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = a[m2 * (i + 0) + j + 1] * b[n2 * (j + 1) + i + 0];
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = a[m2 * (i + 1) + j + 0] * b[n2 * (j + 0) + i + 1];
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = a[m2 * (i + 1) + j + 1] * b[n2 * (j + 1) + i + 1];
   }
 }
 
@@ -745,10 +853,19 @@ __kernel void mul_at_bt_for_elems(__global const float *a, __global const float 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = a[n2 * j + i] * b[n2 * j + i];
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = a[n2 * (j + 0) + i + 0] * b[n2 * (j + 0) + i + 0];
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = a[n2 * (j + 1) + i + 0] * b[n2 * (j + 1) + i + 0];
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = a[n2 * (j + 0) + i + 1] * b[n2 * (j + 0) + i + 1];
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = a[n2 * (j + 1) + i + 1] * b[n2 * (j + 1) + i + 1];
   }
 }
 
@@ -756,10 +873,19 @@ __kernel void div_a_b_for_elems(__global const float *a, __global const float *b
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = a[m2 * i + j] / b[m2 * i + j];
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = a[m2 * (i + 0) + j + 0] / b[m2 * (i + 0) + j + 0];
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = a[m2 * (i + 0) + j + 1] / b[m2 * (i + 0) + j + 1];
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = a[m2 * (i + 1) + j + 0] / b[m2 * (i + 1) + j + 0];
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = a[m2 * (i + 1) + j + 1] / b[m2 * (i + 1) + j + 1];
   }
 }
 
@@ -767,10 +893,19 @@ __kernel void div_at_b_for_elems(__global const float *a, __global const float *
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = a[n2 * j + i] / b[m2 * i + j];
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = a[n2 * (j + 0) + i + 0] / b[m2 * (i + 0) + j + 0];
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = a[n2 * (j + 1) + i + 0] / b[m2 * (i + 0) + j + 1];
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = a[n2 * (j + 0) + i + 1] / b[m2 * (i + 1) + j + 0];
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = a[n2 * (j + 1) + i + 1] / b[m2 * (i + 1) + j + 1];
   }
 }
 
@@ -778,10 +913,19 @@ __kernel void div_a_bt_for_elems(__global const float *a, __global const float *
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = a[m2 * i + j] / b[n2 * j + i];
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = a[m2 * (i + 0) + j + 0] / b[n2 * (j + 0) + i + 0];
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = a[m2 * (i + 0) + j + 1] / b[n2 * (j + 1) + i + 0];
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = a[m2 * (i + 1) + j + 0] / b[n2 * (j + 0) + i + 1];
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = a[m2 * (i + 1) + j + 1] / b[n2 * (j + 1) + i + 1];
   }
 }
 
@@ -789,10 +933,19 @@ __kernel void div_at_bt_for_elems(__global const float *a, __global const float 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = a[n2 * j + i] / b[n2 * j + i];
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = a[n2 * (j + 0) + i + 0] / b[n2 * (j + 0) + i + 0];
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = a[n2 * (j + 1) + i + 0] / b[n2 * (j + 1) + i + 0];
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = a[n2 * (j + 0) + i + 1] / b[n2 * (j + 0) + i + 1];
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = a[n2 * (j + 1) + i + 1] / b[n2 * (j + 1) + i + 1];
   }
 }
 
@@ -800,10 +953,19 @@ __kernel void add_a_b_for_scalar(__global const float *a, float b, __global floa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = a[m2 * i + j] + b;
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = a[m2 * (i + 0) + j + 0] + b;
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = a[m2 * (i + 0) + j + 1] + b;
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = a[m2 * (i + 1) + j + 0] + b;
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = a[m2 * (i + 1) + j + 1] + b;
   }
 }
 
@@ -811,10 +973,19 @@ __kernel void add_at_b_for_scalar(__global const float *a, float b, __global flo
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = a[n2 * j + i] + b;
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = a[n2 * (j + 0) + i + 0] + b;
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = a[n2 * (j + 1) + i + 0] + b;
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = a[n2 * (j + 0) + i + 1] + b;
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = a[n2 * (j + 1) + i + 1] + b;
   }
 }
 
@@ -822,10 +993,19 @@ __kernel void sub_a_b_for_scalar(__global const float *a, float b, __global floa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = a[m2 * i + j] - b;
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = a[m2 * (i + 0) + j + 0] - b;
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = a[m2 * (i + 0) + j + 1] - b;
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = a[m2 * (i + 1) + j + 0] - b;
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = a[m2 * (i + 1) + j + 1] - b;
   }
 }
 
@@ -833,10 +1013,19 @@ __kernel void sub_at_b_for_scalar(__global const float *a, float b, __global flo
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = a[n2 * j + i] - b;
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = a[n2 * (j + 0) + i + 0] - b;
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = a[n2 * (j + 1) + i + 0] - b;
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = a[n2 * (j + 0) + i + 1] - b;
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = a[n2 * (j + 1) + i + 1] - b;
   }
 }
 
@@ -844,10 +1033,19 @@ __kernel void rsub_a_b_for_scalar(__global const float *a, float b, __global flo
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = b - a[m2 * i + j];
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = b - a[m2 * (i + 0) + j + 0];
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = b - a[m2 * (i + 0) + j + 1];
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = b - a[m2 * (i + 1) + j + 0];
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = b - a[m2 * (i + 1) + j + 1];
   }
 }
 
@@ -855,10 +1053,19 @@ __kernel void rsub_at_b_for_scalar(__global const float *a, float b, __global fl
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = b - a[n2 * j + i];
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = b - a[n2 * (j + 0) + i + 0];
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = b - a[n2 * (j + 1) + i + 0];
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = b - a[n2 * (j + 0) + i + 1];
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = b - a[n2 * (j + 1) + i + 1];
   }
 }
 
@@ -866,10 +1073,19 @@ __kernel void mul_a_b_for_scalar(__global const float *a, float b, __global floa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = a[m2 * i + j] * b;
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = a[m2 * (i + 0) + j + 0] * b;
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = a[m2 * (i + 0) + j + 1] * b;
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = a[m2 * (i + 1) + j + 0] * b;
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = a[m2 * (i + 1) + j + 1] * b;
   }
 }
 
@@ -877,10 +1093,19 @@ __kernel void mul_at_b_for_scalar(__global const float *a, float b, __global flo
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = a[n2 * j + i] * b;
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = a[n2 * (j + 0) + i + 0] * b;
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = a[n2 * (j + 1) + i + 0] * b;
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = a[n2 * (j + 0) + i + 1] * b;
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = a[n2 * (j + 1) + i + 1] * b;
   }
 }
 
@@ -888,10 +1113,19 @@ __kernel void div_a_b_for_scalar(__global const float *a, float b, __global floa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = a[m2 * i + j] / b;
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = a[m2 * (i + 0) + j + 0] / b;
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = a[m2 * (i + 0) + j + 1] / b;
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = a[m2 * (i + 1) + j + 0] / b;
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = a[m2 * (i + 1) + j + 1] / b;
   }
 }
 
@@ -899,10 +1133,19 @@ __kernel void div_at_b_for_scalar(__global const float *a, float b, __global flo
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = a[n2 * j + i] / b;
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = a[n2 * (j + 0) + i + 0] / b;
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = a[n2 * (j + 1) + i + 0] / b;
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = a[n2 * (j + 0) + i + 1] / b;
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = a[n2 * (j + 1) + i + 1] / b;
   }
 }
 
@@ -910,10 +1153,19 @@ __kernel void rdiv_a_b_for_scalar(__global const float *a, float b, __global flo
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = b / a[m2 * i + j];
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0  < m2) {
+    c[m2 * (i + 0) + j + 0] = b / a[m2 * (i + 0) + j + 0];
+  }
+  if(i + 0 < n2 && j + 1  < m2) {
+    c[m2 * (i + 0) + j + 1] = b / a[m2 * (i + 0) + j + 1];
+  }
+  if(i + 1 < n2 && j + 0  < m2) {
+    c[m2 * (i + 1) + j + 0] = b / a[m2 * (i + 1) + j + 0];
+  }
+  if(i + 1 < n2 && j + 1  < m2) {
+    c[m2 * (i + 1) + j + 1] = b / a[m2 * (i + 1) + j + 1];
   }
 }
 
@@ -921,10 +1173,19 @@ __kernel void rdiv_at_b_for_scalar(__global const float *a, float b, __global fl
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = b / a[n2 * j + i];
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0  < m2) {
+    c[m2 * (i + 0) + j + 0] = b / a[n2 * (j + 0) + i + 0];
+  }
+  if(i + 0 < n2 && j + 1  < m2) {
+    c[m2 * (i + 0) + j + 1] = b / a[n2 * (j + 1) + i + 0];
+  }
+  if(i + 1 < n2 && j + 0  < m2) {
+    c[m2 * (i + 1) + j + 0] = b / a[n2 * (j + 0) + i + 1];
+  }
+  if(i + 1 < n2 && j + 1  < m2) {
+    c[m2 * (i + 1) + j + 1] = b / a[n2 * (j + 1) + i + 1];
   }
 }
 
@@ -932,10 +1193,19 @@ __kernel void sigmoid_a(__global const float *a, __global float *b, ulong n, ulo
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = 1.0f / (1.0f + exp(-a[m2 * i + j]));
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = 1.0f / (1.0f + exp(-a[m2 * (i + 0) + j + 0]));
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = 1.0f / (1.0f + exp(-a[m2 * (i + 0) + j + 1]));
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = 1.0f / (1.0f + exp(-a[m2 * (i + 1) + j + 0]));
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = 1.0f / (1.0f + exp(-a[m2 * (i + 1) + j + 1]));
   }
 }
 
@@ -943,10 +1213,19 @@ __kernel void sigmoid_at(__global const float *a, __global float *b, ulong n, ul
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = 1.0f / (1.0f + exp(-a[n2 * j + i]));
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = 1.0f / (1.0f + exp(-a[n2 * (j + 0) + i + 0]));
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = 1.0f / (1.0f + exp(-a[n2 * (j + 1) + i + 0]));
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = 1.0f / (1.0f + exp(-a[n2 * (j + 0) + i + 1]));
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = 1.0f / (1.0f + exp(-a[n2 * (j + 1) + i + 1]));
   }
 }
 
@@ -954,10 +1233,19 @@ __kernel void tanh_a(__global const float *a, __global float *b, ulong n, ulong 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = tanh(a[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = tanh(a[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = tanh(a[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = tanh(a[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = tanh(a[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -965,10 +1253,19 @@ __kernel void tanh_at(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = tanh(a[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = tanh(a[n2 * (j + 0) + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = tanh(a[n2 * (j + 1) + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = tanh(a[n2 * (j + 0) + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = tanh(a[n2 * (j + 1) + i + 1]);
   }
 }
 
@@ -978,8 +1275,17 @@ __kernel void swish_a(__global const float *a, __global float *b, ulong n, ulong
   size_t m2 = (size_t) m;
   size_t i = get_global_id(0);
   size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = a[m2 * i + j] / (1.0f + exp(-a[m2 * i + j]));
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = a[m2 * (i + 0) + j + 0] / (1.0f + exp(-a[m2 * (i + 0) + j + 0]));
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = a[m2 * (i + 0) + j + 1] / (1.0f + exp(-a[m2 * (i + 0) + j + 1]));
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = a[m2 * (i + 1) + j + 0] / (1.0f + exp(-a[m2 * (i + 1) + j + 0]));
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = a[m2 * (i + 1) + j + 1] / (1.0f + exp(-a[m2 * (i + 1) + j + 1]));
   }
 }
 
@@ -987,10 +1293,19 @@ __kernel void swish_at(__global const float *a, __global float *b, ulong n, ulon
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = a[n2 * j + i] / (1.0f + exp(-a[n2 * j + i]));
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = a[n2 * (j + 0) + i + 0] / (1.0f + exp(-a[n2 * (j + 0) + i + 0]));
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = a[n2 * (j + 1) + i + 0] / (1.0f + exp(-a[n2 * (j + 1) + i + 0]));
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = a[n2 * (j + 0) + i + 1] / (1.0f + exp(-a[n2 * (j + 0) + i + 1]));
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = a[n2 * (j + 1) + i + 1] / (1.0f + exp(-a[n2 * (j + 1) + i + 1]));
   }
 }
 
@@ -998,28 +1313,53 @@ __kernel void softmax_a(__global const float *a, __global float *b, __local floa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
   size_t k;
-  size_t tile_width = get_local_size(1);
-  size_t tile_height = get_local_size(0);
-  size_t ti = get_local_id(0);
-  size_t tj = get_local_id(1);
-  float sum = 0.0f;
+  size_t tile_width = get_local_size(1) << 1;
+  size_t tile_height = get_local_size(0) << 1;
+  size_t ti = get_local_id(0) << 1;
+  size_t tj = get_local_id(1) << 1;
+  float sum1 = 0.0f;
+  float sum2 = 0.0f;
   for(k = 0; k < n2; k += tile_height) {
     size_t tk;
-    es[tile_width * ti + tj] = 0.0f;
-    if(j < m2 && k + ti < n2) {
-      es[tile_width * ti + tj] = exp(a[m2 * (k + ti) + j]);
+    es[tile_width * (ti + 0) + tj + 0] = 0.0f;
+    if(j + 0 < m2 && k + ti + 0 < n2) {
+      es[tile_width * (ti + 0) + tj + 0] = exp(a[m2 * (k + ti + 0) + j + 0]);
+    }
+    es[tile_width * (ti + 0) + tj + 1] = 0.0f;
+    if(j + 1 < m2 && k + ti + 0 < n2) {
+      es[tile_width * (ti + 0) + tj + 1] = exp(a[m2 * (k + ti + 0) + j + 1]);
+    }
+    es[tile_width * (ti + 1) + tj + 0] = 0.0f;
+    if(j + 0 < m2 && k + ti + 1 < n2) {
+      es[tile_width * (ti + 1) + tj + 0] = exp(a[m2 * (k + ti + 1) + j + 0]);
+    }
+    es[tile_width * (ti + 1) + tj + 1] = 0.0f;
+    if(j + 1 < m2 && k + ti + 1 < n2) {
+      es[tile_width * (ti + 1) + tj + 1] = exp(a[m2 * (k + ti + 1) + j + 1]);
     }
     barrier(CLK_LOCAL_MEM_FENCE);
-    for(tk = 0; tk < tile_height; tk++) {
-      sum += es[tile_width * tk + tj];
+    for(tk = 0; tk < tile_height; tk += 2) {
+      sum1 += es[tile_width * (tk + 0) + tj + 0];
+      sum1 += es[tile_width * (tk + 1) + tj + 0];
+      sum2 += es[tile_width * (tk + 0) + tj + 1];
+      sum2 += es[tile_width * (tk + 1) + tj + 1];
     }
     barrier(CLK_LOCAL_MEM_FENCE);
   }
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = exp(a[m2 * i + j]) / sum;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = exp(a[m2 * (i + 0) + j + 0]) / sum1;
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = exp(a[m2 * (i + 0) + j + 1]) / sum2;
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = exp(a[m2 * (i + 1) + j + 0]) / sum1;
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = exp(a[m2 * (i + 1) + j + 1]) / sum2;
   }
 }
 
@@ -1027,28 +1367,53 @@ __kernel void softmax_at(__global const float *a, __global float *b, __local flo
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
   size_t k;
-  size_t tile_width = get_local_size(1);
-  size_t tile_height = get_local_size(0);
-  size_t ti = get_local_id(0);
-  size_t tj = get_local_id(1);
-  float sum = 0.0f;
+  size_t tile_width = get_local_size(1) << 1;
+  size_t tile_height = get_local_size(0) << 1;
+  size_t ti = get_local_id(0) << 1;
+  size_t tj = get_local_id(1) << 1;
+  float sum1 = 0.0f;
+  float sum2 = 0.0f;
   for(k = 0; k < n2; k += tile_height) {
     size_t tk;
-    es[tile_width * ti + tj] = 0.0f;
-    if(j < m2 && k + ti < n2) {
-      es[tile_width * ti + tj] = exp(a[n2 * j + k + ti]);
+    es[tile_width * (ti + 0) + tj + 0] = 0.0f;
+    if(j + 0 < m2 && k + ti + 0 < n2) {
+      es[tile_width * (ti + 0) + tj + 0] = exp(a[n2 * (j + 0) + k + ti + 0]);
+    }
+    es[tile_width * (ti + 0) + tj + 1] = 0.0f;
+    if(j + 1 < m2 && k + ti + 0 < n2) {
+      es[tile_width * (ti + 0) + tj + 1] = exp(a[n2 * (j + 1) + k + ti + 0]);
+    }
+    es[tile_width * (ti + 1) + tj + 0] = 0.0f;
+    if(j + 0 < m2 && k + ti + 1 < n2) {
+      es[tile_width * (ti + 1) + tj + 0] = exp(a[n2 * (j + 0) + k + ti + 1]);
+    }
+    es[tile_width * (ti + 1) + tj + 1] = 0.0f;
+    if(j + 1 < m2 && k + ti + 1 < n2) {
+      es[tile_width * (ti + 1) + tj + 1] = exp(a[n2 * (j + 1) + k + ti + 1]);
     }
     barrier(CLK_LOCAL_MEM_FENCE);
-    for(tk = 0; tk < tile_height; tk++) {
-      sum += es[tile_width * tk + tj];
+    for(tk = 0; tk < tile_height; tk += 2) {
+      sum1 += es[tile_width * (tk + 0) + tj + 0];
+      sum1 += es[tile_width * (tk + 1) + tj + 0];
+      sum2 += es[tile_width * (tk + 0) + tj + 1];
+      sum2 += es[tile_width * (tk + 1) + tj + 1];
     }
     barrier(CLK_LOCAL_MEM_FENCE);
   }
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = exp(a[n2 * j + i]) / sum;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = exp(a[n2 * (j + 0) + i + 0]) / sum1;
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = exp(a[n2 * (j + 1) + i + 0]) / sum2;
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = exp(a[n2 * (j + 0) + i + 1]) / sum1;
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = exp(a[n2 * (j + 1) + i + 1]) / sum2;
   }
 }
 
@@ -1056,10 +1421,19 @@ __kernel void sqrt_a(__global const float *a, __global float *b, ulong n, ulong 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = sqrt(a[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = sqrt(a[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = sqrt(a[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = sqrt(a[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = sqrt(a[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -1067,10 +1441,19 @@ __kernel void sqrt_at(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = sqrt(a[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = sqrt(a[n2 * (j + 0) + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = sqrt(a[n2 * (j + 1) + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = sqrt(a[n2 * (j + 0) + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = sqrt(a[n2 * (j + 1) + i + 1]);
   }
 }
 
@@ -1078,10 +1461,19 @@ __kernel void repeat_col_a(__global const float *a, __global float *b, ulong n, 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = a[i];
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = a[i + 0];
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = a[i + 0];
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = a[i + 1];
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = a[i + 1];
   }
 }
 
@@ -1089,10 +1481,19 @@ __kernel void repeat_row_a(__global const float *a, __global float *b, ulong n, 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = a[j];
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = a[j + 0];
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = a[j + 1];
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = a[j + 0];
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = a[j + 1];
   }
 }
 
@@ -1100,10 +1501,19 @@ __kernel void abs_a(__global const float *a, __global float *b, ulong n, ulong m
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = fabs(a[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = fabs(a[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = fabs(a[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = fabs(a[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = fabs(a[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -1111,10 +1521,19 @@ __kernel void abs_at(__global const float *a, __global float *b, ulong n, ulong 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = fabs(a[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = fabs(a[n2 * (j + 0) + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = fabs(a[n2 * (j + 1) + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = fabs(a[n2 * (j + 0) + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = fabs(a[n2 * (j + 1) + i + 1]);
   }
 }
 
@@ -1122,10 +1541,19 @@ __kernel void pow_a_b(__global const float *a, __global const float *b, __global
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = pow(a[m2 * i + j], b[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = pow(a[m2 * (i + 0) + j + 0], b[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = pow(a[m2 * (i + 0) + j + 1], b[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = pow(a[m2 * (i + 1) + j + 0], b[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = pow(a[m2 * (i + 1) + j + 1], b[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -1133,10 +1561,19 @@ __kernel void pow_at_b(__global const float *a, __global const float *b, __globa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = pow(a[n2 * j + i], b[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = pow(a[n2 * (j + 0) + i + 0], b[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = pow(a[n2 * (j + 1) + i + 0], b[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = pow(a[n2 * (j + 0) + i + 1], b[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = pow(a[n2 * (j + 1) + i + 1], b[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -1144,10 +1581,19 @@ __kernel void pow_a_bt(__global const float *a, __global const float *b, __globa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = pow(a[m2 * i + j], b[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = pow(a[m2 * (i + 0) + j + 0], b[n2 * (j + 0) + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = pow(a[m2 * (i + 0) + j + 1], b[n2 * (j + 1) + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = pow(a[m2 * (i + 1) + j + 0], b[n2 * (j + 0) + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = pow(a[m2 * (i + 1) + j + 1], b[n2 * (j + 1) + i + 1]);
   }
 }
 
@@ -1155,10 +1601,19 @@ __kernel void pow_at_bt(__global const float *a, __global const float *b, __glob
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = pow(a[n2 * j + i], b[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = pow(a[n2 * (j + 0) + i + 0], b[n2 * (j + 0) + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = pow(a[n2 * (j + 1) + i + 0], b[n2 * (j + 1) + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = pow(a[n2 * (j + 0) + i + 1], b[n2 * (j + 0) + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = pow(a[n2 * (j + 1) + i + 1], b[n2 * (j + 1) + i + 1]);
   }
 }
 
@@ -1166,10 +1621,19 @@ __kernel void pow_a_b_for_scalar(__global const float *a, float b, __global floa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = pow(a[m2 * i + j], b);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = pow(a[m2 * (i + 0) + j + 0], b);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = pow(a[m2 * (i + 0) + j + 1], b);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = pow(a[m2 * (i + 1) + j + 0], b);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = pow(a[m2 * (i + 1) + j + 1], b);
   }
 }
 
@@ -1177,10 +1641,19 @@ __kernel void pow_at_b_for_scalar(__global const float *a, float b, __global flo
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = pow(a[n2 * j + i], b);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = pow(a[n2 * (j + 0) + i + 0], b);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = pow(a[n2 * (j + 1) + i + 0], b);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = pow(a[n2 * (j + 0) + i + 1], b);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = pow(a[n2 * (j + 1) + i + 1], b);
   }
 }
 
@@ -1188,10 +1661,19 @@ __kernel void rpow_a_b_for_scalar(__global const float *a, float b, __global flo
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = pow(b, a[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = pow(b, a[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = pow(b, a[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = pow(b, a[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = pow(b, a[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -1199,10 +1681,19 @@ __kernel void rpow_at_b_for_scalar(__global const float *a, float b, __global fl
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = pow(b, a[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = pow(b, a[n2 * (j + 0) + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = pow(b, a[n2 * (j + 1) + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = pow(b, a[n2 * (j + 0) + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = pow(b, a[n2 * (j + 1) + i + 1]);
   }
 }
 
@@ -1210,10 +1701,19 @@ __kernel void exp_a(__global const float *a, __global float *b, ulong n, ulong m
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = exp(a[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0 ] = exp(a[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = exp(a[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = exp(a[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = exp(a[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -1221,10 +1721,19 @@ __kernel void exp_at(__global const float *a, __global float *b, ulong n, ulong 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = exp(a[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = exp(a[n2 * (j + 0) + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = exp(a[n2 * (j + 1) + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = exp(a[n2 * (j + 0) + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = exp(a[n2 * (j + 1) + i + 1]);
   }
 }
 
@@ -1232,10 +1741,19 @@ __kernel void ln_a(__global const float *a, __global float *b, ulong n, ulong m)
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = log(a[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = log(a[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = log(a[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = log(a[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = log(a[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -1243,10 +1761,19 @@ __kernel void ln_at(__global const float *a, __global float *b, ulong n, ulong m
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = log(a[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = log(a[n2 * (j + 0) + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = log(a[n2 * (j + 1) + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = log(a[n2 * (j + 0) + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = log(a[n2 * (j + 1) + i + 1]);
   }
 }
 
@@ -1254,10 +1781,19 @@ __kernel void log2_a(__global const float *a, __global float *b, ulong n, ulong 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = log2(a[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = log2(a[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = log2(a[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = log2(a[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = log2(a[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -1265,10 +1801,19 @@ __kernel void log2_at(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = log2(a[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = log2(a[n2 * (j + 0) + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = log2(a[n2 * (j + 1) + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = log2(a[n2 * (j + 0) + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = log2(a[n2 * (j + 1) + i + 1]);
   }
 }
 
@@ -1276,10 +1821,19 @@ __kernel void log10_a(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = log10(a[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = log10(a[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = log10(a[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = log10(a[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = log10(a[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -1287,10 +1841,19 @@ __kernel void log10_at(__global const float *a, __global float *b, ulong n, ulon
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = log10(a[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = log10(a[n2 * (j + 0) + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = log10(a[n2 * (j + 1) + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = log10(a[n2 * (j + 0) + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = log10(a[n2 * (j + 1) + i + 1]);
   }
 }
 
@@ -1298,10 +1861,19 @@ __kernel void sin_a(__global const float *a, __global float *b, ulong n, ulong m
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = sin(a[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = sin(a[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = sin(a[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = sin(a[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = sin(a[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -1309,10 +1881,19 @@ __kernel void sin_at(__global const float *a, __global float *b, ulong n, ulong 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = sin(a[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = sin(a[n2 * (j + 0) + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = sin(a[n2 * (j + 1) + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = sin(a[n2 * (j + 0) + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = sin(a[n2 * (j + 1) + i + 1]);
   }
 }
 
@@ -1320,10 +1901,19 @@ __kernel void cos_a(__global const float *a, __global float *b, ulong n, ulong m
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = cos(a[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = cos(a[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = cos(a[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = cos(a[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = cos(a[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -1331,10 +1921,19 @@ __kernel void cos_at(__global const float *a, __global float *b, ulong n, ulong 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = cos(a[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = cos(a[n2 * (j + 0) + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = cos(a[n2 * (j + 1) + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = cos(a[n2 * (j + 0) + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = cos(a[n2 * (j + 1) + i + 1]);
   }
 }
 
@@ -1342,10 +1941,19 @@ __kernel void tan_a(__global const float *a, __global float *b, ulong n, ulong m
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = tan(a[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = tan(a[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = tan(a[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = tan(a[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = tan(a[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -1353,10 +1961,19 @@ __kernel void tan_at(__global const float *a, __global float *b, ulong n, ulong 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = tan(a[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = tan(a[n2 * (j + 0) + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = tan(a[n2 * (j + 1) + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = tan(a[n2 * (j + 0) + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = tan(a[n2 * (j + 1) + i + 1]);
   }
 }
 
@@ -1364,10 +1981,19 @@ __kernel void asin_a(__global const float *a, __global float *b, ulong n, ulong 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = asin(a[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = asin(a[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = asin(a[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = asin(a[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = asin(a[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -1375,10 +2001,19 @@ __kernel void asin_at(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = asin(a[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = asin(a[n2 * (j + 0) + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = asin(a[n2 * (j + 1) + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = asin(a[n2 * (j + 0) + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = asin(a[n2 * (j + 1) + i + 1]);
   }
 }
 
@@ -1386,10 +2021,19 @@ __kernel void acos_a(__global const float *a, __global float *b, ulong n, ulong 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = acos(a[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = acos(a[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = acos(a[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = acos(a[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = acos(a[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -1397,10 +2041,19 @@ __kernel void acos_at(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = acos(a[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = acos(a[n2 * (j + 0) + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = acos(a[n2 * (j + 1) + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = acos(a[n2 * (j + 0) + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = acos(a[n2 * (j + 1) + i + 1]);
   }
 }
 
@@ -1408,10 +2061,19 @@ __kernel void atan_a(__global const float *a, __global float *b, ulong n, ulong 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = atan(a[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = atan(a[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = atan(a[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = atan(a[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = atan(a[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -1419,10 +2081,19 @@ __kernel void atan_at(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = atan(a[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = atan(a[n2 * (j + 0)  + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = atan(a[n2 * (j + 1)  + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = atan(a[n2 * (j + 0)  + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = atan(a[n2 * (j + 1)  + i + 1]);
   }
 }
 
@@ -1430,10 +2101,19 @@ __kernel void atan2_a_b(__global const float *a, __global const float *b, __glob
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = atan2(a[m2 * i + j], b[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = atan2(a[m2 * (i + 0) + j + 0], b[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = atan2(a[m2 * (i + 0) + j + 1], b[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = atan2(a[m2 * (i + 1) + j + 0], b[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = atan2(a[m2 * (i + 1) + j + 1], b[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -1441,10 +2121,19 @@ __kernel void atan2_at_b(__global const float *a, __global const float *b, __glo
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = atan2(a[n2 * j + i], b[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = atan2(a[n2 * (j + 0) + i + 0], b[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = atan2(a[n2 * (j + 1) + i + 0], b[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = atan2(a[n2 * (j + 0) + i + 1], b[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = atan2(a[n2 * (j + 1) + i + 1], b[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -1452,10 +2141,19 @@ __kernel void atan2_a_bt(__global const float *a, __global const float *b, __glo
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = atan2(a[m2 * i + j], b[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = atan2(a[m2 * (i + 0) + j + 0], b[n2 * (j + 0) + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = atan2(a[m2 * (i + 0) + j + 1], b[n2 * (j + 1) + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = atan2(a[m2 * (i + 1) + j + 0], b[n2 * (j + 0) + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = atan2(a[m2 * (i + 1) + j + 1], b[n2 * (j + 1) + i + 1]);
   }
 }
 
@@ -1463,10 +2161,19 @@ __kernel void atan2_at_bt(__global const float *a, __global const float *b, __gl
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = atan2(a[n2 * j + i], b[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = atan2(a[n2 * (j + 0) + i + 0], b[n2 * (j + 0) + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = atan2(a[n2 * (j + 1) + i + 0], b[n2 * (j + 1) + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = atan2(a[n2 * (j + 0) + i + 1], b[n2 * (j + 0) + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = atan2(a[n2 * (j + 1) + i + 1], b[n2 * (j + 1) + i + 1]);
   }
 }
 
@@ -1474,10 +2181,19 @@ __kernel void atan2_a_b_for_scalar(__global const float *a, float b, __global fl
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = atan2(a[m2 * i + j], b);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = atan2(a[m2 * (i + 0) + j + 0], b);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = atan2(a[m2 * (i + 0) + j + 1], b);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = atan2(a[m2 * (i + 1) + j + 0], b);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = atan2(a[m2 * (i + 1) + j + 1], b);
   }
 }
 
@@ -1485,10 +2201,19 @@ __kernel void atan2_at_b_for_scalar(__global const float *a, float b, __global f
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = atan2(a[n2 * j + i], b);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = atan2(a[n2 * (j + 0) + i + 0], b);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = atan2(a[n2 * (j + 1) + i + 0], b);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = atan2(a[n2 * (j + 0) + i + 1], b);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = atan2(a[n2 * (j + 1) + i + 1], b);
   }
 }
 
@@ -1496,10 +2221,19 @@ __kernel void ratan2_a_b_for_scalar(__global const float *a, float b, __global f
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = atan2(b, a[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = atan2(b, a[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = atan2(b, a[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = atan2(b, a[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = atan2(b, a[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -1507,10 +2241,19 @@ __kernel void ratan2_at_b_for_scalar(__global const float *a, float b, __global 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = atan2(b, a[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = atan2(b, a[n2 * (j + 0) + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = atan2(b, a[n2 * (j + 1) + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = atan2(b, a[n2 * (j + 0) + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = atan2(b, a[n2 * (j + 1) + i + 1]);
   }
 }
 
@@ -1518,10 +2261,19 @@ __kernel void sinh_a(__global const float *a, __global float *b, ulong n, ulong 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = sinh(a[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = sinh(a[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = sinh(a[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = sinh(a[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = sinh(a[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -1529,10 +2281,19 @@ __kernel void sinh_at(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = sinh(a[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = sinh(a[n2 * (j + 0) + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = sinh(a[n2 * (j + 1) + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = sinh(a[n2 * (j + 0) + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = sinh(a[n2 * (j + 1) + i + 1]);
   }
 }
 
@@ -1540,10 +2301,19 @@ __kernel void cosh_a(__global const float *a, __global float *b, ulong n, ulong 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = cosh(a[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = cosh(a[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = cosh(a[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = cosh(a[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = cosh(a[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -1551,10 +2321,19 @@ __kernel void cosh_at(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = cosh(a[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = cosh(a[n2 * (j + 0) + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = cosh(a[n2 * (j + 1) + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = cosh(a[n2 * (j + 0) + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = cosh(a[n2 * (j + 1) + i + 1]);
   }
 }
 
@@ -1562,10 +2341,19 @@ __kernel void asinh_a(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = asinh(a[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = asinh(a[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = asinh(a[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = asinh(a[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = asinh(a[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -1573,10 +2361,19 @@ __kernel void asinh_at(__global const float *a, __global float *b, ulong n, ulon
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = asinh(a[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = asinh(a[n2 * (j + 0) + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = asinh(a[n2 * (j + 1) + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = asinh(a[n2 * (j + 0) + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = asinh(a[n2 * (j + 1) + i + 1]);
   }
 }
 
@@ -1584,10 +2381,19 @@ __kernel void acosh_a(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = acosh(a[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = acosh(a[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = acosh(a[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = acosh(a[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = acosh(a[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -1595,10 +2401,19 @@ __kernel void acosh_at(__global const float *a, __global float *b, ulong n, ulon
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = acosh(a[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = acosh(a[n2 * (j + 0) + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = acosh(a[n2 * (j + 1) + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = acosh(a[n2 * (j + 0) + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = acosh(a[n2 * (j + 1) + i + 1]);
   }
 }
 
@@ -1606,10 +2421,19 @@ __kernel void atanh_a(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = atanh(a[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = atanh(a[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = atanh(a[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = atanh(a[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = atanh(a[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -1617,10 +2441,19 @@ __kernel void atanh_at(__global const float *a, __global float *b, ulong n, ulon
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = atanh(a[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = atanh(a[n2 * (j + 0) + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = atanh(a[n2 * (j + 1) + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = atanh(a[n2 * (j + 0) + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = atanh(a[n2 * (j + 1) + i + 1]);
   }
 }
 
@@ -1628,13 +2461,34 @@ __kernel void signum_a(__global const float *a, __global float *b, ulong n, ulon
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    if(!isnan(a[m2 * i + j])) {
-      b[m2 * i + j] = (signbit(a[m2 * i + j]) ? -1.0 : 1.0);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    if(!isnan(a[m2 * (i + 0) + j + 0])) {
+      b[m2 * (i + 0) + j + 0] = (signbit(a[m2 * (i + 0) + j + 0]) ? -1.0 : 1.0);
     } else {
-      b[m2 * i + j] = a[m2 * i + j];
+      b[m2 * (i + 0) + j + 0] = a[m2 * (i + 0) + j + 0];
+    }
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    if(!isnan(a[m2 * (i + 0) + j + 1])) {
+      b[m2 * (i + 0) + j + 1] = (signbit(a[m2 * (i + 0) + j + 1]) ? -1.0 : 1.0);
+    } else {
+      b[m2 * (i + 0) + j + 1] = a[m2 * (i + 0) + j + 1];
+    }
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    if(!isnan(a[m2 * (i + 1) + j + 0])) {
+      b[m2 * (i + 1) + j + 0] = (signbit(a[m2 * (i + 1) + j + 0]) ? -1.0 : 1.0);
+    } else {
+      b[m2 * (i + 1) + j + 0] = a[m2 * (i + 1) + j + 0];
+    }
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    if(!isnan(a[m2 * (i + 1) + j + 1])) {
+      b[m2 * (i + 1) + j + 1] = (signbit(a[m2 * (i + 1) + j + 1]) ? -1.0 : 1.0);
+    } else {
+      b[m2 * (i + 1) + j + 1] = a[m2 * (i + 1) + j + 1];
     }
   }
 }
@@ -1643,13 +2497,34 @@ __kernel void signum_at(__global const float *a, __global float *b, ulong n, ulo
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    if(!isnan(a[n2 * j + i])) {
-      b[m2 * i + j] = (signbit(a[n2 * j + i]) ? -1.0 : 1.0);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    if(!isnan(a[n2 * (j + 0) + i + 0])) {
+      b[m2 * (i + 0) + j + 0] = (signbit(a[n2 * (j + 0) + i + 0]) ? -1.0 : 1.0);
     } else {
-      b[m2 * i + j] = a[n2 * j + i];
+      b[m2 * (i + 0) + j + 0] = a[n2 * (j + 0) + i + 0];
+    }
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    if(!isnan(a[n2 * (j + 1) + i + 0])) {
+      b[m2 * (i + 0) + j + 1] = (signbit(a[n2 * (j + 1) + i + 0]) ? -1.0 : 1.0);
+    } else {
+      b[m2 * (i + 0) + j + 1] = a[n2 * (j + 1) + i + 0];
+    }
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    if(!isnan(a[n2 * (j + 0) + i + 1])) {
+      b[m2 * (i + 1) + j + 0] = (signbit(a[n2 * (j + 0) + i + 1]) ? -1.0 : 1.0);
+    } else {
+      b[m2 * (i + 1) + j + 0] = a[n2 * (j + 0) + i + 1];
+    }
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    if(!isnan(a[n2 * (j + 1) + i + 1])) {
+      b[m2 * (i + 1) + j + 1] = (signbit(a[n2 * (j + 1) + i + 1]) ? -1.0 : 1.0);
+    } else {
+      b[m2 * (i + 1) + j + 1] = a[n2 * (j + 1) + i + 1];
     }
   }
 }
@@ -1658,10 +2533,19 @@ __kernel void ceil_a(__global const float *a, __global float *b, ulong n, ulong 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = ceil(a[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = ceil(a[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = ceil(a[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = ceil(a[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = ceil(a[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -1669,10 +2553,19 @@ __kernel void ceil_at(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = ceil(a[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = ceil(a[n2 * (j + 0) + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = ceil(a[n2 * (j + 1) + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = ceil(a[n2 * (j + 0) + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = ceil(a[n2 * (j + 1) + i + 1]);
   }
 }
 
@@ -1680,10 +2573,19 @@ __kernel void floor_a(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = floor(a[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = floor(a[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = floor(a[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = floor(a[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = floor(a[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -1691,10 +2593,19 @@ __kernel void floor_at(__global const float *a, __global float *b, ulong n, ulon
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = floor(a[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = floor(a[n2 * (j + 0) + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = floor(a[n2 * (j + 1) + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = floor(a[n2 * (j + 0) + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = floor(a[n2 * (j + 1) + i + 1]);
   }
 }
 
@@ -1702,10 +2613,19 @@ __kernel void round_a(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = round(a[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = round(a[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = round(a[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = round(a[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = round(a[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -1713,10 +2633,19 @@ __kernel void round_at(__global const float *a, __global float *b, ulong n, ulon
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = round(a[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = round(a[n2 * (j + 0) + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = round(a[n2 * (j + 1) + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = round(a[n2 * (j + 0) + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = round(a[n2 * (j + 1) + i + 1]);
   }
 }
 
@@ -1724,10 +2653,19 @@ __kernel void trunc_a(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = trunc(a[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = trunc(a[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = trunc(a[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = trunc(a[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = trunc(a[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -1735,10 +2673,19 @@ __kernel void trunc_at(__global const float *a, __global float *b, ulong n, ulon
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    b[m2 * i + j] = trunc(a[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    b[m2 * (i + 0) + j + 0] = trunc(a[n2 * (j + 0) + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    b[m2 * (i + 0) + j + 1] = trunc(a[n2 * (j + 1) + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    b[m2 * (i + 1) + j + 0] = trunc(a[n2 * (j + 0) + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    b[m2 * (i + 1) + j + 1] = trunc(a[n2 * (j + 1) + i + 1]);
   }
 }
 
@@ -1746,10 +2693,19 @@ __kernel void max_a_b(__global const float *a, __global const float *b, __global
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = fmax(a[m2 * i + j], b[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = fmax(a[m2 * (i + 0) + j + 0], b[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = fmax(a[m2 * (i + 0) + j + 1], b[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = fmax(a[m2 * (i + 1) + j + 0], b[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = fmax(a[m2 * (i + 1) + j + 1], b[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -1757,10 +2713,19 @@ __kernel void max_at_b(__global const float *a, __global const float *b, __globa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = fmax(a[n2 * j + i], b[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = fmax(a[n2 * (j + 0) + i + 0], b[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = fmax(a[n2 * (j + 1) + i + 0], b[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = fmax(a[n2 * (j + 0) + i + 1], b[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = fmax(a[n2 * (j + 1) + i + 1], b[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -1768,10 +2733,19 @@ __kernel void max_a_bt(__global const float *a, __global const float *b, __globa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = fmax(a[m2 * i + j], b[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = fmax(a[m2 * (i + 0) + j + 0], b[n2 * (j + 0) + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = fmax(a[m2 * (i + 0) + j + 1], b[n2 * (j + 1) + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = fmax(a[m2 * (i + 1) + j + 0], b[n2 * (j + 0) + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = fmax(a[m2 * (i + 1) + j + 1], b[n2 * (j + 1) + i + 1]);
   }
 }
 
@@ -1779,10 +2753,19 @@ __kernel void max_at_bt(__global const float *a, __global const float *b, __glob
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = fmax(a[n2 * j + i], b[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = fmax(a[n2 * (j + 0) + i + 0], b[n2 * (j + 0) + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = fmax(a[n2 * (j + 1) + i + 0], b[n2 * (j + 1) + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = fmax(a[n2 * (j + 0) + i + 1], b[n2 * (j + 0) + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = fmax(a[n2 * (j + 1) + i + 1], b[n2 * (j + 1) + i + 1]);
   }
 }
 
@@ -1790,10 +2773,19 @@ __kernel void max_a_b_for_scalar(__global const float *a, float b, __global floa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = fmax(a[m2 * i + j], b);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = fmax(a[m2 * (i + 0) + j + 0], b);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = fmax(a[m2 * (i + 0) + j + 1], b);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = fmax(a[m2 * (i + 1) + j + 0], b);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = fmax(a[m2 * (i + 1) + j + 1], b);
   }
 }
 
@@ -1801,10 +2793,19 @@ __kernel void max_at_b_for_scalar(__global const float *a, float b, __global flo
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = fmax(a[n2 * j + i], b);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = fmax(a[n2 * (j + 0) + i + 0], b);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = fmax(a[n2 * (j + 1) + i + 0], b);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = fmax(a[n2 * (j + 0) + i + 1], b);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = fmax(a[n2 * (j + 1) + i + 1], b);
   }
 }
 
@@ -1812,10 +2813,19 @@ __kernel void min_a_b(__global const float *a, __global const float *b, __global
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = fmin(a[m2 * i + j], b[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = fmin(a[m2 * (i + 0) + j + 0], b[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = fmin(a[m2 * (i + 0) + j + 1], b[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = fmin(a[m2 * (i + 1) + j + 0], b[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = fmin(a[m2 * (i + 1) + j + 1], b[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -1823,10 +2833,19 @@ __kernel void min_at_b(__global const float *a, __global const float *b, __globa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = fmin(a[n2 * j + i], b[m2 * i + j]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = fmin(a[n2 * (j + 0) + i + 0], b[m2 * (i + 0) + j + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = fmin(a[n2 * (j + 1) + i + 0], b[m2 * (i + 0) + j + 1]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = fmin(a[n2 * (j + 0) + i + 1], b[m2 * (i + 1) + j + 0]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = fmin(a[n2 * (j + 1) + i + 1], b[m2 * (i + 1) + j + 1]);
   }
 }
 
@@ -1834,10 +2853,19 @@ __kernel void min_a_bt(__global const float *a, __global const float *b, __globa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = fmin(a[m2 * i + j], b[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = fmin(a[m2 * (i + 0) + j + 0], b[n2 * (j + 0) + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = fmin(a[m2 * (i + 0) + j + 1], b[n2 * (j + 1) + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = fmin(a[m2 * (i + 1) + j + 0], b[n2 * (j + 0) + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = fmin(a[m2 * (i + 1) + j + 1], b[n2 * (j + 1) + i + 1]);
   }
 }
 
@@ -1845,10 +2873,19 @@ __kernel void min_at_bt(__global const float *a, __global const float *b, __glob
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = fmin(a[n2 * j + i], b[n2 * j + i]);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = fmin(a[n2 * (j + 0) + i + 0], b[n2 * (j + 0) + i + 0]);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = fmin(a[n2 * (j + 1) + i + 0], b[n2 * (j + 1) + i + 0]);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = fmin(a[n2 * (j + 0) + i + 1], b[n2 * (j + 0) + i + 1]);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = fmin(a[n2 * (j + 1) + i + 1], b[n2 * (j + 1) + i + 1]);
   }
 }
 
@@ -1856,10 +2893,19 @@ __kernel void min_a_b_for_scalar(__global const float *a, float b, __global floa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = fmin(a[m2 * i + j], b);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = fmin(a[m2 * (i + 0) + j + 0], b);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = fmin(a[m2 * (i + 0) + j + 1], b);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = fmin(a[m2 * (i + 1) + j + 0], b);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = fmin(a[m2 * (i + 1) + j + 1], b);
   }
 }
 
@@ -1867,9 +2913,18 @@ __kernel void min_at_b_for_scalar(__global const float *a, float b, __global flo
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
-  if(i < n2 && j < m2) {
-    c[m2 * i + j] = fmin(a[n2 * j + i], b);
+  size_t i = get_global_id(0) << 1;
+  size_t j = get_global_id(1) << 1;
+  if(i + 0 < n2 && j + 0 < m2) {
+    c[m2 * (i + 0) + j + 0] = fmin(a[n2 * (j + 0) + i + 0], b);
+  }
+  if(i + 0 < n2 && j + 1 < m2) {
+    c[m2 * (i + 0) + j + 1] = fmin(a[n2 * (j + 1) + i + 0], b);
+  }
+  if(i + 1 < n2 && j + 0 < m2) {
+    c[m2 * (i + 1) + j + 0] = fmin(a[n2 * (j + 0) + i + 1], b);
+  }
+  if(i + 1 < n2 && j + 1 < m2) {
+    c[m2 * (i + 1) + j + 1] = fmin(a[n2 * (j + 1) + i + 1], b);
   }
 }
