@@ -199,6 +199,8 @@ __kernel void mul_a_b(__global const float *a, __global const float *b, __global
   size_t tj = get_local_id(1);
   size_t bi = ti << 2;
   size_t bj = tj << 2;
+  size_t ik = get_global_id(0);
+  size_t jk = get_global_id(1);
   __private float ar1;
   __private float ar2;
   __private float ar3;
@@ -225,48 +227,52 @@ __kernel void mul_a_b(__global const float *a, __global const float *b, __global
   __private float cr44 = 0.0f;
   for(k = 0; k < l2; k += mthread_size) {
     size_t tk;
-    as[mthread_size * (bi + 0) + tj] = 0.0f;
+    size_t tjik = (tj + ik) % mthread_size;
+    size_t tijk = (ti + jk) % mthread_size;
+    as[mthread_size * (bi + 0) + tjik] = 0.0f;
     if(i + 0 < n2 && k + tj < l2) {
-      as[mthread_size * (bi + 0) + tj] = a[l2 * (i + 0) + k + tj];
+      as[mthread_size * (bi + 0) + tjik] = a[l2 * (i + 0) + k + tj];
     }
-    as[mthread_size * (bi + 1) + tj] = 0.0f;
+    as[mthread_size * (bi + 1) + tjik] = 0.0f;
     if(i + 1 < n2 && k + tj < l2) {
-      as[mthread_size * (bi + 1) + tj] = a[l2 * (i + 1) + k + tj];
+      as[mthread_size * (bi + 1) + tjik] = a[l2 * (i + 1) + k + tj];
     }
-    as[mthread_size * (bi + 2) + tj] = 0.0f;
+    as[mthread_size * (bi + 2) + tjik] = 0.0f;
     if(i + 2 < n2 && k + tj < l2) {
-      as[mthread_size * (bi + 2) + tj] = a[l2 * (i + 2) + k + tj];
+      as[mthread_size * (bi + 2) + tjik] = a[l2 * (i + 2) + k + tj];
     }
-    as[mthread_size * (bi + 3) + tj] = 0.0f;
+    as[mthread_size * (bi + 3) + tjik] = 0.0f;
     if(i + 3 < n2 && k + tj < l2) {
-      as[mthread_size * (bi + 3) + tj] = a[l2 * (i + 3) + k + tj];
+      as[mthread_size * (bi + 3) + tjik] = a[l2 * (i + 3) + k + tj];
     }
-    bs[mtile_width * ti + bj + 0] = 0.0f;
+    bs[mthread_size * (bj + 0) + tijk] = 0.0f;
     if(j + 0 < m2 && k + ti < l2) {
-      bs[mtile_width * ti + bj + 0] = b[m2 * (k + ti) + j + 0];
+      bs[mthread_size * (bj + 0) + tijk] = b[m2 * (k + ti) + j + 0];
     }
-    bs[mtile_width * ti + bj + 1] = 0.0f;
+    bs[mthread_size * (bj + 1) + tijk] = 0.0f;
     if(j + 1 < m2 && k + ti < l2) {
-      bs[mtile_width * ti + bj + 1] = b[m2 * (k + ti) + j + 1];
+      bs[mthread_size * (bj + 1) + tijk] = b[m2 * (k + ti) + j + 1];
     }
-    bs[mtile_width * ti + bj + 2] = 0.0f;
+    bs[mthread_size * (bj + 2) + tijk] = 0.0f;
     if(j + 2 < m2 && k + ti < l2) {
-      bs[mtile_width * ti + bj + 2] = b[m2 * (k + ti) + j + 2];
+      bs[mthread_size * (bj + 2) + tijk] = b[m2 * (k + ti) + j + 2];
     }
-    bs[mtile_width * ti + bj + 3] = 0.0f;
+    bs[mthread_size * (bj + 3) + tijk] = 0.0f;
     if(j + 3 < m2 && k + ti < l2) {
-      bs[mtile_width * ti + bj + 3] = b[m2 * (k + ti) + j + 3];
+      bs[mthread_size * (bj + 3) + tijk] = b[m2 * (k + ti) + j + 3];
     }
     barrier(CLK_LOCAL_MEM_FENCE);
     for(tk = 0; tk < mthread_size; tk++) {
-      ar1 = as[mthread_size * (bi + 0) + tk];
-      ar2 = as[mthread_size * (bi + 1) + tk];
-      ar3 = as[mthread_size * (bi + 2) + tk];
-      ar4 = as[mthread_size * (bi + 3) + tk];
-      br1 = bs[mtile_width * tk + bj + 0];
-      br2 = bs[mtile_width * tk + bj + 1];
-      br3 = bs[mtile_width * tk + bj + 2];
-      br4 = bs[mtile_width * tk + bj + 3];
+      size_t tkik = (tk + ik) % mthread_size;
+      size_t tkjk = (tk + jk) % mthread_size;
+      ar1 = as[mthread_size * (bi + 0) + tkik];
+      ar2 = as[mthread_size * (bi + 1) + tkik];
+      ar3 = as[mthread_size * (bi + 2) + tkik];
+      ar4 = as[mthread_size * (bi + 3) + tkik];
+      br1 = bs[mthread_size * (bj + 0) + tkjk];
+      br2 = bs[mthread_size * (bj + 1) + tkjk];
+      br3 = bs[mthread_size * (bj + 2) + tkjk];
+      br4 = bs[mthread_size * (bj + 3) + tkjk];
       cr11 += ar1 * br1;
       cr12 += ar1 * br2;
       cr13 += ar1 * br3;
@@ -350,6 +356,8 @@ __kernel void mul_at_b(__global const float *a, __global const float *b, __globa
   size_t tj = get_local_id(1);
   size_t bi = ti << 2;
   size_t bj = tj << 2;
+  size_t ik = get_global_id(0);
+  size_t jk = get_global_id(1);
   __private float ar1;
   __private float ar2;
   __private float ar3;
@@ -376,48 +384,52 @@ __kernel void mul_at_b(__global const float *a, __global const float *b, __globa
   __private float cr44 = 0.0f;
   for(k = 0; k < l2; k += mthread_size) {
     size_t tk;
-    as[mthread_size * (bi + 0) + tj] = 0.0f;
+    size_t tjik = (tj + ik) % mthread_size;
+    size_t tijk = (ti + jk) % mthread_size;
+    as[mthread_size * (bi + 0) + tjik] = 0.0f;
     if(i + 0 < n2 && k + tj < l2) {
-      as[mthread_size * (bi + 0) + tj] = a[n2 * (k + tj) + i + 0];
+      as[mthread_size * (bi + 0) + tjik] = a[n2 * (k + tj) + i + 0];
     }
-    as[mthread_size * (bi + 1) + tj] = 0.0f;
+    as[mthread_size * (bi + 1) + tjik] = 0.0f;
     if(i + 1 < n2 && k + tj < l2) {
-      as[mthread_size * (bi + 1) + tj] = a[n2 * (k + tj) + i + 1];
+      as[mthread_size * (bi + 1) + tjik] = a[n2 * (k + tj) + i + 1];
     }
-    as[mthread_size * (bi + 2) + tj] = 0.0f;
+    as[mthread_size * (bi + 2) + tjik] = 0.0f;
     if(i + 2 < n2 && k + tj < l2) {
-      as[mthread_size * (bi + 2) + tj] = a[n2 * (k + tj) + i + 2];
+      as[mthread_size * (bi + 2) + tjik] = a[n2 * (k + tj) + i + 2];
     }
-    as[mthread_size * (bi + 3) + tj] = 0.0f;
+    as[mthread_size * (bi + 3) + tjik] = 0.0f;
     if(i + 3 < n2 && k + tj < l2) {
-      as[mthread_size * (bi + 3) + tj] = a[n2 * (k + tj) + i + 3];
+      as[mthread_size * (bi + 3) + tjik] = a[n2 * (k + tj) + i + 3];
     }
-    bs[mtile_width * ti + bj + 0] = 0.0f;
+    bs[mthread_size * (bj + 0) + tijk] = 0.0f;
     if(j + 0 < m2 && k + ti < l2) {
-      bs[mtile_width * ti + bj + 0] = b[m2 * (k + ti) + j + 0];
+      bs[mthread_size * (bj + 0) + tijk] = b[m2 * (k + ti) + j + 0];
     }
-    bs[mtile_width * ti + bj + 1] = 0.0f;
+    bs[mthread_size * (bj + 1) + tijk] = 0.0f;
     if(j + 1 < m2 && k + ti < l2) {
-      bs[mtile_width * ti + bj + 1] = b[m2 * (k + ti) + j + 1];
+      bs[mthread_size * (bj + 1) + tijk] = b[m2 * (k + ti) + j + 1];
     }
-    bs[mtile_width * ti + bj + 2] = 0.0f;
+    bs[mthread_size * (bj + 2) + tijk] = 0.0f;
     if(j + 2 < m2 && k + ti < l2) {
-      bs[mtile_width * ti + bj + 2] = b[m2 * (k + ti) + j + 2];
+      bs[mthread_size * (bj + 2) + tijk] = b[m2 * (k + ti) + j + 2];
     }
-    bs[mtile_width * ti + bj + 3] = 0.0f;
+    bs[mthread_size * (bj + 3) + tijk] = 0.0f;
     if(j + 3 < m2 && k + ti < l2) {
-      bs[mtile_width * ti + bj + 3] = b[m2 * (k + ti) + j + 3];
+      bs[mthread_size * (bj + 3) + tijk] = b[m2 * (k + ti) + j + 3];
     }
     barrier(CLK_LOCAL_MEM_FENCE);
     for(tk = 0; tk < mthread_size; tk++) {
-      ar1 = as[mthread_size * (bi + 0) + tk];
-      ar2 = as[mthread_size * (bi + 1) + tk];
-      ar3 = as[mthread_size * (bi + 2) + tk];
-      ar4 = as[mthread_size * (bi + 3) + tk];
-      br1 = bs[mtile_width * tk + bj + 0];
-      br2 = bs[mtile_width * tk + bj + 1];
-      br3 = bs[mtile_width * tk + bj + 2];
-      br4 = bs[mtile_width * tk + bj + 3];
+      size_t tkik = (tk + ik) % mthread_size;
+      size_t tkjk = (tk + jk) % mthread_size;
+      ar1 = as[mthread_size * (bi + 0) + tkik];
+      ar2 = as[mthread_size * (bi + 1) + tkik];
+      ar3 = as[mthread_size * (bi + 2) + tkik];
+      ar4 = as[mthread_size * (bi + 3) + tkik];
+      br1 = bs[mthread_size * (bj + 0) + tkjk];
+      br2 = bs[mthread_size * (bj + 1) + tkjk];
+      br3 = bs[mthread_size * (bj + 2) + tkjk];
+      br4 = bs[mthread_size * (bj + 3) + tkjk];
       cr11 += ar1 * br1;
       cr12 += ar1 * br2;
       cr13 += ar1 * br3;
@@ -501,6 +513,8 @@ __kernel void mul_a_bt(__global const float *a, __global const float *b, __globa
   size_t tj = get_local_id(1);
   size_t bi = ti << 2;
   size_t bj = tj << 2;
+  size_t ik = get_global_id(0);
+  size_t jk = get_global_id(1);
   __private float ar1;
   __private float ar2;
   __private float ar3;
@@ -527,48 +541,52 @@ __kernel void mul_a_bt(__global const float *a, __global const float *b, __globa
   __private float cr44 = 0.0f;
   for(k = 0; k < l2; k += mthread_size) {
     size_t tk;
-    as[mthread_size * (bi + 0) + tj] = 0.0f;
+    size_t tjik = (tj + ik) % mthread_size;
+    size_t tijk = (ti + jk) % mthread_size;
+    as[mthread_size * (bi + 0) + tjik] = 0.0f;
     if(i + 0 < n2 && k + tj < l2) {
-      as[mthread_size * (bi + 0) + tj] = a[l2 * (i + 0) + k + tj];
+      as[mthread_size * (bi + 0) + tjik] = a[l2 * (i + 0) + k + tj];
     }
-    as[mthread_size * (bi + 1) + tj] = 0.0f;
+    as[mthread_size * (bi + 1) + tjik] = 0.0f;
     if(i + 1 < n2 && k + tj < l2) {
-      as[mthread_size * (bi + 1) + tj] = a[l2 * (i + 1) + k + tj];
+      as[mthread_size * (bi + 1) + tjik] = a[l2 * (i + 1) + k + tj];
     }
-    as[mthread_size * (bi + 2) + tj] = 0.0f;
+    as[mthread_size * (bi + 2) + tjik] = 0.0f;
     if(i + 2 < n2 && k + tj < l2) {
-      as[mthread_size * (bi + 2) + tj] = a[l2 * (i + 2) + k + tj];
+      as[mthread_size * (bi + 2) + tjik] = a[l2 * (i + 2) + k + tj];
     }
-    as[mthread_size * (bi + 3) + tj] = 0.0f;
+    as[mthread_size * (bi + 3) + tjik] = 0.0f;
     if(i + 3 < n2 && k + tj < l2) {
-      as[mthread_size * (bi + 3) + tj] = a[l2 * (i + 3) + k + tj];
+      as[mthread_size * (bi + 3) + tjik] = a[l2 * (i + 3) + k + tj];
     }
-    bs[mtile_width * ti + bj + 0] = 0.0f;
+    bs[mthread_size * (bj + 0) + tijk] = 0.0f;
     if(j + 0 < m2 && k + ti < l2) {
-      bs[mtile_width * ti + bj + 0] = b[l2 * (j + 0) + k + ti];
+      bs[mthread_size * (bj + 0) + tijk] = b[l2 * (j + 0) + k + ti];
     }
-    bs[mtile_width * ti + bj + 1] = 0.0f;
+    bs[mthread_size * (bj + 1) + tijk] = 0.0f;
     if(j + 1 < m2 && k + ti < l2) {
-      bs[mtile_width * ti + bj + 1] = b[l2 * (j + 1) + k + ti];
+      bs[mthread_size * (bj + 1) + tijk] = b[l2 * (j + 1) + k + ti];
     }
-    bs[mtile_width * ti + bj + 2] = 0.0f;
+    bs[mthread_size * (bj + 2) + tijk] = 0.0f;
     if(j + 2 < m2 && k + ti < l2) {
-      bs[mtile_width * ti + bj + 2] = b[l2 * (j + 2) + k + ti];
+      bs[mthread_size * (bj + 2) + tijk] = b[l2 * (j + 2) + k + ti];
     }
-    bs[mtile_width * ti + bj + 3] = 0.0f;
+    bs[mthread_size * (bj + 3) + tijk] = 0.0f;
     if(j + 3 < m2 && k + ti < l2) {
-      bs[mtile_width * ti + bj + 3] = b[l2 * (j + 3) + k + ti];
+      bs[mthread_size * (bj + 3) + tijk] = b[l2 * (j + 3) + k + ti];
     }
     barrier(CLK_LOCAL_MEM_FENCE);
     for(tk = 0; tk < mthread_size; tk++) {
-      ar1 = as[mthread_size * (bi + 0) + tk];
-      ar2 = as[mthread_size * (bi + 1) + tk];
-      ar3 = as[mthread_size * (bi + 2) + tk];
-      ar4 = as[mthread_size * (bi + 3) + tk];
-      br1 = bs[mtile_width * tk + bj + 0];
-      br2 = bs[mtile_width * tk + bj + 1];
-      br3 = bs[mtile_width * tk + bj + 2];
-      br4 = bs[mtile_width * tk + bj + 3];
+      size_t tkik = (tk + ik) % mthread_size;
+      size_t tkjk = (tk + jk) % mthread_size;
+      ar1 = as[mthread_size * (bi + 0) + tkik];
+      ar2 = as[mthread_size * (bi + 1) + tkik];
+      ar3 = as[mthread_size * (bi + 2) + tkik];
+      ar4 = as[mthread_size * (bi + 3) + tkik];
+      br1 = bs[mthread_size * (bj + 0) + tkjk];
+      br2 = bs[mthread_size * (bj + 1) + tkjk];
+      br3 = bs[mthread_size * (bj + 2) + tkjk];
+      br4 = bs[mthread_size * (bj + 3) + tkjk];
       cr11 += ar1 * br1;
       cr12 += ar1 * br2;
       cr13 += ar1 * br3;
@@ -652,6 +670,8 @@ __kernel void mul_at_bt(__global const float *a, __global const float *b, __glob
   size_t tj = get_local_id(1);
   size_t bi = ti << 2;
   size_t bj = tj << 2;
+  size_t ik = get_global_id(0);
+  size_t jk = get_global_id(1);
   __private float ar1;
   __private float ar2;
   __private float ar3;
@@ -678,48 +698,52 @@ __kernel void mul_at_bt(__global const float *a, __global const float *b, __glob
   __private float cr44 = 0.0f;
   for(k = 0; k < l2; k += mthread_size) {
     size_t tk;
-    as[mthread_size * (bi + 0) + tj] = 0.0f;
+    size_t tjik = (tj + ik) % mthread_size;
+    size_t tijk = (ti + jk) % mthread_size;
+    as[mthread_size * (bi + 0) + tjik] = 0.0f;
     if(i + 0 < n2 && k + tj < l2) {
-      as[mthread_size * (bi + 0) + tj] = a[n2 * (k + tj) + i + 0];
+      as[mthread_size * (bi + 0) + tjik] = a[n2 * (k + tj) + i + 0];
     }
-    as[mthread_size * (bi + 1) + tj] = 0.0f;
+    as[mthread_size * (bi + 1) + tjik] = 0.0f;
     if(i + 1 < n2 && k + tj < l2) {
-      as[mthread_size * (bi + 1) + tj] = a[n2 * (k + tj) + i + 1];
+      as[mthread_size * (bi + 1) + tjik] = a[n2 * (k + tj) + i + 1];
     }
-    as[mthread_size * (bi + 2) + tj] = 0.0f;
+    as[mthread_size * (bi + 2) + tjik] = 0.0f;
     if(i + 2 < n2 && k + tj < l2) {
-      as[mthread_size * (bi + 2) + tj] = a[n2 * (k + tj) + i + 2];
+      as[mthread_size * (bi + 2) + tjik] = a[n2 * (k + tj) + i + 2];
     }
-    as[mthread_size * (bi + 3) + tj] = 0.0f;
+    as[mthread_size * (bi + 3) + tjik] = 0.0f;
     if(i + 3 < n2 && k + tj < l2) {
-      as[mthread_size * (bi + 3) + tj] = a[n2 * (k + tj) + i + 3];
+      as[mthread_size * (bi + 3) + tjik] = a[n2 * (k + tj) + i + 3];
     }
-    bs[mtile_width * ti + bj + 0] = 0.0f;
+    bs[mthread_size * (bj + 0) + tijk] = 0.0f;
     if(j + 0 < m2 && k + ti < l2) {
-      bs[mtile_width * ti + bj + 0] = b[l2 * (j + 0) + k + ti];
+      bs[mthread_size * (bj + 0) + tijk] = b[l2 * (j + 0) + k + ti];
     }
-    bs[mtile_width * ti + bj + 1] = 0.0f;
+    bs[mthread_size * (bj + 1) + tijk] = 0.0f;
     if(j + 1 < m2 && k + ti < l2) {
-      bs[mtile_width * ti + bj + 1] = b[l2 * (j + 1) + k + ti];
+      bs[mthread_size * (bj + 1) + tijk] = b[l2 * (j + 1) + k + ti];
     }
-    bs[mtile_width * ti + bj + 2] = 0.0f;
+    bs[mthread_size * (bj + 2) + tijk] = 0.0f;
     if(j + 2 < m2 && k + ti < l2) {
-      bs[mtile_width * ti + bj + 2] = b[l2 * (j + 2) + k + ti];
+      bs[mthread_size * (bj + 2) + tijk] = b[l2 * (j + 2) + k + ti];
     }
-    bs[mtile_width * ti + bj + 3] = 0.0f;
+    bs[mthread_size * (bj + 3) + tijk] = 0.0f;
     if(j + 3 < m2 && k + ti < l2) {
-      bs[mtile_width * ti + bj + 3] = b[l2 * (j + 3) + k + ti];
+      bs[mthread_size * (bj + 3) + tijk] = b[l2 * (j + 3) + k + ti];
     }
     barrier(CLK_LOCAL_MEM_FENCE);
     for(tk = 0; tk < mthread_size; tk++) {
-      ar1 = as[mthread_size * (bi + 0) + tk];
-      ar2 = as[mthread_size * (bi + 1) + tk];
-      ar3 = as[mthread_size * (bi + 2) + tk];
-      ar4 = as[mthread_size * (bi + 3) + tk];
-      br1 = bs[mtile_width * tk + bj + 0];
-      br2 = bs[mtile_width * tk + bj + 1];
-      br3 = bs[mtile_width * tk + bj + 2];
-      br4 = bs[mtile_width * tk + bj + 3];
+      size_t tkik = (tk + ik) % mthread_size;
+      size_t tkjk = (tk + jk) % mthread_size;
+      ar1 = as[mthread_size * (bi + 0) + tkik];
+      ar2 = as[mthread_size * (bi + 1) + tkik];
+      ar3 = as[mthread_size * (bi + 2) + tkik];
+      ar4 = as[mthread_size * (bi + 3) + tkik];
+      br1 = bs[mthread_size * (bj + 0) + tkjk];
+      br2 = bs[mthread_size * (bj + 1) + tkjk];
+      br3 = bs[mthread_size * (bj + 2) + tkjk];
+      br4 = bs[mthread_size * (bj + 3) + tkjk];
       cr11 += ar1 * br1;
       cr12 += ar1 * br2;
       cr13 += ar1 * br3;
