@@ -8,7 +8,6 @@
 #define TILE_SIZE       (1024 << 2)
 
 #define MTHREAD_SIZE    16
-#define MTILE_WIDTH     (MTHREAD_SIZE << 2)
 
 #define MMA_TILE_WIDTH  64
 
@@ -472,617 +471,513 @@ extern "C" {
 
   __global__ void mul_a_b(const float *a, const float *b, float *c, size_t n, size_t m, size_t l)
   {
-    __shared__ float as[MTILE_WIDTH][MTHREAD_SIZE];
-    __shared__ float bs[MTILE_WIDTH][MTHREAD_SIZE];
+    __shared__ float4 as[MTHREAD_SIZE][MTHREAD_SIZE];
+    __shared__ float4 bs[MTHREAD_SIZE][MTHREAD_SIZE];
     size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 2;
     size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 2;
     size_t k;
     size_t ti = threadIdx.x;
     size_t tj = threadIdx.y;
-    size_t bi = ti << 2;
-    size_t bj = tj << 2;
     size_t ik = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
     size_t jk = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    float ar1;
-    float ar2;
-    float ar3;
-    float ar4;
-    float br1;
-    float br2;
-    float br3;
-    float br4;
-    float cr11 = 0.0f;
-    float cr12 = 0.0f;
-    float cr13 = 0.0f;
-    float cr14 = 0.0f;
-    float cr21 = 0.0f;
-    float cr22 = 0.0f;
-    float cr23 = 0.0f;
-    float cr24 = 0.0f;
-    float cr31 = 0.0f;
-    float cr32 = 0.0f;
-    float cr33 = 0.0f;
-    float cr34 = 0.0f;
-    float cr41 = 0.0f;
-    float cr42 = 0.0f;
-    float cr43 = 0.0f;
-    float cr44 = 0.0f;
+    float4 ar;
+    float4 br;
+    float4 cr1 = { 0.0f, 0.0f, 0.0f, 0.0f };
+    float4 cr2 = { 0.0f, 0.0f, 0.0f, 0.0f };
+    float4 cr3 = { 0.0f, 0.0f, 0.0f, 0.0f };
+    float4 cr4 = { 0.0f, 0.0f, 0.0f, 0.0f };
     for(k = 0; k < l; k += MTHREAD_SIZE) {
       size_t tk;
       size_t tjik = (tj + ik) % MTHREAD_SIZE;
       size_t tijk = (ti + jk) % MTHREAD_SIZE;
-      as[bi + 0][tjik] = 0.0f;
+      as[ti][tjik].x = 0.0f;
       if(i + 0 < n && k + tj < l) {
-        as[bi + 0][tjik] = a[l * (i + 0) + k + tj];
+        as[ti][tjik].x = a[l * (i + 0) + k + tj];
       }
-      as[bi + 1][tjik] = 0.0f;
+      as[ti][tjik].y = 0.0f;
       if(i + 1 < n && k + tj < l) {
-        as[bi + 1][tjik] = a[l * (i + 1) + k + tj];
+        as[ti][tjik].y = a[l * (i + 1) + k + tj];
       }
-      as[bi + 2][tjik] = 0.0f;
+      as[ti][tjik].z = 0.0f;
       if(i + 2 < n && k + tj < l) {
-        as[bi + 2][tjik] = a[l * (i + 2) + k + tj];
+        as[ti][tjik].z = a[l * (i + 2) + k + tj];
       }
-      as[bi + 3][tjik] = 0.0f;
+      as[ti][tjik].w = 0.0f;
       if(i + 3 < n && k + tj < l) {
-        as[bi + 3][tjik] = a[l * (i + 3) + k + tj];
+        as[ti][tjik].w = a[l * (i + 3) + k + tj];
       }
-      bs[bj + 0][tijk] = 0.0f;
+      bs[tj][tijk].x = 0.0f;
       if(j + 0 < m && k + ti < l) {
-        bs[bj + 0][tijk] = b[m * (k + ti) + j + 0];
+        bs[tj][tijk].x = b[m * (k + ti) + j + 0];
       }
-      bs[bj + 1][tijk] = 0.0f;
+      bs[tj][tijk].y = 0.0f;
       if(j + 1 < m && k + ti < l) {
-        bs[bj + 1][tijk] = b[m * (k + ti) + j + 1];
+        bs[tj][tijk].y = b[m * (k + ti) + j + 1];
       }
-      bs[bj + 2][tijk] = 0.0f;
+      bs[tj][tijk].z = 0.0f;
       if(j + 2 < m && k + ti < l) {
-        bs[bj + 2][tijk] = b[m * (k + ti) + j + 2];
+        bs[tj][tijk].z = b[m * (k + ti) + j + 2];
       }
-      bs[bj + 3][tijk] = 0.0f;
+      bs[tj][tijk].w = 0.0f;
       if(j + 3 < m && k + ti < l) {
-        bs[bj + 3][tijk] = b[m * (k + ti) + j + 3];
+        bs[tj][tijk].w = b[m * (k + ti) + j + 3];
       }
       __syncthreads();
       for(tk = 0; tk < MTHREAD_SIZE; tk++) {
         size_t tkik = (tk + ik) % MTHREAD_SIZE;
         size_t tkjk = (tk + jk) % MTHREAD_SIZE;
-        ar1 = as[bi + 0][tkik];
-        ar2 = as[bi + 1][tkik];
-        ar3 = as[bi + 2][tkik];
-        ar4 = as[bi + 3][tkik];
-        br1 = bs[bj + 0][tkjk];
-        br2 = bs[bj + 1][tkjk];
-        br3 = bs[bj + 2][tkjk];
-        br4 = bs[bj + 3][tkjk];
-        cr11 += ar1 * br1;
-        cr12 += ar1 * br2;
-        cr13 += ar1 * br3;
-        cr14 += ar1 * br4;
-        cr21 += ar2 * br1;
-        cr22 += ar2 * br2;
-        cr23 += ar2 * br3;
-        cr24 += ar2 * br4;
-        cr31 += ar3 * br1;
-        cr32 += ar3 * br2;
-        cr33 += ar3 * br3;
-        cr34 += ar3 * br4;
-        cr41 += ar4 * br1;
-        cr42 += ar4 * br2;
-        cr43 += ar4 * br3;
-        cr44 += ar4 * br4;
+        ar = as[ti][tkik];
+        br = bs[tj][tkjk];
+        cr1.x += ar.x * br.x;
+        cr1.y += ar.x * br.y;
+        cr1.z += ar.x * br.z;
+        cr1.w += ar.x * br.w;
+        cr2.x += ar.y * br.x;
+        cr2.y += ar.y * br.y;
+        cr2.z += ar.y * br.z;
+        cr2.w += ar.y * br.w;
+        cr3.x += ar.z * br.x;
+        cr3.y += ar.z * br.y;
+        cr3.z += ar.z * br.z;
+        cr3.w += ar.z * br.w;
+        cr4.x += ar.w * br.x;
+        cr4.y += ar.w * br.y;
+        cr4.z += ar.w * br.z;
+        cr4.w += ar.w * br.w;
       }
       __syncthreads();
     }
     if(i + 0 < n && j + 0 < m) {
-      c[m * (i + 0) + j + 0] = cr11;
+      c[m * (i + 0) + j + 0] = cr1.x;
     }
     if(i + 0 < n && j + 1 < m) {
-      c[m * (i + 0) + j + 1] = cr12;
+      c[m * (i + 0) + j + 1] = cr1.y;
     }
     if(i + 0 < n && j + 2 < m) {
-      c[m * (i + 0) + j + 2] = cr13;
+      c[m * (i + 0) + j + 2] = cr1.z;
     }
     if(i + 0 < n && j + 3 < m) {
-      c[m * (i + 0) + j + 3] = cr14;
+      c[m * (i + 0) + j + 3] = cr1.w;
     }
     if(i + 1 < n && j + 0 < m) {
-      c[m * (i + 1) + j + 0] = cr21;
+      c[m * (i + 1) + j + 0] = cr2.x;
     }
     if(i + 1 < n && j + 1 < m) {
-      c[m * (i + 1) + j + 1] = cr22;
+      c[m * (i + 1) + j + 1] = cr2.y;
     }
     if(i + 1 < n && j + 2 < m) {
-      c[m * (i + 1) + j + 2] = cr23;
+      c[m * (i + 1) + j + 2] = cr2.z;
     }
     if(i + 1 < n && j + 3 < m) {
-      c[m * (i + 1) + j + 3] = cr24;
+      c[m * (i + 1) + j + 3] = cr2.w;
     }
     if(i + 2 < n && j + 0 < m) {
-      c[m * (i + 2) + j + 0] = cr31;
+      c[m * (i + 2) + j + 0] = cr3.x;
     }
     if(i + 2 < n && j + 1 < m) {
-      c[m * (i + 2) + j + 1] = cr32;
+      c[m * (i + 2) + j + 1] = cr3.y;
     }
     if(i + 2 < n && j + 2 < m) {
-      c[m * (i + 2) + j + 2] = cr33;
+      c[m * (i + 2) + j + 2] = cr3.z;
     }
     if(i + 2 < n && j + 3 < m) {
-      c[m * (i + 2) + j + 3] = cr34;
+      c[m * (i + 2) + j + 3] = cr3.w;
     }
     if(i + 3 < n && j + 0 < m) {
-      c[m * (i + 3) + j + 0] = cr41;
+      c[m * (i + 3) + j + 0] = cr4.x;
     }
     if(i + 3 < n && j + 1 < m) {
-      c[m * (i + 3) + j + 1] = cr42;
+      c[m * (i + 3) + j + 1] = cr4.y;
     }
     if(i + 3 < n && j + 2 < m) {
-      c[m * (i + 3) + j + 2] = cr43;
+      c[m * (i + 3) + j + 2] = cr4.z;
     }
     if(i + 3 < n && j + 3 < m) {
-      c[m * (i + 3) + j + 3] = cr44;
+      c[m * (i + 3) + j + 3] = cr4.w;
     }
   }
   
   __global__ void mul_at_b(const float *a, const float *b, float *c, size_t n, size_t m, size_t l)
   {
-    __shared__ float as[MTILE_WIDTH][MTHREAD_SIZE];
-    __shared__ float bs[MTILE_WIDTH][MTHREAD_SIZE];
+    __shared__ float4 as[MTHREAD_SIZE][MTHREAD_SIZE];
+    __shared__ float4 bs[MTHREAD_SIZE][MTHREAD_SIZE];
     size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 2;
     size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 2;
     size_t k;
     size_t ti = threadIdx.x;
     size_t tj = threadIdx.y;
-    size_t bi = ti << 2;
-    size_t bj = tj << 2;
     size_t ik = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
     size_t jk = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    float ar1;
-    float ar2;
-    float ar3;
-    float ar4;
-    float br1;
-    float br2;
-    float br3;
-    float br4;
-    float cr11 = 0.0f;
-    float cr12 = 0.0f;
-    float cr13 = 0.0f;
-    float cr14 = 0.0f;
-    float cr21 = 0.0f;
-    float cr22 = 0.0f;
-    float cr23 = 0.0f;
-    float cr24 = 0.0f;
-    float cr31 = 0.0f;
-    float cr32 = 0.0f;
-    float cr33 = 0.0f;
-    float cr34 = 0.0f;
-    float cr41 = 0.0f;
-    float cr42 = 0.0f;
-    float cr43 = 0.0f;
-    float cr44 = 0.0f;
+    float4 ar;
+    float4 br;
+    float4 cr1 = { 0.0f, 0.0f, 0.0f, 0.0f };
+    float4 cr2 = { 0.0f, 0.0f, 0.0f, 0.0f };
+    float4 cr3 = { 0.0f, 0.0f, 0.0f, 0.0f };
+    float4 cr4 = { 0.0f, 0.0f, 0.0f, 0.0f };
     for(k = 0; k < l; k += MTHREAD_SIZE) {
       size_t tk;
       size_t tjik = (tj + ik) % MTHREAD_SIZE;
       size_t tijk = (ti + jk) % MTHREAD_SIZE;
-      as[bi + 0][tjik] = 0.0f;
+      as[ti][tjik].x = 0.0f;
       if(i + 0 < n && k + tj < l) {
-        as[bi + 0][tjik] = a[n * (k + tj) + i + 0];
+        as[ti][tjik].x = a[n * (k + tj) + i + 0];
       }
-      as[bi + 1][tjik] = 0.0f;
+      as[ti][tjik].y = 0.0f;
       if(i + 1 < n && k + tj < l) {
-        as[bi + 1][tjik] = a[n * (k + tj) + i + 1];
+        as[ti][tjik].y = a[n * (k + tj) + i + 1];
       }
-      as[bi + 2][tjik] = 0.0f;
+      as[ti][tjik].z = 0.0f;
       if(i + 2 < n && k + tj < l) {
-        as[bi + 2][tjik] = a[n * (k + tj) + i + 2];
+        as[ti][tjik].z = a[n * (k + tj) + i + 2];
       }
-      as[bi + 3][tjik] = 0.0f;
+      as[ti][tjik].w = 0.0f;
       if(i + 3 < n && k + tj < l) {
-        as[bi + 3][tjik] = a[n * (k + tj) + i + 3];
+        as[ti][tjik].w = a[n * (k + tj) + i + 3];
       }
-      bs[bj + 0][tijk] = 0.0f;
+      bs[tj][tijk].x = 0.0f;
       if(j + 0 < m && k + ti < l) {
-        bs[bj + 0][tijk] = b[m * (k + ti) + j + 0];
+        bs[tj][tijk].x = b[m * (k + ti) + j + 0];
       }
-      bs[bj + 1][tijk] = 0.0f;
+      bs[tj][tijk].y = 0.0f;
       if(j + 1 < m && k + ti < l) {
-        bs[bj + 1][tijk] = b[m * (k + ti) + j + 1];
+        bs[tj][tijk].y = b[m * (k + ti) + j + 1];
       }
-      bs[bj + 2][tijk] = 0.0f;
+      bs[tj][tijk].z = 0.0f;
       if(j + 2 < m && k + ti < l) {
-        bs[bj + 2][tijk] = b[m * (k + ti) + j + 2];
+        bs[tj][tijk].z = b[m * (k + ti) + j + 2];
       }
-      bs[bj + 3][tijk] = 0.0f;
+      bs[tj][tijk].w = 0.0f;
       if(j + 3 < m && k + ti < l) {
-        bs[bj + 3][tijk] = b[m * (k + ti) + j + 3];
+        bs[tj][tijk].w = b[m * (k + ti) + j + 3];
       }
       __syncthreads();
       for(tk = 0; tk < MTHREAD_SIZE; tk++) {
         size_t tkik = (tk + ik) % MTHREAD_SIZE;
         size_t tkjk = (tk + jk) % MTHREAD_SIZE;
-        ar1 = as[bi + 0][tkik];
-        ar2 = as[bi + 1][tkik];
-        ar3 = as[bi + 2][tkik];
-        ar4 = as[bi + 3][tkik];
-        br1 = bs[bj + 0][tkjk];
-        br2 = bs[bj + 1][tkjk];
-        br3 = bs[bj + 2][tkjk];
-        br4 = bs[bj + 3][tkjk];
-        cr11 += ar1 * br1;
-        cr12 += ar1 * br2;
-        cr13 += ar1 * br3;
-        cr14 += ar1 * br4;
-        cr21 += ar2 * br1;
-        cr22 += ar2 * br2;
-        cr23 += ar2 * br3;
-        cr24 += ar2 * br4;
-        cr31 += ar3 * br1;
-        cr32 += ar3 * br2;
-        cr33 += ar3 * br3;
-        cr34 += ar3 * br4;
-        cr41 += ar4 * br1;
-        cr42 += ar4 * br2;
-        cr43 += ar4 * br3;
-        cr44 += ar4 * br4;
+        ar = as[ti][tkik];
+        br = bs[tj][tkjk];
+        cr1.x += ar.x * br.x;
+        cr1.y += ar.x * br.y;
+        cr1.z += ar.x * br.z;
+        cr1.w += ar.x * br.w;
+        cr2.x += ar.y * br.x;
+        cr2.y += ar.y * br.y;
+        cr2.z += ar.y * br.z;
+        cr2.w += ar.y * br.w;
+        cr3.x += ar.z * br.x;
+        cr3.y += ar.z * br.y;
+        cr3.z += ar.z * br.z;
+        cr3.w += ar.z * br.w;
+        cr4.x += ar.w * br.x;
+        cr4.y += ar.w * br.y;
+        cr4.z += ar.w * br.z;
+        cr4.w += ar.w * br.w;
       }
       __syncthreads();
     }
     if(i + 0 < n && j + 0 < m) {
-      c[m * (i + 0) + j + 0] = cr11;
+      c[m * (i + 0) + j + 0] = cr1.x;
     }
     if(i + 0 < n && j + 1 < m) {
-      c[m * (i + 0) + j + 1] = cr12;
+      c[m * (i + 0) + j + 1] = cr1.y;
     }
     if(i + 0 < n && j + 2 < m) {
-      c[m * (i + 0) + j + 2] = cr13;
+      c[m * (i + 0) + j + 2] = cr1.z;
     }
     if(i + 0 < n && j + 3 < m) {
-      c[m * (i + 0) + j + 3] = cr14;
+      c[m * (i + 0) + j + 3] = cr1.w;
     }
     if(i + 1 < n && j + 0 < m) {
-      c[m * (i + 1) + j + 0] = cr21;
+      c[m * (i + 1) + j + 0] = cr2.x;
     }
     if(i + 1 < n && j + 1 < m) {
-      c[m * (i + 1) + j + 1] = cr22;
+      c[m * (i + 1) + j + 1] = cr2.y;
     }
     if(i + 1 < n && j + 2 < m) {
-      c[m * (i + 1) + j + 2] = cr23;
+      c[m * (i + 1) + j + 2] = cr2.z;
     }
     if(i + 1 < n && j + 3 < m) {
-      c[m * (i + 1) + j + 3] = cr24;
+      c[m * (i + 1) + j + 3] = cr2.w;
     }
     if(i + 2 < n && j + 0 < m) {
-      c[m * (i + 2) + j + 0] = cr31;
+      c[m * (i + 2) + j + 0] = cr3.x;
     }
     if(i + 2 < n && j + 1 < m) {
-      c[m * (i + 2) + j + 1] = cr32;
+      c[m * (i + 2) + j + 1] = cr3.y;
     }
     if(i + 2 < n && j + 2 < m) {
-      c[m * (i + 2) + j + 2] = cr33;
+      c[m * (i + 2) + j + 2] = cr3.z;
     }
     if(i + 2 < n && j + 3 < m) {
-      c[m * (i + 2) + j + 3] = cr34;
+      c[m * (i + 2) + j + 3] = cr3.w;
     }
     if(i + 3 < n && j + 0 < m) {
-      c[m * (i + 3) + j + 0] = cr41;
+      c[m * (i + 3) + j + 0] = cr4.x;
     }
     if(i + 3 < n && j + 1 < m) {
-      c[m * (i + 3) + j + 1] = cr42;
+      c[m * (i + 3) + j + 1] = cr4.y;
     }
     if(i + 3 < n && j + 2 < m) {
-      c[m * (i + 3) + j + 2] = cr43;
+      c[m * (i + 3) + j + 2] = cr4.z;
     }
     if(i + 3 < n && j + 3 < m) {
-      c[m * (i + 3) + j + 3] = cr44;
+      c[m * (i + 3) + j + 3] = cr4.w;
     }
   }
 
   __global__ void mul_a_bt(const float *a, const float *b, float *c, size_t n, size_t m, size_t l)
   {
-    __shared__ float as[MTILE_WIDTH][MTHREAD_SIZE];
-    __shared__ float bs[MTILE_WIDTH][MTHREAD_SIZE];
+    __shared__ float4 as[MTHREAD_SIZE][MTHREAD_SIZE];
+    __shared__ float4 bs[MTHREAD_SIZE][MTHREAD_SIZE];
     size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 2;
     size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 2;
     size_t k;
     size_t ti = threadIdx.x;
     size_t tj = threadIdx.y;
-    size_t bi = ti << 2;
-    size_t bj = tj << 2;
     size_t ik = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
     size_t jk = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    float ar1;
-    float ar2;
-    float ar3;
-    float ar4;
-    float br1;
-    float br2;
-    float br3;
-    float br4;
-    float cr11 = 0.0f;
-    float cr12 = 0.0f;
-    float cr13 = 0.0f;
-    float cr14 = 0.0f;
-    float cr21 = 0.0f;
-    float cr22 = 0.0f;
-    float cr23 = 0.0f;
-    float cr24 = 0.0f;
-    float cr31 = 0.0f;
-    float cr32 = 0.0f;
-    float cr33 = 0.0f;
-    float cr34 = 0.0f;
-    float cr41 = 0.0f;
-    float cr42 = 0.0f;
-    float cr43 = 0.0f;
-    float cr44 = 0.0f;
+    float4 ar;
+    float4 br;
+    float4 cr1 = { 0.0f, 0.0f, 0.0f, 0.0f };
+    float4 cr2 = { 0.0f, 0.0f, 0.0f, 0.0f };
+    float4 cr3 = { 0.0f, 0.0f, 0.0f, 0.0f };
+    float4 cr4 = { 0.0f, 0.0f, 0.0f, 0.0f };
     for(k = 0; k < l; k += MTHREAD_SIZE) {
       size_t tk;
       size_t tjik = (tj + ik) % MTHREAD_SIZE;
       size_t tijk = (ti + jk) % MTHREAD_SIZE;
-      as[bi + 0][tjik] = 0.0f;
+      as[ti][tjik].x = 0.0f;
       if(i + 0 < n && k + tj < l) {
-        as[bi + 0][tjik] = a[l * (i + 0) + k + tj];
+        as[ti][tjik].x = a[l * (i + 0) + k + tj];
       }
-      as[bi + 1][tjik] = 0.0f;
+      as[ti][tjik].y = 0.0f;
       if(i + 1 < n && k + tj < l) {
-        as[bi + 1][tjik] = a[l * (i + 1) + k + tj];
+        as[ti][tjik].y = a[l * (i + 1) + k + tj];
       }
-      as[bi + 2][tjik] = 0.0f;
+      as[ti][tjik].z = 0.0f;
       if(i + 2 < n && k + tj < l) {
-        as[bi + 2][tjik] = a[l * (i + 2) + k + tj];
+        as[ti][tjik].z = a[l * (i + 2) + k + tj];
       }
-      as[bi + 3][tjik] = 0.0f;
+      as[ti][tjik].w = 0.0f;
       if(i + 3 < n && k + tj < l) {
-        as[bi + 3][tjik] = a[l * (i + 3) + k + tj];
+        as[ti][tjik].w = a[l * (i + 3) + k + tj];
       }
-      bs[bj + 0][tijk] = 0.0f;
+      bs[tj][tijk].x = 0.0f;
       if(j + 0 < m && k + ti < l) {
-        bs[bj + 0][tijk] = b[l * (j + 0) + k + ti];
+        bs[tj][tijk].x = b[l * (j + 0) + k + ti];
       }
-      bs[bj + 1][tijk] = 0.0f;
+      bs[tj][tijk].y = 0.0f;
       if(j + 1 < m && k + ti < l) {
-        bs[bj + 1][tijk] = b[l * (j + 1) + k + ti];
+        bs[tj][tijk].y = b[l * (j + 1) + k + ti];
       }
-      bs[bj + 2][tijk] = 0.0f;
+      bs[tj][tijk].z = 0.0f;
       if(j + 2 < m && k + ti < l) {
-        bs[bj + 2][tijk] = b[l * (j + 2) + k + ti];
+        bs[tj][tijk].z = b[l * (j + 2) + k + ti];
       }
-      bs[bj + 3][tijk] = 0.0f;
+      bs[tj][tijk].w = 0.0f;
       if(j + 3 < m && k + ti < l) {
-        bs[bj + 3][tijk] = b[l * (j + 3) + k + ti];
+        bs[tj][tijk].w = b[l * (j + 3) + k + ti];
       }
       __syncthreads();
       for(tk = 0; tk < MTHREAD_SIZE; tk++) {
         size_t tkik = (tk + ik) % MTHREAD_SIZE;
         size_t tkjk = (tk + jk) % MTHREAD_SIZE;
-        ar1 = as[bi + 0][tkik];
-        ar2 = as[bi + 1][tkik];
-        ar3 = as[bi + 2][tkik];
-        ar4 = as[bi + 3][tkik];
-        br1 = bs[bj + 0][tkjk];
-        br2 = bs[bj + 1][tkjk];
-        br3 = bs[bj + 2][tkjk];
-        br4 = bs[bj + 3][tkjk];
-        cr11 += ar1 * br1;
-        cr12 += ar1 * br2;
-        cr13 += ar1 * br3;
-        cr14 += ar1 * br4;
-        cr21 += ar2 * br1;
-        cr22 += ar2 * br2;
-        cr23 += ar2 * br3;
-        cr24 += ar2 * br4;
-        cr31 += ar3 * br1;
-        cr32 += ar3 * br2;
-        cr33 += ar3 * br3;
-        cr34 += ar3 * br4;
-        cr41 += ar4 * br1;
-        cr42 += ar4 * br2;
-        cr43 += ar4 * br3;
-        cr44 += ar4 * br4;
+        ar = as[ti][tkik];
+        br = bs[tj][tkjk];
+        cr1.x += ar.x * br.x;
+        cr1.y += ar.x * br.y;
+        cr1.z += ar.x * br.z;
+        cr1.w += ar.x * br.w;
+        cr2.x += ar.y * br.x;
+        cr2.y += ar.y * br.y;
+        cr2.z += ar.y * br.z;
+        cr2.w += ar.y * br.w;
+        cr3.x += ar.z * br.x;
+        cr3.y += ar.z * br.y;
+        cr3.z += ar.z * br.z;
+        cr3.w += ar.z * br.w;
+        cr4.x += ar.w * br.x;
+        cr4.y += ar.w * br.y;
+        cr4.z += ar.w * br.z;
+        cr4.w += ar.w * br.w;
       }
       __syncthreads();
     }
     if(i + 0 < n && j + 0 < m) {
-      c[m * (i + 0) + j + 0] = cr11;
+      c[m * (i + 0) + j + 0] = cr1.x;
     }
     if(i + 0 < n && j + 1 < m) {
-      c[m * (i + 0) + j + 1] = cr12;
+      c[m * (i + 0) + j + 1] = cr1.y;
     }
     if(i + 0 < n && j + 2 < m) {
-      c[m * (i + 0) + j + 2] = cr13;
+      c[m * (i + 0) + j + 2] = cr1.z;
     }
     if(i + 0 < n && j + 3 < m) {
-      c[m * (i + 0) + j + 3] = cr14;
+      c[m * (i + 0) + j + 3] = cr1.w;
     }
     if(i + 1 < n && j + 0 < m) {
-      c[m * (i + 1) + j + 0] = cr21;
+      c[m * (i + 1) + j + 0] = cr2.x;
     }
     if(i + 1 < n && j + 1 < m) {
-      c[m * (i + 1) + j + 1] = cr22;
+      c[m * (i + 1) + j + 1] = cr2.y;
     }
     if(i + 1 < n && j + 2 < m) {
-      c[m * (i + 1) + j + 2] = cr23;
+      c[m * (i + 1) + j + 2] = cr2.z;
     }
     if(i + 1 < n && j + 3 < m) {
-      c[m * (i + 1) + j + 3] = cr24;
+      c[m * (i + 1) + j + 3] = cr2.w;
     }
     if(i + 2 < n && j + 0 < m) {
-      c[m * (i + 2) + j + 0] = cr31;
+      c[m * (i + 2) + j + 0] = cr3.x;
     }
     if(i + 2 < n && j + 1 < m) {
-      c[m * (i + 2) + j + 1] = cr32;
+      c[m * (i + 2) + j + 1] = cr3.y;
     }
     if(i + 2 < n && j + 2 < m) {
-      c[m * (i + 2) + j + 2] = cr33;
+      c[m * (i + 2) + j + 2] = cr3.z;
     }
     if(i + 2 < n && j + 3 < m) {
-      c[m * (i + 2) + j + 3] = cr34;
+      c[m * (i + 2) + j + 3] = cr3.w;
     }
     if(i + 3 < n && j + 0 < m) {
-      c[m * (i + 3) + j + 0] = cr41;
+      c[m * (i + 3) + j + 0] = cr4.x;
     }
     if(i + 3 < n && j + 1 < m) {
-      c[m * (i + 3) + j + 1] = cr42;
+      c[m * (i + 3) + j + 1] = cr4.y;
     }
     if(i + 3 < n && j + 2 < m) {
-      c[m * (i + 3) + j + 2] = cr43;
+      c[m * (i + 3) + j + 2] = cr4.z;
     }
     if(i + 3 < n && j + 3 < m) {
-      c[m * (i + 3) + j + 3] = cr44;
+      c[m * (i + 3) + j + 3] = cr4.w;
     }
   }
 
   __global__ void mul_at_bt(const float *a, const float *b, float *c, size_t n, size_t m, size_t l)
   {
-    __shared__ float as[MTILE_WIDTH][MTHREAD_SIZE];
-    __shared__ float bs[MTILE_WIDTH][MTHREAD_SIZE];
+    __shared__ float4 as[MTHREAD_SIZE][MTHREAD_SIZE];
+    __shared__ float4 bs[MTHREAD_SIZE][MTHREAD_SIZE];
     size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 2;
     size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 2;
     size_t k;
     size_t ti = threadIdx.x;
     size_t tj = threadIdx.y;
-    size_t bi = ti << 2;
-    size_t bj = tj << 2;
     size_t ik = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
     size_t jk = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    float ar1;
-    float ar2;
-    float ar3;
-    float ar4;
-    float br1;
-    float br2;
-    float br3;
-    float br4;
-    float cr11 = 0.0f;
-    float cr12 = 0.0f;
-    float cr13 = 0.0f;
-    float cr14 = 0.0f;
-    float cr21 = 0.0f;
-    float cr22 = 0.0f;
-    float cr23 = 0.0f;
-    float cr24 = 0.0f;
-    float cr31 = 0.0f;
-    float cr32 = 0.0f;
-    float cr33 = 0.0f;
-    float cr34 = 0.0f;
-    float cr41 = 0.0f;
-    float cr42 = 0.0f;
-    float cr43 = 0.0f;
-    float cr44 = 0.0f;
+    float4 ar;
+    float4 br;
+    float4 cr1 = { 0.0f, 0.0f, 0.0f, 0.0f };
+    float4 cr2 = { 0.0f, 0.0f, 0.0f, 0.0f };
+    float4 cr3 = { 0.0f, 0.0f, 0.0f, 0.0f };
+    float4 cr4 = { 0.0f, 0.0f, 0.0f, 0.0f };
     for(k = 0; k < l; k += MTHREAD_SIZE) {
       size_t tk;
       size_t tjik = (tj + ik) % MTHREAD_SIZE;
       size_t tijk = (ti + jk) % MTHREAD_SIZE;
-      as[bi + 0][tjik] = 0.0f;
+      as[ti][tjik].x = 0.0f;
       if(i + 0 < n && k + tj < l) {
-        as[bi + 0][tjik] = a[n * (k + tj) + i + 0];
+        as[ti][tjik].x = a[n * (k + tj) + i + 0];
       }
-      as[bi + 1][tjik] = 0.0f;
+      as[ti][tjik].y = 0.0f;
       if(i + 1 < n && k + tj < l) {
-        as[bi + 1][tjik] = a[n * (k + tj) + i + 1];
+        as[ti][tjik].y = a[n * (k + tj) + i + 1];
       }
-      as[bi + 2][tjik] = 0.0f;
+      as[ti][tjik].z = 0.0f;
       if(i + 2 < n && k + tj < l) {
-        as[bi + 2][tjik] = a[n * (k + tj) + i + 2];
+        as[ti][tjik].z = a[n * (k + tj) + i + 2];
       }
-      as[bi + 3][tjik] = 0.0f;
+      as[ti][tjik].w = 0.0f;
       if(i + 3 < n && k + tj < l) {
-        as[bi + 3][tjik] = a[n * (k + tj) + i + 3];
+        as[ti][tjik].w = a[n * (k + tj) + i + 3];
       }
-      bs[bj + 0][tijk] = 0.0f;
+      bs[tj][tijk].x = 0.0f;
       if(j + 0 < m && k + ti < l) {
-        bs[bj + 0][tijk] = b[l * (j + 0) + k + ti];
+        bs[tj][tijk].x = b[l * (j + 0) + k + ti];
       }
-      bs[bj + 1][tijk] = 0.0f;
+      bs[tj][tijk].y = 0.0f;
       if(j + 1 < m && k + ti < l) {
-        bs[bj + 1][tijk] = b[l * (j + 1) + k + ti];
+        bs[tj][tijk].y = b[l * (j + 1) + k + ti];
       }
-      bs[bj + 2][tijk] = 0.0f;
+      bs[tj][tijk].z = 0.0f;
       if(j + 2 < m && k + ti < l) {
-        bs[bj + 2][tijk] = b[l * (j + 2) + k + ti];
+        bs[tj][tijk].z = b[l * (j + 2) + k + ti];
       }
-      bs[bj + 3][tijk] = 0.0f;
+      bs[tj][tijk].w = 0.0f;
       if(j + 3 < m && k + ti < l) {
-        bs[bj + 3][tijk] = b[l * (j + 3) + k + ti];
+        bs[tj][tijk].w = b[l * (j + 3) + k + ti];
       }
       __syncthreads();
       for(tk = 0; tk < MTHREAD_SIZE; tk++) {
         size_t tkik = (tk + ik) % MTHREAD_SIZE;
         size_t tkjk = (tk + jk) % MTHREAD_SIZE;
-        ar1 = as[bi + 0][tkik];
-        ar2 = as[bi + 1][tkik];
-        ar3 = as[bi + 2][tkik];
-        ar4 = as[bi + 3][tkik];
-        br1 = bs[bj + 0][tkjk];
-        br2 = bs[bj + 1][tkjk];
-        br3 = bs[bj + 2][tkjk];
-        br4 = bs[bj + 3][tkjk];
-        cr11 += ar1 * br1;
-        cr12 += ar1 * br2;
-        cr13 += ar1 * br3;
-        cr14 += ar1 * br4;
-        cr21 += ar2 * br1;
-        cr22 += ar2 * br2;
-        cr23 += ar2 * br3;
-        cr24 += ar2 * br4;
-        cr31 += ar3 * br1;
-        cr32 += ar3 * br2;
-        cr33 += ar3 * br3;
-        cr34 += ar3 * br4;
-        cr41 += ar4 * br1;
-        cr42 += ar4 * br2;
-        cr43 += ar4 * br3;
-        cr44 += ar4 * br4;
+        ar = as[ti][tkik];
+        br = bs[tj][tkjk];
+        cr1.x += ar.x * br.x;
+        cr1.y += ar.x * br.y;
+        cr1.z += ar.x * br.z;
+        cr1.w += ar.x * br.w;
+        cr2.x += ar.y * br.x;
+        cr2.y += ar.y * br.y;
+        cr2.z += ar.y * br.z;
+        cr2.w += ar.y * br.w;
+        cr3.x += ar.z * br.x;
+        cr3.y += ar.z * br.y;
+        cr3.z += ar.z * br.z;
+        cr3.w += ar.z * br.w;
+        cr4.x += ar.w * br.x;
+        cr4.y += ar.w * br.y;
+        cr4.z += ar.w * br.z;
+        cr4.w += ar.w * br.w;
       }
       __syncthreads();
     }
     if(i + 0 < n && j + 0 < m) {
-      c[m * (i + 0) + j + 0] = cr11;
+      c[m * (i + 0) + j + 0] = cr1.x;
     }
     if(i + 0 < n && j + 1 < m) {
-      c[m * (i + 0) + j + 1] = cr12;
+      c[m * (i + 0) + j + 1] = cr1.y;
     }
     if(i + 0 < n && j + 2 < m) {
-      c[m * (i + 0) + j + 2] = cr13;
+      c[m * (i + 0) + j + 2] = cr1.z;
     }
     if(i + 0 < n && j + 3 < m) {
-      c[m * (i + 0) + j + 3] = cr14;
+      c[m * (i + 0) + j + 3] = cr1.w;
     }
     if(i + 1 < n && j + 0 < m) {
-      c[m * (i + 1) + j + 0] = cr21;
+      c[m * (i + 1) + j + 0] = cr2.x;
     }
     if(i + 1 < n && j + 1 < m) {
-      c[m * (i + 1) + j + 1] = cr22;
+      c[m * (i + 1) + j + 1] = cr2.y;
     }
     if(i + 1 < n && j + 2 < m) {
-      c[m * (i + 1) + j + 2] = cr23;
+      c[m * (i + 1) + j + 2] = cr2.z;
     }
     if(i + 1 < n && j + 3 < m) {
-      c[m * (i + 1) + j + 3] = cr24;
+      c[m * (i + 1) + j + 3] = cr2.w;
     }
     if(i + 2 < n && j + 0 < m) {
-      c[m * (i + 2) + j + 0] = cr31;
+      c[m * (i + 2) + j + 0] = cr3.x;
     }
     if(i + 2 < n && j + 1 < m) {
-      c[m * (i + 2) + j + 1] = cr32;
+      c[m * (i + 2) + j + 1] = cr3.y;
     }
     if(i + 2 < n && j + 2 < m) {
-      c[m * (i + 2) + j + 2] = cr33;
+      c[m * (i + 2) + j + 2] = cr3.z;
     }
     if(i + 2 < n && j + 3 < m) {
-      c[m * (i + 2) + j + 3] = cr34;
+      c[m * (i + 2) + j + 3] = cr3.w;
     }
     if(i + 3 < n && j + 0 < m) {
-      c[m * (i + 3) + j + 0] = cr41;
+      c[m * (i + 3) + j + 0] = cr4.x;
     }
     if(i + 3 < n && j + 1 < m) {
-      c[m * (i + 3) + j + 1] = cr42;
+      c[m * (i + 3) + j + 1] = cr4.y;
     }
     if(i + 3 < n && j + 2 < m) {
-      c[m * (i + 3) + j + 2] = cr43;
+      c[m * (i + 3) + j + 2] = cr4.z;
     }
     if(i + 3 < n && j + 3 < m) {
-      c[m * (i + 3) + j + 3] = cr44;
+      c[m * (i + 3) + j + 3] = cr4.w;
     }
   }
 
