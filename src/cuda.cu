@@ -523,6 +523,7 @@ extern "C" {
         bs[tj][tijk].w = b[m * (k + ti) + j + 3];
       }
       __syncthreads();
+#pragma unroll
       for(tk = 0; tk < MTHREAD_SIZE; tk++) {
         size_t tkik = (tk + ik) % MTHREAD_SIZE;
         size_t tkjk = (tk + jk) % MTHREAD_SIZE;
@@ -651,6 +652,7 @@ extern "C" {
         bs[tj][tijk].w = b[m * (k + ti) + j + 3];
       }
       __syncthreads();
+#pragma unroll
       for(tk = 0; tk < MTHREAD_SIZE; tk++) {
         size_t tkik = (tk + ik) % MTHREAD_SIZE;
         size_t tkjk = (tk + jk) % MTHREAD_SIZE;
@@ -779,6 +781,7 @@ extern "C" {
         bs[tj][tijk].w = b[l * (j + 3) + k + ti];
       }
       __syncthreads();
+#pragma unroll
       for(tk = 0; tk < MTHREAD_SIZE; tk++) {
         size_t tkik = (tk + ik) % MTHREAD_SIZE;
         size_t tkjk = (tk + jk) % MTHREAD_SIZE;
@@ -907,6 +910,7 @@ extern "C" {
         bs[tj][tijk].w = b[l * (j + 3) + k + ti];
       }
       __syncthreads();
+#pragma unroll
       for(tk = 0; tk < MTHREAD_SIZE; tk++) {
         size_t tkik = (tk + ik) % MTHREAD_SIZE;
         size_t tkjk = (tk + jk) % MTHREAD_SIZE;
@@ -1483,6 +1487,7 @@ extern "C" {
         es[thread_width * ti + tj].w = expf(a[m * (k + bi + 1) + j + 1]);
       }
       __syncthreads();
+#pragma unroll
       for(tk = 0; tk < thread_height; tk++) {
         float4 e = es[thread_width * tk + tj];
         sum.x += e.x;
@@ -1538,6 +1543,7 @@ extern "C" {
         es[thread_width * ti + tj].w = expf(a[n * (j + 1) + k + bi + 1]);
       }
       __syncthreads();
+#pragma unroll
       for(tk = 0; tk < thread_height; tk++) {
         float4 e = es[thread_width * tk + tj];
         sum.x += e.x;
