@@ -1487,7 +1487,7 @@ extern "C" {
         es[thread_width * ti + tj].w = expf(a[m * (k + bi + 1) + j + 1]);
       }
       __syncthreads();
-#pragma unroll
+#pragma unroll 32
       for(tk = 0; tk < thread_height; tk++) {
         float4 e = es[thread_width * tk + tj];
         sum.x += e.x;
@@ -1543,7 +1543,7 @@ extern "C" {
         es[thread_width * ti + tj].w = expf(a[n * (j + 1) + k + bi + 1]);
       }
       __syncthreads();
-#pragma unroll
+#pragma unroll 32
       for(tk = 0; tk < thread_height; tk++) {
         float4 e = es[thread_width * tk + tj];
         sum.x += e.x;
