@@ -241,6 +241,7 @@ __kernel void mul_a_b(__global const float *a, __global const float *b, __global
       bs[mthread_size * tj + tijk].w = b[m2 * (k + ti) + j + 3];
     }
     barrier(CLK_LOCAL_MEM_FENCE);
+#pragma unroll
     for(tk = 0; tk < mthread_size; tk++) {
       size_t tkik = (tk + ik) % mthread_size;
       size_t tkjk = (tk + jk) % mthread_size;
@@ -359,6 +360,7 @@ __kernel void mul_at_b(__global const float *a, __global const float *b, __globa
       bs[mthread_size * tj + tijk].w = b[m2 * (k + ti) + j + 3];
     }
     barrier(CLK_LOCAL_MEM_FENCE);
+#pragma unroll
     for(tk = 0; tk < mthread_size; tk++) {
       size_t tkik = (tk + ik) % mthread_size;
       size_t tkjk = (tk + jk) % mthread_size;
@@ -477,6 +479,7 @@ __kernel void mul_a_bt(__global const float *a, __global const float *b, __globa
       bs[mthread_size * tj + tijk].w = b[l2 * (j + 3) + k + ti];
     }
     barrier(CLK_LOCAL_MEM_FENCE);
+#pragma unroll
     for(tk = 0; tk < mthread_size; tk++) {
       size_t tkik = (tk + ik) % mthread_size;
       size_t tkjk = (tk + jk) % mthread_size;
@@ -595,6 +598,7 @@ __kernel void mul_at_bt(__global const float *a, __global const float *b, __glob
       bs[mthread_size * tj + tijk].w = b[l2 * (j + 3) + k + ti];
     }
     barrier(CLK_LOCAL_MEM_FENCE);
+#pragma unroll
     for(tk = 0; tk < mthread_size; tk++) {
       size_t tkik = (tk + ik) % mthread_size;
       size_t tkjk = (tk + jk) % mthread_size;
@@ -1210,6 +1214,7 @@ __kernel void softmax_a(__global const float *a, __global float *b, __local floa
       es[thread_width * ti + tj].w = exp(a[m2 * (k + bi + 1) + j + 1]);
     }
     barrier(CLK_LOCAL_MEM_FENCE);
+#pragma unroll
     for(tk = 0; tk < thread_height; tk++) {
       __private float4 e = es[thread_width * tk + tj];
       sum += e.xy;
@@ -1264,6 +1269,7 @@ __kernel void softmax_at(__global const float *a, __global float *b, __local flo
       es[thread_width * ti + tj].w = exp(a[n2 * (j + 1) + k + bi + 1]);
     }
     barrier(CLK_LOCAL_MEM_FENCE);
+#pragma unroll
     for(tk = 0; tk < thread_height; tk++) {
       __private float4 e = es[thread_width * tk + tj];
       sum += e.xy;
