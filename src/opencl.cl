@@ -1177,111 +1177,111 @@ __kernel void swish_at(__global const float *a, __global float *b, ulong n, ulon
   }
 }
 
-__kernel void softmax_a(__global const float *a, __global float *b, __local float *es, ulong n, ulong m)
+__kernel void softmax_a(__global const float *a, __global float *b, __local float4 *es, ulong n, ulong m)
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
   size_t i = get_global_id(0) << 1;
   size_t j = get_global_id(1) << 1;
   size_t k;
-  size_t tile_width = get_local_size(1) << 1;
-  size_t tile_height = get_local_size(0) << 1;
-  size_t ti = get_local_id(0) << 1;
-  size_t tj = get_local_id(1) << 1;
-  float sum1 = 0.0f;
-  float sum2 = 0.0f;
+  size_t thread_width = get_local_size(1);
+  size_t thread_height = get_local_size(0);
+  size_t tile_height = thread_height << 1;
+  size_t ti = get_local_id(0);
+  size_t tj = get_local_id(1);
+  size_t bi = ti << 1;
+  __private float2 sum = (float2) (0.0f, 0.0f);
   for(k = 0; k < n2; k += tile_height) {
     size_t tk;
-    es[tile_width * (ti + 0) + tj + 0] = 0.0f;
-    if(j + 0 < m2 && k + ti + 0 < n2) {
-      es[tile_width * (ti + 0) + tj + 0] = exp(a[m2 * (k + ti + 0) + j + 0]);
+    es[thread_width * ti + tj].x = 0.0f;
+    if(j + 0 < m2 && k + bi + 0 < n2) {
+      es[thread_width * ti + tj].x = exp(a[m2 * (k + bi + 0) + j + 0]);
     }
-    es[tile_width * (ti + 0) + tj + 1] = 0.0f;
-    if(j + 1 < m2 && k + ti + 0 < n2) {
-      es[tile_width * (ti + 0) + tj + 1] = exp(a[m2 * (k + ti + 0) + j + 1]);
+    es[thread_width * ti + tj].y = 0.0f;
+    if(j + 1 < m2 && k + bi + 0 < n2) {
+      es[thread_width * ti + tj].y = exp(a[m2 * (k + bi + 0) + j + 1]);
     }
-    es[tile_width * (ti + 1) + tj + 0] = 0.0f;
-    if(j + 0 < m2 && k + ti + 1 < n2) {
-      es[tile_width * (ti + 1) + tj + 0] = exp(a[m2 * (k + ti + 1) + j + 0]);
+    es[thread_width * ti + tj].z = 0.0f;
+    if(j + 0 < m2 && k + bi + 1 < n2) {
+      es[thread_width * ti + tj].z = exp(a[m2 * (k + bi + 1) + j + 0]);
     }
-    es[tile_width * (ti + 1) + tj + 1] = 0.0f;
-    if(j + 1 < m2 && k + ti + 1 < n2) {
-      es[tile_width * (ti + 1) + tj + 1] = exp(a[m2 * (k + ti + 1) + j + 1]);
+    es[thread_width * ti + tj].w = 0.0f;
+    if(j + 1 < m2 && k + bi + 1 < n2) {
+      es[thread_width * ti + tj].w = exp(a[m2 * (k + bi + 1) + j + 1]);
     }
     barrier(CLK_LOCAL_MEM_FENCE);
-    for(tk = 0; tk < tile_height; tk += 2) {
-      sum1 += es[tile_width * (tk + 0) + tj + 0];
-      sum1 += es[tile_width * (tk + 1) + tj + 0];
-      sum2 += es[tile_width * (tk + 0) + tj + 1];
-      sum2 += es[tile_width * (tk + 1) + tj + 1];
+    for(tk = 0; tk < thread_height; tk++) {
+      __private float4 e = es[thread_width * tk + tj];
+      sum += e.xy;
+      sum += e.zw;
     }
     barrier(CLK_LOCAL_MEM_FENCE);
   }
   if(i + 0 < n2 && j + 0 < m2) {
-    b[m2 * (i + 0) + j + 0] = exp(a[m2 * (i + 0) + j + 0]) / sum1;
+    b[m2 * (i + 0) + j + 0] = exp(a[m2 * (i + 0) + j + 0]) / sum.x;
   }
   if(i + 0 < n2 && j + 1 < m2) {
-    b[m2 * (i + 0) + j + 1] = exp(a[m2 * (i + 0) + j + 1]) / sum2;
+    b[m2 * (i + 0) + j + 1] = exp(a[m2 * (i + 0) + j + 1]) / sum.y;
   }
   if(i + 1 < n2 && j + 0 < m2) {
-    b[m2 * (i + 1) + j + 0] = exp(a[m2 * (i + 1) + j + 0]) / sum1;
+    b[m2 * (i + 1) + j + 0] = exp(a[m2 * (i + 1) + j + 0]) / sum.x;
   }
   if(i + 1 < n2 && j + 1 < m2) {
-    b[m2 * (i + 1) + j + 1] = exp(a[m2 * (i + 1) + j + 1]) / sum2;
+    b[m2 * (i + 1) + j + 1] = exp(a[m2 * (i + 1) + j + 1]) / sum.y;
   }
 }
 
-__kernel void softmax_at(__global const float *a, __global float *b, __local float *es, ulong n, ulong m)
+__kernel void softmax_at(__global const float *a, __global float *b, __local float4 *es, ulong n, ulong m)
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
   size_t i = get_global_id(0) << 1;
   size_t j = get_global_id(1) << 1;
   size_t k;
-  size_t tile_width = get_local_size(1) << 1;
-  size_t tile_height = get_local_size(0) << 1;
-  size_t ti = get_local_id(0) << 1;
-  size_t tj = get_local_id(1) << 1;
-  float sum1 = 0.0f;
-  float sum2 = 0.0f;
+  size_t thread_width = get_local_size(1);
+  size_t thread_height = get_local_size(0);
+  size_t tile_height = thread_height << 1;
+  size_t ti = get_local_id(0);
+  size_t tj = get_local_id(1);
+  size_t bi = ti << 1;
+  __private float2 sum = (float2) (0.0f, 0.0f);
   for(k = 0; k < n2; k += tile_height) {
     size_t tk;
-    es[tile_width * (ti + 0) + tj + 0] = 0.0f;
-    if(j + 0 < m2 && k + ti + 0 < n2) {
-      es[tile_width * (ti + 0) + tj + 0] = exp(a[n2 * (j + 0) + k + ti + 0]);
+    es[thread_width * ti + tj].x = 0.0f;
+    if(j + 0 < m2 && k + bi + 0 < n2) {
+      es[thread_width * ti + tj].x = exp(a[n2 * (j + 0) + k + bi + 0]);
     }
-    es[tile_width * (ti + 0) + tj + 1] = 0.0f;
-    if(j + 1 < m2 && k + ti + 0 < n2) {
-      es[tile_width * (ti + 0) + tj + 1] = exp(a[n2 * (j + 1) + k + ti + 0]);
+    es[thread_width * ti + tj].y = 0.0f;
+    if(j + 1 < m2 && k + bi + 0 < n2) {
+      es[thread_width * ti + tj].y = exp(a[n2 * (j + 1) + k + bi + 0]);
     }
-    es[tile_width * (ti + 1) + tj + 0] = 0.0f;
-    if(j + 0 < m2 && k + ti + 1 < n2) {
-      es[tile_width * (ti + 1) + tj + 0] = exp(a[n2 * (j + 0) + k + ti + 1]);
+    es[thread_width * ti + tj].z = 0.0f;
+    if(j + 0 < m2 && k + bi + 1 < n2) {
+      es[thread_width * ti + tj].z = exp(a[n2 * (j + 0) + k + bi + 1]);
     }
-    es[tile_width * (ti + 1) + tj + 1] = 0.0f;
-    if(j + 1 < m2 && k + ti + 1 < n2) {
-      es[tile_width * (ti + 1) + tj + 1] = exp(a[n2 * (j + 1) + k + ti + 1]);
+    es[thread_width * ti + tj].w = 0.0f;
+    if(j + 1 < m2 && k + bi + 1 < n2) {
+      es[thread_width * ti + tj].w = exp(a[n2 * (j + 1) + k + bi + 1]);
     }
     barrier(CLK_LOCAL_MEM_FENCE);
-    for(tk = 0; tk < tile_height; tk += 2) {
-      sum1 += es[tile_width * (tk + 0) + tj + 0];
-      sum1 += es[tile_width * (tk + 1) + tj + 0];
-      sum2 += es[tile_width * (tk + 0) + tj + 1];
-      sum2 += es[tile_width * (tk + 1) + tj + 1];
+    for(tk = 0; tk < thread_height; tk++) {
+      __private float4 e = es[thread_width * tk + tj];
+      sum += e.xy;
+      sum += e.zw;
     }
     barrier(CLK_LOCAL_MEM_FENCE);
   }
   if(i + 0 < n2 && j + 0 < m2) {
-    b[m2 * (i + 0) + j + 0] = exp(a[n2 * (j + 0) + i + 0]) / sum1;
+    b[m2 * (i + 0) + j + 0] = exp(a[n2 * (j + 0) + i + 0]) / sum.x;
   }
   if(i + 0 < n2 && j + 1 < m2) {
-    b[m2 * (i + 0) + j + 1] = exp(a[n2 * (j + 1) + i + 0]) / sum2;
+    b[m2 * (i + 0) + j + 1] = exp(a[n2 * (j + 1) + i + 0]) / sum.y;
   }
   if(i + 1 < n2 && j + 0 < m2) {
-    b[m2 * (i + 1) + j + 0] = exp(a[n2 * (j + 0) + i + 1]) / sum1;
+    b[m2 * (i + 1) + j + 0] = exp(a[n2 * (j + 0) + i + 1]) / sum.x;
   }
   if(i + 1 < n2 && j + 1 < m2) {
-    b[m2 * (i + 1) + j + 1] = exp(a[n2 * (j + 1) + i + 1]) / sum2;
+    b[m2 * (i + 1) + j + 1] = exp(a[n2 * (j + 1) + i + 1]) / sum.y;
   }
 }
 
