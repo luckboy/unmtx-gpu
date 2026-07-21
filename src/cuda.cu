@@ -5,7 +5,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
-#define TILE_SIZE       (1024 << 2)
+#define THREAD_SIZE     1024
 
 #define MTHREAD_SIZE    16
 
@@ -1453,107 +1453,111 @@ extern "C" {
 
   __global__ void softmax_a(const float *a, float *b, size_t n, size_t m)
   {
-    __shared__ float es[TILE_SIZE];
+    __shared__ float4 es[THREAD_SIZE];
     size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
     size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
     size_t k;
-    size_t tile_width = blockDim.y << 1;
-    size_t tile_height = blockDim.x << 1;
-    size_t ti = threadIdx.x << 1;
-    size_t tj = threadIdx.y << 1;
-    float sum1 = 0.0f;
-    float sum2 = 0.0f;
+    size_t thread_width = blockDim.y;
+    size_t thread_height = blockDim.x;
+    size_t tile_height = thread_height << 1;
+    size_t ti = threadIdx.x;
+    size_t tj = threadIdx.y;
+    size_t bi = ti << 1;
+    float2 sum = { 0.0f, 0.0f };
     for(k = 0; k < n; k += tile_height) {
       size_t tk;
-      es[tile_width * (ti + 0) + tj + 0] = 0.0f;
-      if(j + 0 < m && k + ti + 0 < n) {
-        es[tile_width * (ti + 0) + tj + 0] = expf(a[m * (k + ti + 0) + j + 0]);
+      es[thread_width * ti + tj].x = 0.0f;
+      if(j + 0 < m && k + bi + 0 < n) {
+        es[thread_width * ti + tj].x = expf(a[m * (k + bi + 0) + j + 0]);
       }
-      es[tile_width * (ti + 0) + tj + 1] = 0.0f;
-      if(j + 1 < m && k + ti + 0 < n) {
-        es[tile_width * (ti + 0) + tj + 1] = expf(a[m * (k + ti + 0) + j + 1]);
+      es[thread_width * ti + tj].y = 0.0f;
+      if(j + 1 < m && k + bi + 0 < n) {
+        es[thread_width * ti + tj].y = expf(a[m * (k + bi + 0) + j + 1]);
       }
-      es[tile_width * (ti + 1) + tj + 0] = 0.0f;
-      if(j + 0 < m && k + ti + 1 < n) {
-        es[tile_width * (ti + 1) + tj + 0] = expf(a[m * (k + ti + 1) + j + 0]);
+      es[thread_width * ti + tj + 0].z = 0.0f;
+      if(j + 0 < m && k + bi + 1 < n) {
+        es[thread_width * ti + tj].z = expf(a[m * (k + bi + 1) + j + 0]);
       }
-      es[tile_width * (ti + 1) + tj + 1] = 0.0f;
-      if(j + 1 < m && k + ti + 1 < n) {
-        es[tile_width * (ti + 1) + tj + 1] = expf(a[m * (k + ti + 1) + j + 1]);
+      es[thread_width * ti + tj].w = 0.0f;
+      if(j + 1 < m && k + bi + 1 < n) {
+        es[thread_width * ti + tj].w = expf(a[m * (k + bi + 1) + j + 1]);
       }
       __syncthreads();
-      for(tk = 0; tk < tile_height; tk += 2) {
-        sum1 += es[tile_width * (tk + 0) + tj + 0];
-        sum1 += es[tile_width * (tk + 1) + tj + 0];
-        sum2 += es[tile_width * (tk + 0) + tj + 1];
-        sum2 += es[tile_width * (tk + 1) + tj + 1];
+      for(tk = 0; tk < thread_height; tk++) {
+        float4 e = es[thread_width * tk + tj];
+        sum.x += e.x;
+        sum.y += e.y;
+        sum.x += e.z;
+        sum.y += e.w;
       }
       __syncthreads();
     }
     if(i + 0 < n && j + 0 < m) {
-      b[m * (i + 0) + j + 0] = expf(a[m * (i + 0) + j + 0]) / sum1;
+      b[m * (i + 0) + j + 0] = expf(a[m * (i + 0) + j + 0]) / sum.x;
     }
     if(i + 0 < n && j + 1 < m) {
-      b[m * (i + 0) + j + 1] = expf(a[m * (i + 0) + j + 1]) / sum2;
+      b[m * (i + 0) + j + 1] = expf(a[m * (i + 0) + j + 1]) / sum.y;
     }
     if(i + 1 < n && j + 0 < m) {
-      b[m * (i + 1) + j + 0] = expf(a[m * (i + 1) + j + 0]) / sum1;
+      b[m * (i + 1) + j + 0] = expf(a[m * (i + 1) + j + 0]) / sum.x;
     }
     if(i + 1 < n && j + 1 < m) {
-      b[m * (i + 1) + j + 1] = expf(a[m * (i + 1) + j + 1]) / sum2;
+      b[m * (i + 1) + j + 1] = expf(a[m * (i + 1) + j + 1]) / sum.y;
     }
   }
 
   __global__ void softmax_at(const float *a, float *b, size_t n, size_t m)
   {
-    __shared__ float es[TILE_SIZE];
+    __shared__ float4 es[THREAD_SIZE];
     size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 1;
     size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 1;
     size_t k;
-    size_t tile_width = blockDim.y << 1;
-    size_t tile_height = blockDim.x << 1;
-    size_t ti = threadIdx.x << 1;
-    size_t tj = threadIdx.y << 1;
-    float sum1 = 0.0f;
-    float sum2 = 0.0f;
+    size_t thread_width = blockDim.y;
+    size_t thread_height = blockDim.x;
+    size_t tile_height = thread_height << 1;
+    size_t ti = threadIdx.x;
+    size_t tj = threadIdx.y;
+    size_t bi = ti << 1;
+    float2 sum = { 0.0f, 0.0f };
     for(k = 0; k < n; k += tile_height) {
       size_t tk;
-      es[tile_width * (ti + 0) + tj + 0] = 0.0f;
-      if(j + 0 < m && k + ti + 0 < n) {
-        es[tile_width * (ti + 0) + tj + 0] = expf(a[n * (j + 0) + k + ti + 0]);
+      es[thread_width * ti + tj].x = 0.0f;
+      if(j + 0 < m && k + bi + 0 < n) {
+        es[thread_width * ti + tj].x = expf(a[n * (j + 0) + k + bi + 0]);
       }
-      es[tile_width * (ti + 0) + tj + 1] = 0.0f;
-      if(j + 1 < m && k + ti + 0 < n) {
-        es[tile_width * (ti + 0) + tj + 1] = expf(a[n * (j + 1) + k + ti + 0]);
+      es[thread_width * ti + tj].y = 0.0f;
+      if(j + 1 < m && k + bi + 0 < n) {
+        es[thread_width * ti + tj].y = expf(a[n * (j + 1) + k + bi + 0]);
       }
-      es[tile_width * (ti + 1) + tj + 0] = 0.0f;
-      if(j + 0 < m && k + ti + 1 < n) {
-        es[tile_width * (ti + 1) + tj + 0] = expf(a[n * (j + 0) + k + ti + 1]);
+      es[thread_width * ti + tj].z = 0.0f;
+      if(j + 0 < m && k + bi + 1 < n) {
+        es[thread_width * ti + tj].z = expf(a[n * (j + 0) + k + bi + 1]);
       }
-      es[tile_width * (ti + 1) + tj + 1] = 0.0f;
-      if(j + 1 < m && k + ti + 1 < n) {
-        es[tile_width * (ti + 1) + tj + 1] = expf(a[n * (j + 1) + k + ti + 1]);
+      es[thread_width * ti + tj].w = 0.0f;
+      if(j + 1 < m && k + bi + 1 < n) {
+        es[thread_width * ti + tj].w = expf(a[n * (j + 1) + k + bi + 1]);
       }
       __syncthreads();
-      for(tk = 0; tk < tile_height; tk += 2) {
-        sum1 += es[tile_width * (tk + 0) + tj + 0];
-        sum1 += es[tile_width * (tk + 1) + tj + 0];
-        sum2 += es[tile_width * (tk + 0) + tj + 1];
-        sum2 += es[tile_width * (tk + 1) + tj + 1];
+      for(tk = 0; tk < thread_height; tk++) {
+        float4 e = es[thread_width * tk + tj];
+        sum.x += e.x;
+        sum.y += e.y;
+        sum.x += e.z;
+        sum.y += e.w;
       }
       __syncthreads();
     }
     if(i + 0 < n && j + 0 < m) {
-      b[m * (i + 0) + j + 0] = expf(a[n * (j + 0) + i + 0]) / sum1;
+      b[m * (i + 0) + j + 0] = expf(a[n * (j + 0) + i + 0]) / sum.x;
     }
     if(i + 0 < n && j + 1 < m) {
-      b[m * (i + 0) + j + 1] = expf(a[n * (j + 1) + i + 0]) / sum2;
+      b[m * (i + 0) + j + 1] = expf(a[n * (j + 1) + i + 0]) / sum.y;
     }
     if(i + 1 < n && j + 0 < m) {
-      b[m * (i + 1) + j + 0] = expf(a[n * (j + 0) + i + 1]) / sum1;
+      b[m * (i + 1) + j + 0] = expf(a[n * (j + 0) + i + 1]) / sum.x;
     }
     if(i + 1 < n && j + 1 < m) {
-      b[m * (i + 1) + j + 1] = expf(a[n * (j + 1) + i + 1]) / sum2;
+      b[m * (i + 1) + j + 1] = expf(a[n * (j + 1) + i + 1]) / sum.y;
     }
   }
 
