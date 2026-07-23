@@ -9,8 +9,8 @@ __kernel void transpose_a(__global const float *a, __global float *b, ulong n, u
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = a[n2 * (j + 0) + i + 0];
   }
@@ -29,8 +29,8 @@ __kernel void add_a_b(__global const float *a, __global const float *b, __global
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = a[m2 * (i + 0) + j + 0] + b[m2 * (i + 0) + j + 0];
   }
@@ -49,8 +49,8 @@ __kernel void add_at_b(__global const float *a, __global const float *b, __globa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = a[n2 * (j + 0) + i + 0] + b[m2 * (i + 0) + j + 0];
   }
@@ -69,8 +69,8 @@ __kernel void add_a_bt(__global const float *a, __global const float *b, __globa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = a[m2 * (i + 0) + j + 0] + b[n2 * (j + 0) + i + 0];
   }
@@ -89,8 +89,8 @@ __kernel void add_at_bt(__global const float *a, __global const float *b, __glob
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = a[n2 * (j + 0) + i + 0] + b[n2 * (j + 0) + i + 0];
   }
@@ -109,8 +109,8 @@ __kernel void sub_a_b(__global const float *a, __global const float *b, __global
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = a[m2 * (i + 0) + j + 0] - b[m2 * (i + 0) + j + 0];
   }
@@ -129,8 +129,8 @@ __kernel void sub_at_b(__global const float *a, __global const float *b, __globa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = a[n2 * (j + 0) + i + 0] - b[m2 * (i + 0) + j + 0];
   }
@@ -149,8 +149,8 @@ __kernel void sub_a_bt(__global const float *a, __global const float *b, __globa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = a[m2 * (i + 0) + j + 0] - b[n2 * (j + 0) + i + 0];
   }
@@ -169,8 +169,8 @@ __kernel void sub_at_bt(__global const float *a, __global const float *b, __glob
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = a[n2 * (j + 0) + i + 0] - b[n2 * (j + 0) + i + 0];
   }
@@ -190,14 +190,14 @@ __kernel void mul_a_b(__global const float *a, __global const float *b, __global
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
   size_t l2 = (size_t) l;
-  size_t i = get_global_id(0) << 2;
-  size_t j = get_global_id(1) << 2;
+  size_t i = get_global_id(1) << 2;
+  size_t j = get_global_id(0) << 2;
   size_t k;
   size_t mthread_size = get_local_size(0);
-  size_t ti = get_local_id(0);
-  size_t tj = get_local_id(1);
-  size_t ik = get_global_id(0);
-  size_t jk = get_global_id(1);
+  size_t ti = get_local_id(1);
+  size_t tj = get_local_id(0);
+  size_t ik = get_global_id(1);
+  size_t jk = get_global_id(0);
   __private float4 ar;
   __private float4 br;
   __private float4 cr1 = (float4) (0.0f, 0.0f, 0.0f, 0.0f);
@@ -309,14 +309,14 @@ __kernel void mul_at_b(__global const float *a, __global const float *b, __globa
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
   size_t l2 = (size_t) l;
-  size_t i = get_global_id(0) << 2;
-  size_t j = get_global_id(1) << 2;
+  size_t i = get_global_id(1) << 2;
+  size_t j = get_global_id(0) << 2;
   size_t k;
   size_t mthread_size = get_local_size(0);
-  size_t ti = get_local_id(0);
-  size_t tj = get_local_id(1);
-  size_t ik = get_global_id(0);
-  size_t jk = get_global_id(1);
+  size_t ti = get_local_id(1);
+  size_t tj = get_local_id(0);
+  size_t ik = get_global_id(1);
+  size_t jk = get_global_id(0);
   __private float4 ar;
   __private float4 br;
   __private float4 cr1 = (float4) (0.0f, 0.0f, 0.0f, 0.0f);
@@ -665,8 +665,8 @@ __kernel void mul_a_b_for_elems(__global const float *a, __global const float *b
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = a[m2 * (i + 0) + j + 0] * b[m2 * (i + 0) + j + 0];
   }
@@ -685,8 +685,8 @@ __kernel void mul_at_b_for_elems(__global const float *a, __global const float *
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = a[n2 * (j + 0) + i + 0] * b[m2 * (i + 0) + j + 0];
   }
@@ -705,8 +705,8 @@ __kernel void mul_a_bt_for_elems(__global const float *a, __global const float *
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = a[m2 * (i + 0) + j + 0] * b[n2 * (j + 0) + i + 0];
   }
@@ -725,8 +725,8 @@ __kernel void mul_at_bt_for_elems(__global const float *a, __global const float 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = a[n2 * (j + 0) + i + 0] * b[n2 * (j + 0) + i + 0];
   }
@@ -745,8 +745,8 @@ __kernel void div_a_b_for_elems(__global const float *a, __global const float *b
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = a[m2 * (i + 0) + j + 0] / b[m2 * (i + 0) + j + 0];
   }
@@ -765,8 +765,8 @@ __kernel void div_at_b_for_elems(__global const float *a, __global const float *
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = a[n2 * (j + 0) + i + 0] / b[m2 * (i + 0) + j + 0];
   }
@@ -785,8 +785,8 @@ __kernel void div_a_bt_for_elems(__global const float *a, __global const float *
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = a[m2 * (i + 0) + j + 0] / b[n2 * (j + 0) + i + 0];
   }
@@ -805,8 +805,8 @@ __kernel void div_at_bt_for_elems(__global const float *a, __global const float 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = a[n2 * (j + 0) + i + 0] / b[n2 * (j + 0) + i + 0];
   }
@@ -825,8 +825,8 @@ __kernel void add_a_b_for_scalar(__global const float *a, float b, __global floa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = a[m2 * (i + 0) + j + 0] + b;
   }
@@ -845,8 +845,8 @@ __kernel void add_at_b_for_scalar(__global const float *a, float b, __global flo
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = a[n2 * (j + 0) + i + 0] + b;
   }
@@ -865,8 +865,8 @@ __kernel void sub_a_b_for_scalar(__global const float *a, float b, __global floa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = a[m2 * (i + 0) + j + 0] - b;
   }
@@ -885,8 +885,8 @@ __kernel void sub_at_b_for_scalar(__global const float *a, float b, __global flo
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = a[n2 * (j + 0) + i + 0] - b;
   }
@@ -905,8 +905,8 @@ __kernel void rsub_a_b_for_scalar(__global const float *a, float b, __global flo
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = b - a[m2 * (i + 0) + j + 0];
   }
@@ -925,8 +925,8 @@ __kernel void rsub_at_b_for_scalar(__global const float *a, float b, __global fl
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = b - a[n2 * (j + 0) + i + 0];
   }
@@ -945,8 +945,8 @@ __kernel void mul_a_b_for_scalar(__global const float *a, float b, __global floa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = a[m2 * (i + 0) + j + 0] * b;
   }
@@ -965,8 +965,8 @@ __kernel void mul_at_b_for_scalar(__global const float *a, float b, __global flo
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = a[n2 * (j + 0) + i + 0] * b;
   }
@@ -985,8 +985,8 @@ __kernel void div_a_b_for_scalar(__global const float *a, float b, __global floa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = a[m2 * (i + 0) + j + 0] / b;
   }
@@ -1005,8 +1005,8 @@ __kernel void div_at_b_for_scalar(__global const float *a, float b, __global flo
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = a[n2 * (j + 0) + i + 0] / b;
   }
@@ -1025,8 +1025,8 @@ __kernel void rdiv_a_b_for_scalar(__global const float *a, float b, __global flo
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0  < m2) {
     c[m2 * (i + 0) + j + 0] = b / a[m2 * (i + 0) + j + 0];
   }
@@ -1045,8 +1045,8 @@ __kernel void rdiv_at_b_for_scalar(__global const float *a, float b, __global fl
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0  < m2) {
     c[m2 * (i + 0) + j + 0] = b / a[n2 * (j + 0) + i + 0];
   }
@@ -1065,8 +1065,8 @@ __kernel void sigmoid_a(__global const float *a, __global float *b, ulong n, ulo
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = 1.0f / (1.0f + exp(-a[m2 * (i + 0) + j + 0]));
   }
@@ -1085,8 +1085,8 @@ __kernel void sigmoid_at(__global const float *a, __global float *b, ulong n, ul
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = 1.0f / (1.0f + exp(-a[n2 * (j + 0) + i + 0]));
   }
@@ -1105,8 +1105,8 @@ __kernel void tanh_a(__global const float *a, __global float *b, ulong n, ulong 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = tanh(a[m2 * (i + 0) + j + 0]);
   }
@@ -1125,8 +1125,8 @@ __kernel void tanh_at(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = tanh(a[n2 * (j + 0) + i + 0]);
   }
@@ -1145,8 +1145,8 @@ __kernel void swish_a(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0);
-  size_t j = get_global_id(1);
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = a[m2 * (i + 0) + j + 0] / (1.0f + exp(-a[m2 * (i + 0) + j + 0]));
   }
@@ -1165,8 +1165,8 @@ __kernel void swish_at(__global const float *a, __global float *b, ulong n, ulon
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = a[n2 * (j + 0) + i + 0] / (1.0f + exp(-a[n2 * (j + 0) + i + 0]));
   }
@@ -1185,14 +1185,14 @@ __kernel void softmax_a(__global const float *a, __global float *b, __local floa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   size_t k;
-  size_t thread_width = get_local_size(1);
-  size_t thread_height = get_local_size(0);
+  size_t thread_width = get_local_size(0);
+  size_t thread_height = get_local_size(1);
   size_t tile_height = thread_height << 1;
-  size_t ti = get_local_id(0);
-  size_t tj = get_local_id(1);
+  size_t ti = get_local_id(1);
+  size_t tj = get_local_id(0);
   size_t bi = ti << 1;
   __private float2 sum = (float2) (0.0f, 0.0f);
   for(k = 0; k < n2; k += tile_height) {
@@ -1295,8 +1295,8 @@ __kernel void sqrt_a(__global const float *a, __global float *b, ulong n, ulong 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = sqrt(a[m2 * (i + 0) + j + 0]);
   }
@@ -1315,8 +1315,8 @@ __kernel void sqrt_at(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = sqrt(a[n2 * (j + 0) + i + 0]);
   }
@@ -1335,8 +1335,8 @@ __kernel void repeat_col_a(__global const float *a, __global float *b, ulong n, 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = a[i + 0];
   }
@@ -1355,8 +1355,8 @@ __kernel void repeat_row_a(__global const float *a, __global float *b, ulong n, 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = a[j + 0];
   }
@@ -1375,8 +1375,8 @@ __kernel void abs_a(__global const float *a, __global float *b, ulong n, ulong m
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = fabs(a[m2 * (i + 0) + j + 0]);
   }
@@ -1395,8 +1395,8 @@ __kernel void abs_at(__global const float *a, __global float *b, ulong n, ulong 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = fabs(a[n2 * (j + 0) + i + 0]);
   }
@@ -1415,8 +1415,8 @@ __kernel void pow_a_b(__global const float *a, __global const float *b, __global
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = pow(a[m2 * (i + 0) + j + 0], b[m2 * (i + 0) + j + 0]);
   }
@@ -1435,8 +1435,8 @@ __kernel void pow_at_b(__global const float *a, __global const float *b, __globa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = pow(a[n2 * (j + 0) + i + 0], b[m2 * (i + 0) + j + 0]);
   }
@@ -1455,8 +1455,8 @@ __kernel void pow_a_bt(__global const float *a, __global const float *b, __globa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = pow(a[m2 * (i + 0) + j + 0], b[n2 * (j + 0) + i + 0]);
   }
@@ -1475,8 +1475,8 @@ __kernel void pow_at_bt(__global const float *a, __global const float *b, __glob
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = pow(a[n2 * (j + 0) + i + 0], b[n2 * (j + 0) + i + 0]);
   }
@@ -1495,8 +1495,8 @@ __kernel void pow_a_b_for_scalar(__global const float *a, float b, __global floa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = pow(a[m2 * (i + 0) + j + 0], b);
   }
@@ -1515,8 +1515,8 @@ __kernel void pow_at_b_for_scalar(__global const float *a, float b, __global flo
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = pow(a[n2 * (j + 0) + i + 0], b);
   }
@@ -1535,8 +1535,8 @@ __kernel void rpow_a_b_for_scalar(__global const float *a, float b, __global flo
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = pow(b, a[m2 * (i + 0) + j + 0]);
   }
@@ -1555,8 +1555,8 @@ __kernel void rpow_at_b_for_scalar(__global const float *a, float b, __global fl
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = pow(b, a[n2 * (j + 0) + i + 0]);
   }
@@ -1575,8 +1575,8 @@ __kernel void exp_a(__global const float *a, __global float *b, ulong n, ulong m
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0 ] = exp(a[m2 * (i + 0) + j + 0]);
   }
@@ -1595,8 +1595,8 @@ __kernel void exp_at(__global const float *a, __global float *b, ulong n, ulong 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = exp(a[n2 * (j + 0) + i + 0]);
   }
@@ -1615,8 +1615,8 @@ __kernel void ln_a(__global const float *a, __global float *b, ulong n, ulong m)
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = log(a[m2 * (i + 0) + j + 0]);
   }
@@ -1635,8 +1635,8 @@ __kernel void ln_at(__global const float *a, __global float *b, ulong n, ulong m
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = log(a[n2 * (j + 0) + i + 0]);
   }
@@ -1655,8 +1655,8 @@ __kernel void log2_a(__global const float *a, __global float *b, ulong n, ulong 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = log2(a[m2 * (i + 0) + j + 0]);
   }
@@ -1675,8 +1675,8 @@ __kernel void log2_at(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = log2(a[n2 * (j + 0) + i + 0]);
   }
@@ -1695,8 +1695,8 @@ __kernel void log10_a(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = log10(a[m2 * (i + 0) + j + 0]);
   }
@@ -1715,8 +1715,8 @@ __kernel void log10_at(__global const float *a, __global float *b, ulong n, ulon
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = log10(a[n2 * (j + 0) + i + 0]);
   }
@@ -1735,8 +1735,8 @@ __kernel void sin_a(__global const float *a, __global float *b, ulong n, ulong m
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = sin(a[m2 * (i + 0) + j + 0]);
   }
@@ -1755,8 +1755,8 @@ __kernel void sin_at(__global const float *a, __global float *b, ulong n, ulong 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = sin(a[n2 * (j + 0) + i + 0]);
   }
@@ -1775,8 +1775,8 @@ __kernel void cos_a(__global const float *a, __global float *b, ulong n, ulong m
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = cos(a[m2 * (i + 0) + j + 0]);
   }
@@ -1795,8 +1795,8 @@ __kernel void cos_at(__global const float *a, __global float *b, ulong n, ulong 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = cos(a[n2 * (j + 0) + i + 0]);
   }
@@ -1815,8 +1815,8 @@ __kernel void tan_a(__global const float *a, __global float *b, ulong n, ulong m
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = tan(a[m2 * (i + 0) + j + 0]);
   }
@@ -1835,8 +1835,8 @@ __kernel void tan_at(__global const float *a, __global float *b, ulong n, ulong 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = tan(a[n2 * (j + 0) + i + 0]);
   }
@@ -1855,8 +1855,8 @@ __kernel void asin_a(__global const float *a, __global float *b, ulong n, ulong 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = asin(a[m2 * (i + 0) + j + 0]);
   }
@@ -1875,8 +1875,8 @@ __kernel void asin_at(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = asin(a[n2 * (j + 0) + i + 0]);
   }
@@ -1895,8 +1895,8 @@ __kernel void acos_a(__global const float *a, __global float *b, ulong n, ulong 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = acos(a[m2 * (i + 0) + j + 0]);
   }
@@ -1915,8 +1915,8 @@ __kernel void acos_at(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = acos(a[n2 * (j + 0) + i + 0]);
   }
@@ -1935,8 +1935,8 @@ __kernel void atan_a(__global const float *a, __global float *b, ulong n, ulong 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = atan(a[m2 * (i + 0) + j + 0]);
   }
@@ -1955,8 +1955,8 @@ __kernel void atan_at(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = atan(a[n2 * (j + 0)  + i + 0]);
   }
@@ -1975,8 +1975,8 @@ __kernel void atan2_a_b(__global const float *a, __global const float *b, __glob
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = atan2(a[m2 * (i + 0) + j + 0], b[m2 * (i + 0) + j + 0]);
   }
@@ -1995,8 +1995,8 @@ __kernel void atan2_at_b(__global const float *a, __global const float *b, __glo
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = atan2(a[n2 * (j + 0) + i + 0], b[m2 * (i + 0) + j + 0]);
   }
@@ -2015,8 +2015,8 @@ __kernel void atan2_a_bt(__global const float *a, __global const float *b, __glo
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = atan2(a[m2 * (i + 0) + j + 0], b[n2 * (j + 0) + i + 0]);
   }
@@ -2035,8 +2035,8 @@ __kernel void atan2_at_bt(__global const float *a, __global const float *b, __gl
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = atan2(a[n2 * (j + 0) + i + 0], b[n2 * (j + 0) + i + 0]);
   }
@@ -2055,8 +2055,8 @@ __kernel void atan2_a_b_for_scalar(__global const float *a, float b, __global fl
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = atan2(a[m2 * (i + 0) + j + 0], b);
   }
@@ -2075,8 +2075,8 @@ __kernel void atan2_at_b_for_scalar(__global const float *a, float b, __global f
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = atan2(a[n2 * (j + 0) + i + 0], b);
   }
@@ -2095,8 +2095,8 @@ __kernel void ratan2_a_b_for_scalar(__global const float *a, float b, __global f
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = atan2(b, a[m2 * (i + 0) + j + 0]);
   }
@@ -2115,8 +2115,8 @@ __kernel void ratan2_at_b_for_scalar(__global const float *a, float b, __global 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = atan2(b, a[n2 * (j + 0) + i + 0]);
   }
@@ -2135,8 +2135,8 @@ __kernel void sinh_a(__global const float *a, __global float *b, ulong n, ulong 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = sinh(a[m2 * (i + 0) + j + 0]);
   }
@@ -2155,8 +2155,8 @@ __kernel void sinh_at(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = sinh(a[n2 * (j + 0) + i + 0]);
   }
@@ -2175,8 +2175,8 @@ __kernel void cosh_a(__global const float *a, __global float *b, ulong n, ulong 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = cosh(a[m2 * (i + 0) + j + 0]);
   }
@@ -2195,8 +2195,8 @@ __kernel void cosh_at(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = cosh(a[n2 * (j + 0) + i + 0]);
   }
@@ -2215,8 +2215,8 @@ __kernel void asinh_a(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = asinh(a[m2 * (i + 0) + j + 0]);
   }
@@ -2235,8 +2235,8 @@ __kernel void asinh_at(__global const float *a, __global float *b, ulong n, ulon
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = asinh(a[n2 * (j + 0) + i + 0]);
   }
@@ -2255,8 +2255,8 @@ __kernel void acosh_a(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = acosh(a[m2 * (i + 0) + j + 0]);
   }
@@ -2275,8 +2275,8 @@ __kernel void acosh_at(__global const float *a, __global float *b, ulong n, ulon
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = acosh(a[n2 * (j + 0) + i + 0]);
   }
@@ -2295,8 +2295,8 @@ __kernel void atanh_a(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = atanh(a[m2 * (i + 0) + j + 0]);
   }
@@ -2315,8 +2315,8 @@ __kernel void atanh_at(__global const float *a, __global float *b, ulong n, ulon
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = atanh(a[n2 * (j + 0) + i + 0]);
   }
@@ -2335,8 +2335,8 @@ __kernel void signum_a(__global const float *a, __global float *b, ulong n, ulon
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     if(!isnan(a[m2 * (i + 0) + j + 0])) {
       b[m2 * (i + 0) + j + 0] = (signbit(a[m2 * (i + 0) + j + 0]) ? -1.0 : 1.0);
@@ -2371,8 +2371,8 @@ __kernel void signum_at(__global const float *a, __global float *b, ulong n, ulo
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     if(!isnan(a[n2 * (j + 0) + i + 0])) {
       b[m2 * (i + 0) + j + 0] = (signbit(a[n2 * (j + 0) + i + 0]) ? -1.0 : 1.0);
@@ -2407,8 +2407,8 @@ __kernel void ceil_a(__global const float *a, __global float *b, ulong n, ulong 
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = ceil(a[m2 * (i + 0) + j + 0]);
   }
@@ -2427,8 +2427,8 @@ __kernel void ceil_at(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = ceil(a[n2 * (j + 0) + i + 0]);
   }
@@ -2447,8 +2447,8 @@ __kernel void floor_a(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = floor(a[m2 * (i + 0) + j + 0]);
   }
@@ -2467,8 +2467,8 @@ __kernel void floor_at(__global const float *a, __global float *b, ulong n, ulon
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = floor(a[n2 * (j + 0) + i + 0]);
   }
@@ -2487,8 +2487,8 @@ __kernel void round_a(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = round(a[m2 * (i + 0) + j + 0]);
   }
@@ -2507,8 +2507,8 @@ __kernel void round_at(__global const float *a, __global float *b, ulong n, ulon
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = round(a[n2 * (j + 0) + i + 0]);
   }
@@ -2527,8 +2527,8 @@ __kernel void trunc_a(__global const float *a, __global float *b, ulong n, ulong
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = trunc(a[m2 * (i + 0) + j + 0]);
   }
@@ -2547,8 +2547,8 @@ __kernel void trunc_at(__global const float *a, __global float *b, ulong n, ulon
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     b[m2 * (i + 0) + j + 0] = trunc(a[n2 * (j + 0) + i + 0]);
   }
@@ -2567,8 +2567,8 @@ __kernel void max_a_b(__global const float *a, __global const float *b, __global
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = fmax(a[m2 * (i + 0) + j + 0], b[m2 * (i + 0) + j + 0]);
   }
@@ -2587,8 +2587,8 @@ __kernel void max_at_b(__global const float *a, __global const float *b, __globa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = fmax(a[n2 * (j + 0) + i + 0], b[m2 * (i + 0) + j + 0]);
   }
@@ -2607,8 +2607,8 @@ __kernel void max_a_bt(__global const float *a, __global const float *b, __globa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = fmax(a[m2 * (i + 0) + j + 0], b[n2 * (j + 0) + i + 0]);
   }
@@ -2627,8 +2627,8 @@ __kernel void max_at_bt(__global const float *a, __global const float *b, __glob
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = fmax(a[n2 * (j + 0) + i + 0], b[n2 * (j + 0) + i + 0]);
   }
@@ -2647,8 +2647,8 @@ __kernel void max_a_b_for_scalar(__global const float *a, float b, __global floa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = fmax(a[m2 * (i + 0) + j + 0], b);
   }
@@ -2667,8 +2667,8 @@ __kernel void max_at_b_for_scalar(__global const float *a, float b, __global flo
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = fmax(a[n2 * (j + 0) + i + 0], b);
   }
@@ -2687,8 +2687,8 @@ __kernel void min_a_b(__global const float *a, __global const float *b, __global
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = fmin(a[m2 * (i + 0) + j + 0], b[m2 * (i + 0) + j + 0]);
   }
@@ -2707,8 +2707,8 @@ __kernel void min_at_b(__global const float *a, __global const float *b, __globa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = fmin(a[n2 * (j + 0) + i + 0], b[m2 * (i + 0) + j + 0]);
   }
@@ -2727,8 +2727,8 @@ __kernel void min_a_bt(__global const float *a, __global const float *b, __globa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = fmin(a[m2 * (i + 0) + j + 0], b[n2 * (j + 0) + i + 0]);
   }
@@ -2747,8 +2747,8 @@ __kernel void min_at_bt(__global const float *a, __global const float *b, __glob
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = fmin(a[n2 * (j + 0) + i + 0], b[n2 * (j + 0) + i + 0]);
   }
@@ -2767,8 +2767,8 @@ __kernel void min_a_b_for_scalar(__global const float *a, float b, __global floa
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = fmin(a[m2 * (i + 0) + j + 0], b);
   }
@@ -2787,8 +2787,8 @@ __kernel void min_at_b_for_scalar(__global const float *a, float b, __global flo
 {
   size_t n2 = (size_t) n;
   size_t m2 = (size_t) m;
-  size_t i = get_global_id(0) << 1;
-  size_t j = get_global_id(1) << 1;
+  size_t i = get_global_id(1) << 1;
+  size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
     c[m2 * (i + 0) + j + 0] = fmin(a[n2 * (j + 0) + i + 0], b);
   }
