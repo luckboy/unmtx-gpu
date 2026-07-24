@@ -87,7 +87,7 @@ fn preferred_work_sizes(n: usize, m: usize, group_size_for_1d: usize, group_size
             (group_size_for_1d, 1, m2, 1)
         }
     } else if is_mul {
-        let n2 = (((n + 3) / 4 + ((group_size_for_2d + 1) / 2) - 1) / ((group_size_for_2d + 1) / 2)) * ((group_size_for_2d + 1) / 2);
+        let n2 = (((n + 7) / 8 + ((group_size_for_2d + 1) / 2) - 1) / ((group_size_for_2d + 1) / 2)) * ((group_size_for_2d + 1) / 2);
         let m2 = (((m + 3) / 4 + ((group_size_for_2d + 1) / 2) - 1) / ((group_size_for_2d + 1) / 2)) * ((group_size_for_2d + 1) / 2);
         if !are_swapped_dims {
             ((group_size_for_2d + 1) / 2, (group_size_for_2d + 1) / 2, n2, m2)
@@ -305,7 +305,7 @@ impl ClBackend
         })
     }
 
-    fn check_and_enqueue_nd_range_for_mul(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize, are_swapped_dims: bool) -> Result<()>
+    fn check_and_enqueue_nd_range_for_mul(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize, item_row_count: usize, item_col_count: usize, are_swapped_dims: bool) -> Result<()>
     {
         self.check_and_enqueue_nd_range3(kernel_name, a, b, c, |a2, b2, c2| {
                 if a2.len != n * l {
@@ -322,13 +322,13 @@ impl ClBackend
                 let n2 = n as u64;
                 let m2 = m as u64;
                 let l2 = l as u64;
-                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, 1, 1, are_swapped_dims, true);
+                let (n3, m3, n4, m4) = preferred_work_sizes(n, m, inner.group_size_for_1d, inner.group_size_for_2d, item_row_count, item_col_count, are_swapped_dims, true);
                 unsafe {
                     let res = ExecuteKernel::new(kernel)
                     .set_arg(&a_mem)
                     .set_arg(&b_mem)
                     .set_arg(&c_mem)
-                    .set_arg_local_buffer(n3 * m3 * 4 * size_of::<f32>())
+                    .set_arg_local_buffer(n3 * m3 * 8 * size_of::<f32>())
                     .set_arg_local_buffer(n3 * m3 * 4 * size_of::<f32>())
                     .set_arg(&n2)
                     .set_arg(&m2)
@@ -632,16 +632,16 @@ impl Backend for ClBackend
     { self.check_and_enqueue_nd_range_for_op("sub_at_bt", a, b, c, n, m, 2, 2, true) }
     
     fn mul_a_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_mul("mul_a_b", a, b, c, n, m, l, true) }
+    { self.check_and_enqueue_nd_range_for_mul("mul_a_b", a, b, c, n, m, l, 8, 4, true) }
 
     fn mul_at_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_mul("mul_at_b", a, b, c, n, m, l, true) }
+    { self.check_and_enqueue_nd_range_for_mul("mul_at_b", a, b, c, n, m, l, 8, 4, true) }
 
     fn mul_a_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_mul("mul_a_bt", a, b, c, n, m, l, false) }
+    { self.check_and_enqueue_nd_range_for_mul("mul_a_bt", a, b, c, n, m, l, 8, 4, false) }
 
     fn mul_at_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_mul("mul_at_bt", a, b, c, n, m, l, false) }
+    { self.check_and_enqueue_nd_range_for_mul("mul_at_bt", a, b, c, n, m, l, 8, 4, false) }
 
     fn mul_a_b_for_elems(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize) -> Result<()>
     { self.check_and_enqueue_nd_range_for_op("mul_a_b_for_elems", a, b, c, n, m, 2, 2, true) }
