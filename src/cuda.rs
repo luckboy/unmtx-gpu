@@ -115,7 +115,7 @@ fn preferred_launch_config(n: usize, m: usize, item_row_count: usize, item_col_c
                 }
             }
         } else {
-            let n2 = (((n + 3) / 4 + 15) / 16) as u32;
+            let n2 = (((n + 7) / 8 + 15) / 16) as u32;
             let m2 = (((m + 3) / 4 + 15) / 16) as u32;
             if !are_swapped_dims {
                 LaunchConfig {
@@ -413,7 +413,7 @@ impl CudaBackend
         })
     }
 
-    fn check_and_launch_for_mul(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize, are_swapped_dims: bool) -> Result<()>
+    fn check_and_launch_for_mul(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize, item_row_count: usize, item_col_count: usize, are_swapped_dims: bool) -> Result<()>
     {
         let is_mma = self.has_mma;
         self.check_and_launch3(kernel_name, a, b, c, |a2, b2, c2| {
@@ -428,7 +428,7 @@ impl CudaBackend
                 }
                 Ok(())
         }, |inner_g, kernel, a_param, b_param, c_param| {
-                let config = preferred_launch_config(n, m, 1, 1, are_swapped_dims, true, is_mma);
+                let config = preferred_launch_config(n, m, item_row_count, item_col_count, are_swapped_dims, true, is_mma);
                 let mut launch_args = inner_g.stream.launch_builder(&kernel);
                 launch_args.arg(&a_param)
                     .arg(&b_param)
@@ -764,7 +764,7 @@ impl Backend for CudaBackend
         if self.has_cublas {
             self.check_and_launch_cublas_for_mul(a, b, c, n, m, l, false, false)
         } else {
-            self.check_and_launch_for_mul("mul_a_b", a, b, c, n, m, l, true)
+            self.check_and_launch_for_mul("mul_a_b", a, b, c, n, m, l, 8, 4, true)
         }
     }
 
@@ -773,7 +773,7 @@ impl Backend for CudaBackend
         if self.has_cublas {
             self.check_and_launch_cublas_for_mul(a, b, c, n, m, l, true, false)
         } else {
-            self.check_and_launch_for_mul("mul_at_b", a, b, c, n, m, l, true)
+            self.check_and_launch_for_mul("mul_at_b", a, b, c, n, m, l, 8, 4, true)
         }
     }
 
@@ -782,7 +782,7 @@ impl Backend for CudaBackend
         if self.has_cublas {
             self.check_and_launch_cublas_for_mul(a, b, c, n, m, l, false, true)
         } else {
-            self.check_and_launch_for_mul("mul_a_bt", a, b, c, n, m, l, false) 
+            self.check_and_launch_for_mul("mul_a_bt", a, b, c, n, m, l, 8, 4, false) 
         }
     }
 
@@ -791,7 +791,7 @@ impl Backend for CudaBackend
         if self.has_cublas {
             self.check_and_launch_cublas_for_mul(a, b, c, n, m, l, true, true)
         } else {
-            self.check_and_launch_for_mul("mul_at_bt", a, b, c, n, m, l, false)
+            self.check_and_launch_for_mul("mul_at_bt", a, b, c, n, m, l, 8, 4, false)
         }
     }
 

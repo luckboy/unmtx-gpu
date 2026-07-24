@@ -471,21 +471,26 @@ extern "C" {
 
   __global__ void mul_a_b(const float *a, const float *b, float *c, size_t n, size_t m, size_t l)
   {
-    __shared__ float4 as[MTHREAD_SIZE][MTHREAD_SIZE];
+    __shared__ float4 as[MTHREAD_SIZE << 1][MTHREAD_SIZE];
     __shared__ float4 bs[MTHREAD_SIZE][MTHREAD_SIZE];
-    size_t i = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 2;
+    size_t i = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 3;
     size_t j = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 2;
     size_t k;
     size_t ti = threadIdx.y;
     size_t tj = threadIdx.x;
     size_t ik = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
     size_t jk = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    float4 ar;
+    float4 ar1;
+    float4 ar2;
     float4 br;
     float4 cr1 = { 0.0f, 0.0f, 0.0f, 0.0f };
     float4 cr2 = { 0.0f, 0.0f, 0.0f, 0.0f };
     float4 cr3 = { 0.0f, 0.0f, 0.0f, 0.0f };
     float4 cr4 = { 0.0f, 0.0f, 0.0f, 0.0f };
+    float4 cr5 = { 0.0f, 0.0f, 0.0f, 0.0f };
+    float4 cr6 = { 0.0f, 0.0f, 0.0f, 0.0f };
+    float4 cr7 = { 0.0f, 0.0f, 0.0f, 0.0f };
+    float4 cr8 = { 0.0f, 0.0f, 0.0f, 0.0f };
     for(k = 0; k < l; k += MTHREAD_SIZE) {
       size_t tk;
       size_t tjik = (tj + ik) % MTHREAD_SIZE;
@@ -505,6 +510,22 @@ extern "C" {
       as[ti][tjik].w = 0.0f;
       if(i + 3 < n && k + tj < l) {
         as[ti][tjik].w = a[l * (i + 3) + k + tj];
+      }
+      as[ti + MTHREAD_SIZE][tjik].x = 0.0f;
+      if(i + 4 < n && k + tj < l) {
+        as[ti + MTHREAD_SIZE][tjik].x = a[l * (i + 4) + k + tj];
+      }
+      as[ti + MTHREAD_SIZE][tjik].y = 0.0f;
+      if(i + 5 < n && k + tj < l) {
+        as[ti + MTHREAD_SIZE][tjik].y = a[l * (i + 5) + k + tj];
+      }
+      as[ti + MTHREAD_SIZE][tjik].z = 0.0f;
+      if(i + 6 < n && k + tj < l) {
+        as[ti + MTHREAD_SIZE][tjik].z = a[l * (i + 6) + k + tj];
+      }
+      as[ti + MTHREAD_SIZE][tjik].w = 0.0f;
+      if(i + 7 < n && k + tj < l) {
+        as[ti + MTHREAD_SIZE][tjik].w = a[l * (i + 7) + k + tj];
       }
       bs[tj][tijk].x = 0.0f;
       if(j + 0 < m && k + ti < l) {
@@ -527,24 +548,41 @@ extern "C" {
       for(tk = 0; tk < MTHREAD_SIZE; tk++) {
         size_t tkik = (tk + ik) % MTHREAD_SIZE;
         size_t tkjk = (tk + jk) % MTHREAD_SIZE;
-        ar = as[ti][tkik];
+        ar1 = as[ti][tkik];
+        ar2 = as[ti + MTHREAD_SIZE][tkik];
         br = bs[tj][tkjk];
-        cr1.x += ar.x * br.x;
-        cr1.y += ar.x * br.y;
-        cr1.z += ar.x * br.z;
-        cr1.w += ar.x * br.w;
-        cr2.x += ar.y * br.x;
-        cr2.y += ar.y * br.y;
-        cr2.z += ar.y * br.z;
-        cr2.w += ar.y * br.w;
-        cr3.x += ar.z * br.x;
-        cr3.y += ar.z * br.y;
-        cr3.z += ar.z * br.z;
-        cr3.w += ar.z * br.w;
-        cr4.x += ar.w * br.x;
-        cr4.y += ar.w * br.y;
-        cr4.z += ar.w * br.z;
-        cr4.w += ar.w * br.w;
+        cr1.x += ar1.x * br.x;
+        cr1.y += ar1.x * br.y;
+        cr1.z += ar1.x * br.z;
+        cr1.w += ar1.x * br.w;
+        cr2.x += ar1.y * br.x;
+        cr2.y += ar1.y * br.y;
+        cr2.z += ar1.y * br.z;
+        cr2.w += ar1.y * br.w;
+        cr3.x += ar1.z * br.x;
+        cr3.y += ar1.z * br.y;
+        cr3.z += ar1.z * br.z;
+        cr3.w += ar1.z * br.w;
+        cr4.x += ar1.w * br.x;
+        cr4.y += ar1.w * br.y;
+        cr4.z += ar1.w * br.z;
+        cr4.w += ar1.w * br.w;
+        cr5.x += ar2.x * br.x;
+        cr5.y += ar2.x * br.y;
+        cr5.z += ar2.x * br.z;
+        cr5.w += ar2.x * br.w;
+        cr6.x += ar2.y * br.x;
+        cr6.y += ar2.y * br.y;
+        cr6.z += ar2.y * br.z;
+        cr6.w += ar2.y * br.w;
+        cr7.x += ar2.z * br.x;
+        cr7.y += ar2.z * br.y;
+        cr7.z += ar2.z * br.z;
+        cr7.w += ar2.z * br.w;
+        cr8.x += ar2.w * br.x;
+        cr8.y += ar2.w * br.y;
+        cr8.z += ar2.w * br.z;
+        cr8.w += ar2.w * br.w;
       }
       __syncthreads();
     }
@@ -595,26 +633,79 @@ extern "C" {
     }
     if(i + 3 < n && j + 3 < m) {
       c[m * (i + 3) + j + 3] = cr4.w;
+    }
+    if(i + 4 < n && j + 0 < m) {
+      c[m * (i + 4) + j + 0] = cr5.x;
+    }
+    if(i + 4 < n && j + 1 < m) {
+      c[m * (i + 4) + j + 1] = cr5.y;
+    }
+    if(i + 4 < n && j + 2 < m) {
+      c[m * (i + 4) + j + 2] = cr5.z;
+    }
+    if(i + 4 < n && j + 3 < m) {
+      c[m * (i + 4) + j + 3] = cr5.w;
+    }
+    if(i + 5 < n && j + 0 < m) {
+      c[m * (i + 5) + j + 0] = cr6.x;
+    }
+    if(i + 5 < n && j + 1 < m) {
+      c[m * (i + 5) + j + 1] = cr6.y;
+    }
+    if(i + 5 < n && j + 2 < m) {
+      c[m * (i + 5) + j + 2] = cr6.z;
+    }
+    if(i + 5 < n && j + 3 < m) {
+      c[m * (i + 5) + j + 3] = cr6.w;
+    }
+    if(i + 6 < n && j + 0 < m) {
+      c[m * (i + 6) + j + 0] = cr7.x;
+    }
+    if(i + 6 < n && j + 1 < m) {
+      c[m * (i + 6) + j + 1] = cr7.y;
+    }
+    if(i + 6 < n && j + 2 < m) {
+      c[m * (i + 6) + j + 2] = cr7.z;
+    }
+    if(i + 6 < n && j + 3 < m) {
+      c[m * (i + 6) + j + 3] = cr7.w;
+    }
+    if(i + 7 < n && j + 0 < m) {
+      c[m * (i + 7) + j + 0] = cr8.x;
+    }
+    if(i + 7 < n && j + 1 < m) {
+      c[m * (i + 7) + j + 1] = cr8.y;
+    }
+    if(i + 7 < n && j + 2 < m) {
+      c[m * (i + 7) + j + 2] = cr8.z;
+    }
+    if(i + 7 < n && j + 3 < m) {
+      c[m * (i + 7) + j + 3] = cr8.w;
     }
   }
   
   __global__ void mul_at_b(const float *a, const float *b, float *c, size_t n, size_t m, size_t l)
   {
-    __shared__ float4 as[MTHREAD_SIZE][MTHREAD_SIZE];
+    __shared__ float4 as[MTHREAD_SIZE << 1][MTHREAD_SIZE];
     __shared__ float4 bs[MTHREAD_SIZE][MTHREAD_SIZE];
-    size_t i = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 2;
+    size_t i = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 3;
     size_t j = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 2;
     size_t k;
     size_t ti = threadIdx.y;
     size_t tj = threadIdx.x;
     size_t ik = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
     size_t jk = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    float4 ar;
+    float4 ar1;
+    float4 ar2;
     float4 br;
     float4 cr1 = { 0.0f, 0.0f, 0.0f, 0.0f };
     float4 cr2 = { 0.0f, 0.0f, 0.0f, 0.0f };
     float4 cr3 = { 0.0f, 0.0f, 0.0f, 0.0f };
     float4 cr4 = { 0.0f, 0.0f, 0.0f, 0.0f };
+    float4 cr5 = { 0.0f, 0.0f, 0.0f, 0.0f };
+    float4 cr6 = { 0.0f, 0.0f, 0.0f, 0.0f };
+    float4 cr7 = { 0.0f, 0.0f, 0.0f, 0.0f };
+    float4 cr8 = { 0.0f, 0.0f, 0.0f, 0.0f };
     for(k = 0; k < l; k += MTHREAD_SIZE) {
       size_t tk;
       size_t tjik = (tj + ik) % MTHREAD_SIZE;
@@ -634,6 +725,22 @@ extern "C" {
       as[ti][tjik].w = 0.0f;
       if(i + 3 < n && k + tj < l) {
         as[ti][tjik].w = a[n * (k + tj) + i + 3];
+      }
+      as[ti + MTHREAD_SIZE][tjik].x = 0.0f;
+      if(i + 4 < n && k + tj < l) {
+        as[ti + MTHREAD_SIZE][tjik].x = a[n * (k + tj) + i + 4];
+      }
+      as[ti + MTHREAD_SIZE][tjik].y = 0.0f;
+      if(i + 5 < n && k + tj < l) {
+        as[ti + MTHREAD_SIZE][tjik].y = a[n * (k + tj) + i + 5];
+      }
+      as[ti + MTHREAD_SIZE][tjik].z = 0.0f;
+      if(i + 6 < n && k + tj < l) {
+        as[ti + MTHREAD_SIZE][tjik].z = a[n * (k + tj) + i + 6];
+      }
+      as[ti + MTHREAD_SIZE][tjik].w = 0.0f;
+      if(i + 7 < n && k + tj < l) {
+        as[ti + MTHREAD_SIZE][tjik].w = a[n * (k + tj) + i + 7];
       }
       bs[tj][tijk].x = 0.0f;
       if(j + 0 < m && k + ti < l) {
@@ -656,24 +763,41 @@ extern "C" {
       for(tk = 0; tk < MTHREAD_SIZE; tk++) {
         size_t tkik = (tk + ik) % MTHREAD_SIZE;
         size_t tkjk = (tk + jk) % MTHREAD_SIZE;
-        ar = as[ti][tkik];
+        ar1 = as[ti][tkik];
+        ar2 = as[ti + MTHREAD_SIZE][tkik];
         br = bs[tj][tkjk];
-        cr1.x += ar.x * br.x;
-        cr1.y += ar.x * br.y;
-        cr1.z += ar.x * br.z;
-        cr1.w += ar.x * br.w;
-        cr2.x += ar.y * br.x;
-        cr2.y += ar.y * br.y;
-        cr2.z += ar.y * br.z;
-        cr2.w += ar.y * br.w;
-        cr3.x += ar.z * br.x;
-        cr3.y += ar.z * br.y;
-        cr3.z += ar.z * br.z;
-        cr3.w += ar.z * br.w;
-        cr4.x += ar.w * br.x;
-        cr4.y += ar.w * br.y;
-        cr4.z += ar.w * br.z;
-        cr4.w += ar.w * br.w;
+        cr1.x += ar1.x * br.x;
+        cr1.y += ar1.x * br.y;
+        cr1.z += ar1.x * br.z;
+        cr1.w += ar1.x * br.w;
+        cr2.x += ar1.y * br.x;
+        cr2.y += ar1.y * br.y;
+        cr2.z += ar1.y * br.z;
+        cr2.w += ar1.y * br.w;
+        cr3.x += ar1.z * br.x;
+        cr3.y += ar1.z * br.y;
+        cr3.z += ar1.z * br.z;
+        cr3.w += ar1.z * br.w;
+        cr4.x += ar1.w * br.x;
+        cr4.y += ar1.w * br.y;
+        cr4.z += ar1.w * br.z;
+        cr4.w += ar1.w * br.w;
+        cr5.x += ar2.x * br.x;
+        cr5.y += ar2.x * br.y;
+        cr5.z += ar2.x * br.z;
+        cr5.w += ar2.x * br.w;
+        cr6.x += ar2.y * br.x;
+        cr6.y += ar2.y * br.y;
+        cr6.z += ar2.y * br.z;
+        cr6.w += ar2.y * br.w;
+        cr7.x += ar2.z * br.x;
+        cr7.y += ar2.z * br.y;
+        cr7.z += ar2.z * br.z;
+        cr7.w += ar2.z * br.w;
+        cr8.x += ar2.w * br.x;
+        cr8.y += ar2.w * br.y;
+        cr8.z += ar2.w * br.z;
+        cr8.w += ar2.w * br.w;
       }
       __syncthreads();
     }
@@ -725,25 +849,78 @@ extern "C" {
     if(i + 3 < n && j + 3 < m) {
       c[m * (i + 3) + j + 3] = cr4.w;
     }
+    if(i + 4 < n && j + 0 < m) {
+      c[m * (i + 4) + j + 0] = cr5.x;
+    }
+    if(i + 4 < n && j + 1 < m) {
+      c[m * (i + 4) + j + 1] = cr5.y;
+    }
+    if(i + 4 < n && j + 2 < m) {
+      c[m * (i + 4) + j + 2] = cr5.z;
+    }
+    if(i + 4 < n && j + 3 < m) {
+      c[m * (i + 4) + j + 3] = cr5.w;
+    }
+    if(i + 5 < n && j + 0 < m) {
+      c[m * (i + 5) + j + 0] = cr6.x;
+    }
+    if(i + 5 < n && j + 1 < m) {
+      c[m * (i + 5) + j + 1] = cr6.y;
+    }
+    if(i + 5 < n && j + 2 < m) {
+      c[m * (i + 5) + j + 2] = cr6.z;
+    }
+    if(i + 5 < n && j + 3 < m) {
+      c[m * (i + 5) + j + 3] = cr6.w;
+    }
+    if(i + 6 < n && j + 0 < m) {
+      c[m * (i + 6) + j + 0] = cr7.x;
+    }
+    if(i + 6 < n && j + 1 < m) {
+      c[m * (i + 6) + j + 1] = cr7.y;
+    }
+    if(i + 6 < n && j + 2 < m) {
+      c[m * (i + 6) + j + 2] = cr7.z;
+    }
+    if(i + 6 < n && j + 3 < m) {
+      c[m * (i + 6) + j + 3] = cr7.w;
+    }
+    if(i + 7 < n && j + 0 < m) {
+      c[m * (i + 7) + j + 0] = cr8.x;
+    }
+    if(i + 7 < n && j + 1 < m) {
+      c[m * (i + 7) + j + 1] = cr8.y;
+    }
+    if(i + 7 < n && j + 2 < m) {
+      c[m * (i + 7) + j + 2] = cr8.z;
+    }
+    if(i + 7 < n && j + 3 < m) {
+      c[m * (i + 7) + j + 3] = cr8.w;
+    }
   }
 
   __global__ void mul_a_bt(const float *a, const float *b, float *c, size_t n, size_t m, size_t l)
   {
-    __shared__ float4 as[MTHREAD_SIZE][MTHREAD_SIZE];
+    __shared__ float4 as[MTHREAD_SIZE << 1][MTHREAD_SIZE];
     __shared__ float4 bs[MTHREAD_SIZE][MTHREAD_SIZE];
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 2;
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 3;
     size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 2;
     size_t k;
     size_t ti = threadIdx.x;
     size_t tj = threadIdx.y;
     size_t ik = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
     size_t jk = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    float4 ar;
+    float4 ar1;
+    float4 ar2;
     float4 br;
     float4 cr1 = { 0.0f, 0.0f, 0.0f, 0.0f };
     float4 cr2 = { 0.0f, 0.0f, 0.0f, 0.0f };
     float4 cr3 = { 0.0f, 0.0f, 0.0f, 0.0f };
     float4 cr4 = { 0.0f, 0.0f, 0.0f, 0.0f };
+    float4 cr5 = { 0.0f, 0.0f, 0.0f, 0.0f };
+    float4 cr6 = { 0.0f, 0.0f, 0.0f, 0.0f };
+    float4 cr7 = { 0.0f, 0.0f, 0.0f, 0.0f };
+    float4 cr8 = { 0.0f, 0.0f, 0.0f, 0.0f };
     for(k = 0; k < l; k += MTHREAD_SIZE) {
       size_t tk;
       size_t tjik = (tj + ik) % MTHREAD_SIZE;
@@ -764,6 +941,22 @@ extern "C" {
       if(i + 3 < n && k + tj < l) {
         as[ti][tjik].w = a[l * (i + 3) + k + tj];
       }
+      as[ti + MTHREAD_SIZE][tjik].x = 0.0f;
+      if(i + 4 < n && k + tj < l) {
+        as[ti + MTHREAD_SIZE][tjik].x = a[l * (i + 4) + k + tj];
+      }
+      as[ti + MTHREAD_SIZE][tjik].y = 0.0f;
+      if(i + 5 < n && k + tj < l) {
+        as[ti + MTHREAD_SIZE][tjik].y = a[l * (i + 5) + k + tj];
+      }
+      as[ti + MTHREAD_SIZE][tjik].z = 0.0f;
+      if(i + 6 < n && k + tj < l) {
+        as[ti + MTHREAD_SIZE][tjik].z = a[l * (i + 6) + k + tj];
+      }
+      as[ti + MTHREAD_SIZE][tjik].w = 0.0f;
+      if(i + 7 < n && k + tj < l) {
+        as[ti + MTHREAD_SIZE][tjik].w = a[l * (i + 7) + k + tj];
+      }
       bs[tj][tijk].x = 0.0f;
       if(j + 0 < m && k + ti < l) {
         bs[tj][tijk].x = b[l * (j + 0) + k + ti];
@@ -785,24 +978,41 @@ extern "C" {
       for(tk = 0; tk < MTHREAD_SIZE; tk++) {
         size_t tkik = (tk + ik) % MTHREAD_SIZE;
         size_t tkjk = (tk + jk) % MTHREAD_SIZE;
-        ar = as[ti][tkik];
+        ar1 = as[ti][tkik];
+        ar2 = as[ti + MTHREAD_SIZE][tkik];
         br = bs[tj][tkjk];
-        cr1.x += ar.x * br.x;
-        cr1.y += ar.x * br.y;
-        cr1.z += ar.x * br.z;
-        cr1.w += ar.x * br.w;
-        cr2.x += ar.y * br.x;
-        cr2.y += ar.y * br.y;
-        cr2.z += ar.y * br.z;
-        cr2.w += ar.y * br.w;
-        cr3.x += ar.z * br.x;
-        cr3.y += ar.z * br.y;
-        cr3.z += ar.z * br.z;
-        cr3.w += ar.z * br.w;
-        cr4.x += ar.w * br.x;
-        cr4.y += ar.w * br.y;
-        cr4.z += ar.w * br.z;
-        cr4.w += ar.w * br.w;
+        cr1.x += ar1.x * br.x;
+        cr1.y += ar1.x * br.y;
+        cr1.z += ar1.x * br.z;
+        cr1.w += ar1.x * br.w;
+        cr2.x += ar1.y * br.x;
+        cr2.y += ar1.y * br.y;
+        cr2.z += ar1.y * br.z;
+        cr2.w += ar1.y * br.w;
+        cr3.x += ar1.z * br.x;
+        cr3.y += ar1.z * br.y;
+        cr3.z += ar1.z * br.z;
+        cr3.w += ar1.z * br.w;
+        cr4.x += ar1.w * br.x;
+        cr4.y += ar1.w * br.y;
+        cr4.z += ar1.w * br.z;
+        cr4.w += ar1.w * br.w;
+        cr5.x += ar2.x * br.x;
+        cr5.y += ar2.x * br.y;
+        cr5.z += ar2.x * br.z;
+        cr5.w += ar2.x * br.w;
+        cr6.x += ar2.y * br.x;
+        cr6.y += ar2.y * br.y;
+        cr6.z += ar2.y * br.z;
+        cr6.w += ar2.y * br.w;
+        cr7.x += ar2.z * br.x;
+        cr7.y += ar2.z * br.y;
+        cr7.z += ar2.z * br.z;
+        cr7.w += ar2.z * br.w;
+        cr8.x += ar2.w * br.x;
+        cr8.y += ar2.w * br.y;
+        cr8.z += ar2.w * br.z;
+        cr8.w += ar2.w * br.w;
       }
       __syncthreads();
     }
@@ -854,25 +1064,78 @@ extern "C" {
     if(i + 3 < n && j + 3 < m) {
       c[m * (i + 3) + j + 3] = cr4.w;
     }
+    if(i + 4 < n && j + 0 < m) {
+      c[m * (i + 4) + j + 0] = cr5.x;
+    }
+    if(i + 4 < n && j + 1 < m) {
+      c[m * (i + 4) + j + 1] = cr5.y;
+    }
+    if(i + 4 < n && j + 2 < m) {
+      c[m * (i + 4) + j + 2] = cr5.z;
+    }
+    if(i + 4 < n && j + 3 < m) {
+      c[m * (i + 4) + j + 3] = cr5.w;
+    }
+    if(i + 5 < n && j + 0 < m) {
+      c[m * (i + 5) + j + 0] = cr6.x;
+    }
+    if(i + 5 < n && j + 1 < m) {
+      c[m * (i + 5) + j + 1] = cr6.y;
+    }
+    if(i + 5 < n && j + 2 < m) {
+      c[m * (i + 5) + j + 2] = cr6.z;
+    }
+    if(i + 5 < n && j + 3 < m) {
+      c[m * (i + 5) + j + 3] = cr6.w;
+    }
+    if(i + 6 < n && j + 0 < m) {
+      c[m * (i + 6) + j + 0] = cr7.x;
+    }
+    if(i + 6 < n && j + 1 < m) {
+      c[m * (i + 6) + j + 1] = cr7.y;
+    }
+    if(i + 6 < n && j + 2 < m) {
+      c[m * (i + 6) + j + 2] = cr7.z;
+    }
+    if(i + 6 < n && j + 3 < m) {
+      c[m * (i + 6) + j + 3] = cr7.w;
+    }
+    if(i + 7 < n && j + 0 < m) {
+      c[m * (i + 7) + j + 0] = cr8.x;
+    }
+    if(i + 7 < n && j + 1 < m) {
+      c[m * (i + 7) + j + 1] = cr8.y;
+    }
+    if(i + 7 < n && j + 2 < m) {
+      c[m * (i + 7) + j + 2] = cr8.z;
+    }
+    if(i + 7 < n && j + 3 < m) {
+      c[m * (i + 7) + j + 3] = cr8.w;
+    }
   }
 
   __global__ void mul_at_bt(const float *a, const float *b, float *c, size_t n, size_t m, size_t l)
   {
-    __shared__ float4 as[MTHREAD_SIZE][MTHREAD_SIZE];
+    __shared__ float4 as[MTHREAD_SIZE << 1][MTHREAD_SIZE];
     __shared__ float4 bs[MTHREAD_SIZE][MTHREAD_SIZE];
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 2;
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 3;
     size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 2;
     size_t k;
     size_t ti = threadIdx.x;
     size_t tj = threadIdx.y;
     size_t ik = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
     size_t jk = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    float4 ar;
+    float4 ar1;
+    float4 ar2;
     float4 br;
     float4 cr1 = { 0.0f, 0.0f, 0.0f, 0.0f };
     float4 cr2 = { 0.0f, 0.0f, 0.0f, 0.0f };
     float4 cr3 = { 0.0f, 0.0f, 0.0f, 0.0f };
     float4 cr4 = { 0.0f, 0.0f, 0.0f, 0.0f };
+    float4 cr5 = { 0.0f, 0.0f, 0.0f, 0.0f };
+    float4 cr6 = { 0.0f, 0.0f, 0.0f, 0.0f };
+    float4 cr7 = { 0.0f, 0.0f, 0.0f, 0.0f };
+    float4 cr8 = { 0.0f, 0.0f, 0.0f, 0.0f };
     for(k = 0; k < l; k += MTHREAD_SIZE) {
       size_t tk;
       size_t tjik = (tj + ik) % MTHREAD_SIZE;
@@ -893,6 +1156,22 @@ extern "C" {
       if(i + 3 < n && k + tj < l) {
         as[ti][tjik].w = a[n * (k + tj) + i + 3];
       }
+      as[ti + MTHREAD_SIZE][tjik].x = 0.0f;
+      if(i + 4 < n && k + tj < l) {
+        as[ti + MTHREAD_SIZE][tjik].x = a[n * (k + tj) + i + 4];
+      }
+      as[ti + MTHREAD_SIZE][tjik].y = 0.0f;
+      if(i + 5 < n && k + tj < l) {
+        as[ti + MTHREAD_SIZE][tjik].y = a[n * (k + tj) + i + 5];
+      }
+      as[ti + MTHREAD_SIZE][tjik].z = 0.0f;
+      if(i + 6 < n && k + tj < l) {
+        as[ti + MTHREAD_SIZE][tjik].z = a[n * (k + tj) + i + 6];
+      }
+      as[ti + MTHREAD_SIZE][tjik].w = 0.0f;
+      if(i + 7 < n && k + tj < l) {
+        as[ti + MTHREAD_SIZE][tjik].w = a[n * (k + tj) + i + 7];
+      }
       bs[tj][tijk].x = 0.0f;
       if(j + 0 < m && k + ti < l) {
         bs[tj][tijk].x = b[l * (j + 0) + k + ti];
@@ -914,24 +1193,41 @@ extern "C" {
       for(tk = 0; tk < MTHREAD_SIZE; tk++) {
         size_t tkik = (tk + ik) % MTHREAD_SIZE;
         size_t tkjk = (tk + jk) % MTHREAD_SIZE;
-        ar = as[ti][tkik];
+        ar1 = as[ti][tkik];
+        ar2 = as[ti + MTHREAD_SIZE][tkik];
         br = bs[tj][tkjk];
-        cr1.x += ar.x * br.x;
-        cr1.y += ar.x * br.y;
-        cr1.z += ar.x * br.z;
-        cr1.w += ar.x * br.w;
-        cr2.x += ar.y * br.x;
-        cr2.y += ar.y * br.y;
-        cr2.z += ar.y * br.z;
-        cr2.w += ar.y * br.w;
-        cr3.x += ar.z * br.x;
-        cr3.y += ar.z * br.y;
-        cr3.z += ar.z * br.z;
-        cr3.w += ar.z * br.w;
-        cr4.x += ar.w * br.x;
-        cr4.y += ar.w * br.y;
-        cr4.z += ar.w * br.z;
-        cr4.w += ar.w * br.w;
+        cr1.x += ar1.x * br.x;
+        cr1.y += ar1.x * br.y;
+        cr1.z += ar1.x * br.z;
+        cr1.w += ar1.x * br.w;
+        cr2.x += ar1.y * br.x;
+        cr2.y += ar1.y * br.y;
+        cr2.z += ar1.y * br.z;
+        cr2.w += ar1.y * br.w;
+        cr3.x += ar1.z * br.x;
+        cr3.y += ar1.z * br.y;
+        cr3.z += ar1.z * br.z;
+        cr3.w += ar1.z * br.w;
+        cr4.x += ar1.w * br.x;
+        cr4.y += ar1.w * br.y;
+        cr4.z += ar1.w * br.z;
+        cr4.w += ar1.w * br.w;
+        cr5.x += ar2.x * br.x;
+        cr5.y += ar2.x * br.y;
+        cr5.z += ar2.x * br.z;
+        cr5.w += ar2.x * br.w;
+        cr6.x += ar2.y * br.x;
+        cr6.y += ar2.y * br.y;
+        cr6.z += ar2.y * br.z;
+        cr6.w += ar2.y * br.w;
+        cr7.x += ar2.z * br.x;
+        cr7.y += ar2.z * br.y;
+        cr7.z += ar2.z * br.z;
+        cr7.w += ar2.z * br.w;
+        cr8.x += ar2.w * br.x;
+        cr8.y += ar2.w * br.y;
+        cr8.z += ar2.w * br.z;
+        cr8.w += ar2.w * br.w;
       }
       __syncthreads();
     }
@@ -982,6 +1278,54 @@ extern "C" {
     }
     if(i + 3 < n && j + 3 < m) {
       c[m * (i + 3) + j + 3] = cr4.w;
+    }
+    if(i + 4 < n && j + 0 < m) {
+      c[m * (i + 4) + j + 0] = cr5.x;
+    }
+    if(i + 4 < n && j + 1 < m) {
+      c[m * (i + 4) + j + 1] = cr5.y;
+    }
+    if(i + 4 < n && j + 2 < m) {
+      c[m * (i + 4) + j + 2] = cr5.z;
+    }
+    if(i + 4 < n && j + 3 < m) {
+      c[m * (i + 4) + j + 3] = cr5.w;
+    }
+    if(i + 5 < n && j + 0 < m) {
+      c[m * (i + 5) + j + 0] = cr6.x;
+    }
+    if(i + 5 < n && j + 1 < m) {
+      c[m * (i + 5) + j + 1] = cr6.y;
+    }
+    if(i + 5 < n && j + 2 < m) {
+      c[m * (i + 5) + j + 2] = cr6.z;
+    }
+    if(i + 5 < n && j + 3 < m) {
+      c[m * (i + 5) + j + 3] = cr6.w;
+    }
+    if(i + 6 < n && j + 0 < m) {
+      c[m * (i + 6) + j + 0] = cr7.x;
+    }
+    if(i + 6 < n && j + 1 < m) {
+      c[m * (i + 6) + j + 1] = cr7.y;
+    }
+    if(i + 6 < n && j + 2 < m) {
+      c[m * (i + 6) + j + 2] = cr7.z;
+    }
+    if(i + 6 < n && j + 3 < m) {
+      c[m * (i + 6) + j + 3] = cr7.w;
+    }
+    if(i + 7 < n && j + 0 < m) {
+      c[m * (i + 7) + j + 0] = cr8.x;
+    }
+    if(i + 7 < n && j + 1 < m) {
+      c[m * (i + 7) + j + 1] = cr8.y;
+    }
+    if(i + 7 < n && j + 2 < m) {
+      c[m * (i + 7) + j + 2] = cr8.z;
+    }
+    if(i + 7 < n && j + 3 < m) {
+      c[m * (i + 7) + j + 3] = cr8.w;
     }
   }
 
