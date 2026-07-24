@@ -635,10 +635,10 @@ impl Backend for ClBackend
     { self.check_and_enqueue_nd_range_for_mul("mul_a_b", a, b, c, n, m, l, 8, 4, true) }
 
     fn mul_at_b(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_mul("mul_at_b", a, b, c, n, m, l, 8, 4, true) }
+    { self.check_and_enqueue_nd_range_for_mul("mul_at_b", a, b, c, n, m, l, 8, 4, false) }
 
     fn mul_a_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize) -> Result<()>
-    { self.check_and_enqueue_nd_range_for_mul("mul_a_bt", a, b, c, n, m, l, 8, 4, false) }
+    { self.check_and_enqueue_nd_range_for_mul("mul_a_bt", a, b, c, n, m, l, 8, 4, true) }
 
     fn mul_at_bt(&self, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize) -> Result<()>
     { self.check_and_enqueue_nd_range_for_mul("mul_at_bt", a, b, c, n, m, l, 8, 4, false) }
