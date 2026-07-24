@@ -773,7 +773,7 @@ impl Backend for CudaBackend
         if self.has_cublas {
             self.check_and_launch_cublas_for_mul(a, b, c, n, m, l, true, false)
         } else {
-            self.check_and_launch_for_mul("mul_at_b", a, b, c, n, m, l, 8, 4, true)
+            self.check_and_launch_for_mul("mul_at_b", a, b, c, n, m, l, 8, 4, false)
         }
     }
 
@@ -782,7 +782,7 @@ impl Backend for CudaBackend
         if self.has_cublas {
             self.check_and_launch_cublas_for_mul(a, b, c, n, m, l, false, true)
         } else {
-            self.check_and_launch_for_mul("mul_a_bt", a, b, c, n, m, l, 8, 4, false) 
+            self.check_and_launch_for_mul("mul_a_bt", a, b, c, n, m, l, 8, 4, true) 
         }
     }
 

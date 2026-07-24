@@ -256,8 +256,8 @@ extern "C" {
 
   __global__ void mul_at_b(const float *a, const float *b, float *c, size_t n, size_t m, size_t l)
   {
-    size_t i = ((size_t) blockIdx.y) * MMA_TILE_WIDTH;
-    size_t j = ((size_t) blockIdx.x) * MMA_TILE_WIDTH;
+    size_t i = ((size_t) blockIdx.x) * MMA_TILE_WIDTH;
+    size_t j = ((size_t) blockIdx.y) * MMA_TILE_WIDTH;
     size_t k;
     size_t tx = threadIdx.x >> 5;
     size_t stx = threadIdx.x & 31;
@@ -327,8 +327,8 @@ extern "C" {
 
   __global__ void mul_a_bt(const float *a, const float *b, float *c, size_t n, size_t m, size_t l)
   {
-    size_t i = ((size_t) blockIdx.x) * MMA_TILE_WIDTH;
-    size_t j = ((size_t) blockIdx.y) * MMA_TILE_WIDTH;
+    size_t i = ((size_t) blockIdx.y) * MMA_TILE_WIDTH;
+    size_t j = ((size_t) blockIdx.x) * MMA_TILE_WIDTH;
     size_t k;
     size_t tx = threadIdx.x >> 5;
     size_t stx = threadIdx.x & 31;
@@ -688,13 +688,13 @@ extern "C" {
   {
     __shared__ float4 as[MTHREAD_SIZE << 1][MTHREAD_SIZE];
     __shared__ float4 bs[MTHREAD_SIZE][MTHREAD_SIZE];
-    size_t i = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 3;
-    size_t j = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 2;
+    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 3;
+    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 2;
     size_t k;
-    size_t ti = threadIdx.y;
-    size_t tj = threadIdx.x;
-    size_t ik = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
-    size_t jk = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
+    size_t ti = threadIdx.x;
+    size_t tj = threadIdx.y;
+    size_t ik = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
+    size_t jk = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
     float4 ar1;
     float4 ar2;
     float4 br;
@@ -903,13 +903,13 @@ extern "C" {
   {
     __shared__ float4 as[MTHREAD_SIZE << 1][MTHREAD_SIZE];
     __shared__ float4 bs[MTHREAD_SIZE][MTHREAD_SIZE];
-    size_t i = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 3;
-    size_t j = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 2;
+    size_t i = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y << 3;
+    size_t j = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x << 2;
     size_t k;
-    size_t ti = threadIdx.x;
-    size_t tj = threadIdx.y;
-    size_t ik = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
-    size_t jk = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
+    size_t ti = threadIdx.y;
+    size_t tj = threadIdx.x;
+    size_t ik = ((size_t) blockDim.y) * blockIdx.y + threadIdx.y;
+    size_t jk = ((size_t) blockDim.x) * blockIdx.x + threadIdx.x;
     float4 ar1;
     float4 ar2;
     float4 br;
