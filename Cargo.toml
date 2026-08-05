@@ -81,6 +81,11 @@ harness = false
 required-features = ["cuda"]
 
 [[bench]]
+name = "mul_ptx"
+harness = false
+required-features = ["cuda"]
+
+[[bench]]
 name = "nfuns_opencl"
 harness = false
 required-features = ["opencl"]
