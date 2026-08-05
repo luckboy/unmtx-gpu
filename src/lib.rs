@@ -670,6 +670,9 @@ pub enum Error
     /// A cuBLAS error.
     #[cfg(feature = "cuda")]
     Cublas(cuda::CublasError),
+    /// No a PTX module.
+    #[cfg(feature = "cuda")]
+    NoPtxModule,
     /// No a cuBLAS.
     #[cfg(feature = "cuda")]
     NoCublas,
@@ -714,6 +717,8 @@ impl fmt::Display for Error
             Error::Cuda(err) => write!(f, "CUDA error: {}", err),
             #[cfg(feature = "cuda")]
             Error::Cublas(err) => write!(f, "cuBLAS error: {}", err),
+            #[cfg(feature = "cuda")]
+            Error::NoPtxModule => write!(f, "no PTX module"),
             #[cfg(feature = "cuda")]
             Error::NoCublas => write!(f, "no cuBLAS"),
             Error::Compilation(msg) => write!(f, "{}", msg),
