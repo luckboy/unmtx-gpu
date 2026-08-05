@@ -753,6 +753,8 @@ impl Backend for CudaBackend
             "CUDA(cuBLAS)"
         } else if self.has_mma {
             "CUDA(mma)"
+        } else if self.has_ptx {
+            "CUDA(PTX)"
         } else {
             "CUDA"
         }
