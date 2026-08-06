@@ -42,7 +42,6 @@ const SOURCE: &'static str = include_str!("cuda.cu");
 
 const PTX_SOURCE: &'static str = include_str!("ptx_mul.ptx");
 
-
 /// A structure of CUDA backend array.
 ///
 /// This structure contains the reference to the device memory.
