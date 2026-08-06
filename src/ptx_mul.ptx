@@ -1280,7 +1280,7 @@ eloop:  mov.u64 %tmpa, %cij;
         mov.u32 %ti, %tid.x;                    // ti and ik
         mov.u32 %tj, %tid.y;                    // tj and jk
 
-        // a[i][k]
+        // a[k][i]
         cvt.u64.u32 %tmpa, %i;
         shl.b64 %tmpa, %tmpa, 2;
         add.u64 %aki, %aki, %tmpa;
