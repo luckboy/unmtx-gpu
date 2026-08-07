@@ -205,7 +205,12 @@ impl CudaBackend
             Err(err) => return Err(Error::Cuda(err)),
         };
         let mut options: CompileOptions = Default::default();
-        if is_mma {
+        let is_real_mma = if !is_cublas {
+            is_mma
+        } else {
+            false
+        };
+        if is_real_mma {
             options.options = vec![String::from("-DUNMTX_GPU_MMA=1")];
             options.arch = Some("sm_80");
         }
@@ -218,12 +223,12 @@ impl CudaBackend
             Ok(tmp_module) => tmp_module,
             Err(err) => return Err(Error::Cuda(err)),
         };
-        let tmp_is_ptx = if !is_cublas && !is_mma {
+        let is_real_ptx = if !is_cublas && !is_real_mma {
             is_ptx
         } else {
             false
         };
-        let ptx_module = if tmp_is_ptx {
+        let ptx_module = if is_real_ptx {
             match context.load_module(Ptx::from_src(PTX_SOURCE)) {
                 Ok(tmp_ptx_module) => Some(tmp_ptx_module),
                 Err(err) => return Err(Error::Cuda(err)),
@@ -240,7 +245,7 @@ impl CudaBackend
         } else {
             None
         };
-        Ok(CudaBackend { inner: Mutex::new(CudaInnerBackend { context, stream, module, ptx_module, cublas, }), has_cublas: is_cublas, has_mma: is_mma, has_ptx: tmp_is_ptx, })
+        Ok(CudaBackend { inner: Mutex::new(CudaInnerBackend { context, stream, module, ptx_module, cublas, }), has_cublas: is_cublas, has_mma: is_real_mma, has_ptx: is_real_ptx, })
     }
     
     pub fn has_cublas(&self) -> bool
