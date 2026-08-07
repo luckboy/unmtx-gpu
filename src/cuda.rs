@@ -215,7 +215,7 @@ impl CudaBackend
             Err(err) => return Err(Error::Compilation(format!("{}", err))),
         };
         let module = match context.load_module(ptx) {
-            Ok(module) => module,
+            Ok(tmp_module) => tmp_module,
             Err(err) => return Err(Error::Cuda(err)),
         };
         let tmp_is_ptx = if !is_cublas && !is_mma {
@@ -225,7 +225,7 @@ impl CudaBackend
         };
         let ptx_module = if tmp_is_ptx {
             match context.load_module(Ptx::from_src(PTX_SOURCE)) {
-                Ok(ptx_module) => Some(ptx_module),
+                Ok(tmp_ptx_module) => Some(tmp_ptx_module),
                 Err(err) => return Err(Error::Cuda(err)),
             }
         } else {
