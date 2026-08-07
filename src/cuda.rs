@@ -218,7 +218,12 @@ impl CudaBackend
             Ok(module) => module,
             Err(err) => return Err(Error::Cuda(err)),
         };
-        let ptx_module = if is_ptx {
+        let tmp_is_ptx = if !is_cublas && !is_mma {
+            is_ptx
+        } else {
+            false
+        };
+        let ptx_module = if tmp_is_ptx {
             match context.load_module(Ptx::from_src(PTX_SOURCE)) {
                 Ok(ptx_module) => Some(ptx_module),
                 Err(err) => return Err(Error::Cuda(err)),
@@ -235,7 +240,7 @@ impl CudaBackend
         } else {
             None
         };
-        Ok(CudaBackend { inner: Mutex::new(CudaInnerBackend { context, stream, module, ptx_module, cublas, }), has_cublas: is_cublas, has_mma: is_mma, has_ptx: is_ptx, })
+        Ok(CudaBackend { inner: Mutex::new(CudaInnerBackend { context, stream, module, ptx_module, cublas, }), has_cublas: is_cublas, has_mma: is_mma, has_ptx: tmp_is_ptx, })
     }
     
     pub fn has_cublas(&self) -> bool
