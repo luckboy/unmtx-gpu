@@ -7,7 +7,6 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 //
 //! A module that contains a CUDA backend.
-use std::default::Default;
 use std::ffi::c_int;
 use std::sync::Arc;
 use std::sync::Mutex;
@@ -34,9 +33,8 @@ use cudarc::driver::DevicePtrMut;
 use cudarc::driver::LaunchConfig;
 use cudarc::driver::PushKernelArg;
 use cudarc::nvrtc::CompileError;
-use cudarc::nvrtc::CompileOptions;
 use cudarc::nvrtc::Ptx;
-use cudarc::nvrtc::compile_ptx_with_opts;
+use cudarc::nvrtc::compile_ptx;
 
 const SOURCE: &'static str = include_str!("cuda.cu");
 
@@ -66,11 +64,10 @@ pub struct CudaBackend
 {
     inner: Mutex<CudaInnerBackend>,
     has_cublas: bool,
-    has_mma: bool,
     has_ptx: bool,
 }
 
-fn preferred_launch_config(n: usize, m: usize, item_row_count: usize, item_col_count: usize, are_swapped_dims: bool, is_mul: bool, is_mma: bool, is_ptx: bool) -> LaunchConfig
+fn preferred_launch_config(n: usize, m: usize, item_row_count: usize, item_col_count: usize, are_swapped_dims: bool, is_mul: bool, is_ptx: bool) -> LaunchConfig
 {
     if m <= item_col_count && !is_mul {
         let n2 = (((n + item_row_count - 1) / item_row_count + 1023) / 1024) as u32;
@@ -103,54 +100,36 @@ fn preferred_launch_config(n: usize, m: usize, item_row_count: usize, item_col_c
             }
         }
     } else if is_mul {
-        if is_mma {
-            let n2 = ((n + 63) / 64) as u32;
-            let m2 = ((m + 63) / 64) as u32;
+        if is_ptx {
+            let n2 = (((n + 3) / 4 + 31) / 32) as u32;
+            let m2 = (((m + 3) / 4 + 31) / 32) as u32;
             if !are_swapped_dims {
                 LaunchConfig {
                     grid_dim: (n2, m2, 1),
-                    block_dim: (1024, 1, 1),
+                    block_dim: (32, 32, 1),
                     shared_mem_bytes: 0,
                 }
             } else {
                 LaunchConfig {
                     grid_dim: (m2, n2, 1),
-                    block_dim: (1024, 1, 1),
+                    block_dim: (32, 32, 1),
                     shared_mem_bytes: 0,
                 }
             }
         } else {
-            if is_ptx {
-                let n2 = (((n + 3) / 4 + 31) / 32) as u32;
-                let m2 = (((m + 3) / 4 + 31) / 32) as u32;
-                if !are_swapped_dims {
-                    LaunchConfig {
-                        grid_dim: (n2, m2, 1),
-                        block_dim: (32, 32, 1),
-                        shared_mem_bytes: 0,
-                    }
-                } else {
-                    LaunchConfig {
-                        grid_dim: (m2, n2, 1),
-                        block_dim: (32, 32, 1),
-                        shared_mem_bytes: 0,
-                    }
+            let n2 = (((n + 7) / 8 + 15) / 16) as u32;
+            let m2 = (((m + 3) / 4 + 15) / 16) as u32;
+            if !are_swapped_dims {
+                LaunchConfig {
+                    grid_dim: (n2, m2, 1),
+                    block_dim: (16, 16, 1),
+                    shared_mem_bytes: 0,
                 }
             } else {
-                let n2 = (((n + 7) / 8 + 15) / 16) as u32;
-                let m2 = (((m + 3) / 4 + 15) / 16) as u32;
-                if !are_swapped_dims {
-                    LaunchConfig {
-                        grid_dim: (n2, m2, 1),
-                        block_dim: (16, 16, 1),
-                        shared_mem_bytes: 0,
-                    }
-                } else {
-                    LaunchConfig {
-                        grid_dim: (m2, n2, 1),
-                        block_dim: (16, 16, 1),
-                        shared_mem_bytes: 0,
-                    }
+                LaunchConfig {
+                    grid_dim: (m2, n2, 1),
+                    block_dim: (16, 16, 1),
+                    shared_mem_bytes: 0,
                 }
             }
         }
@@ -179,42 +158,24 @@ impl CudaBackend
     pub fn new() -> Result<CudaBackend>
     {
         if cfg!(feature = "default_cublas") {
-            Self::new_with_ordinal_and_flags(0, true, false)
-        } else if cfg!(feature = "default_mma") {
-            Self::new_with_ordinal_and_flags(0, false, true)
+            Self::new_with_ordinal_and_cublas_flag(0, true)
         } else if cfg!(feature = "default_ptx") {
-            Self::new_with_ordinal_and_flags_and_ptx_flag(0, false, false, true)
+            Self::new_with_ordinal_and_cublas_flag_and_ptx_flag(0, false, true)
         } else {
-            Self::new_with_ordinal_and_flags(0, false, false)
+            Self::new_with_ordinal_and_cublas_flag(0, false)
         }
     }
     
-    /// Creates a CUDA backend with the ordinal number and the flags.
-    ///
-    /// This method takes the following flags:
-    ///
-    /// - `is_cublas` - use the cuBLAS library to multiplication of matrices
-    /// - `is_mma` - use the mma instruction to multiplication of matrices
-    pub fn new_with_ordinal_and_flags(ordinal: usize, is_cublas: bool, is_mma: bool) -> Result<CudaBackend>
-    { Self::new_with_ordinal_and_flags_and_ptx_flag(ordinal, is_cublas, is_mma, false) }
+    pub fn new_with_ordinal_and_cublas_flag(ordinal: usize, is_cublas: bool) -> Result<CudaBackend>
+    { Self::new_with_ordinal_and_cublas_flag_and_ptx_flag(ordinal, is_cublas, false) }
 
-    pub fn new_with_ordinal_and_flags_and_ptx_flag(ordinal: usize, is_cublas: bool, is_mma: bool, is_ptx: bool) -> Result<CudaBackend>
+    pub fn new_with_ordinal_and_cublas_flag_and_ptx_flag(ordinal: usize, is_cublas: bool, is_ptx: bool) -> Result<CudaBackend>
     {
         let context = match CudaContext::new(ordinal) {
             Ok(tmp_device) => tmp_device,
             Err(err) => return Err(Error::Cuda(err)),
         };
-        let mut options: CompileOptions = Default::default();
-        let is_real_mma = if !is_cublas {
-            is_mma
-        } else {
-            false
-        };
-        if is_real_mma {
-            options.options = vec![String::from("-DUNMTX_GPU_MMA=1")];
-            options.arch = Some("sm_80");
-        }
-        let ptx = match compile_ptx_with_opts(SOURCE, options) {
+        let ptx = match compile_ptx(SOURCE) {
             Ok(tmp_ptx) => tmp_ptx,
             Err(CompileError::CompileError { log, .. }) => return Err(Error::Compilation(log.as_c_str().to_string_lossy().into_owned())),
             Err(err) => return Err(Error::Compilation(format!("{}", err))),
@@ -223,7 +184,7 @@ impl CudaBackend
             Ok(tmp_module) => tmp_module,
             Err(err) => return Err(Error::Cuda(err)),
         };
-        let is_real_ptx = if !is_cublas && !is_real_mma {
+        let is_real_ptx = if !is_cublas {
             is_ptx
         } else {
             false
@@ -245,7 +206,7 @@ impl CudaBackend
         } else {
             None
         };
-        Ok(CudaBackend { inner: Mutex::new(CudaInnerBackend { context, stream, module, ptx_module, cublas, }), has_cublas: is_cublas, has_mma: is_real_mma, has_ptx: is_real_ptx, })
+        Ok(CudaBackend { inner: Mutex::new(CudaInnerBackend { context, stream, module, ptx_module, cublas, }), has_cublas: is_cublas, has_ptx: is_real_ptx, })
     }
     
     pub fn has_cublas(&self) -> bool
@@ -468,7 +429,6 @@ impl CudaBackend
     
     fn check_and_launch_for_fun(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, n: usize, m: usize, item_row_count: usize, item_col_count: usize, are_swapped_dims: bool) -> Result<()>
     {
-        let is_mma = self.has_mma;
         let is_ptx = self.has_ptx;
         self.check_and_launch2(kernel_name, a, b, |a2, b2| {
                 if a2.len != n * m {
@@ -479,7 +439,7 @@ impl CudaBackend
                 }
                 Ok(())
         }, |inner_g, kernel, a_param, b_param| {
-                let config = preferred_launch_config(n, m, item_row_count, item_col_count, are_swapped_dims, false, is_mma, is_ptx);
+                let config = preferred_launch_config(n, m, item_row_count, item_col_count, are_swapped_dims, false, is_ptx);
                 let mut launch_args = inner_g.stream.launch_builder(&kernel);
                 launch_args.arg(&a_param)
                     .arg(&b_param)
@@ -496,7 +456,6 @@ impl CudaBackend
 
     fn check_and_launch_for_op(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, item_row_count: usize, item_col_count: usize, are_swapped_dims: bool) -> Result<()>
     {
-        let is_mma = self.has_mma;
         let is_ptx = self.has_ptx;
         self.check_and_launch3(kernel_name, a, b, c, |a2, b2, c2| {
                 if a2.len != n * m {
@@ -510,7 +469,7 @@ impl CudaBackend
                 }
                 Ok(())
         }, |inner_g, kernel, a_param, b_param, c_param| {
-                let config = preferred_launch_config(n, m, item_row_count, item_col_count, are_swapped_dims, false, is_mma, is_ptx);
+                let config = preferred_launch_config(n, m, item_row_count, item_col_count, are_swapped_dims, false, is_ptx);
                 let mut launch_args = inner_g.stream.launch_builder(&kernel);
                 launch_args.arg(&a_param)
                     .arg(&b_param)
@@ -528,7 +487,6 @@ impl CudaBackend
 
     fn check_and_launch_for_mul(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize, item_row_count: usize, item_col_count: usize, are_swapped_dims: bool) -> Result<()>
     {
-        let is_mma = self.has_mma;
         let is_ptx = self.has_ptx;
         self.check_and_launch3(kernel_name, a, b, c, |a2, b2, c2| {
                 if a2.len != n * l {
@@ -542,7 +500,7 @@ impl CudaBackend
                 }
                 Ok(())
         }, |inner_g, kernel, a_param, b_param, c_param| {
-                let config = preferred_launch_config(n, m, item_row_count, item_col_count, are_swapped_dims, true, is_mma, is_ptx);
+                let config = preferred_launch_config(n, m, item_row_count, item_col_count, are_swapped_dims, true, is_ptx);
                 let mut launch_args = inner_g.stream.launch_builder(&kernel);
                 launch_args.arg(&a_param)
                     .arg(&b_param)
@@ -561,7 +519,6 @@ impl CudaBackend
 
     fn check_and_launch_for_scalar(&self, kernel_name: &str, a: &BackendArray, b: f32, c: &BackendArray, n: usize, m: usize, item_row_count: usize, item_col_count: usize, are_swapped_dims: bool) -> Result<()>
     {
-        let is_mma = self.has_mma;
         let is_ptx = self.has_ptx;
         self.check_and_launch2(kernel_name, a, c, |a2, c2| {
                 if a2.len != n * m  {
@@ -572,7 +529,7 @@ impl CudaBackend
                 }
                 Ok(())
         }, |inner_g, kernel, a_param, c_param| {
-                let config = preferred_launch_config(n, m, item_row_count, item_col_count, are_swapped_dims, false, is_mma, is_ptx);
+                let config = preferred_launch_config(n, m, item_row_count, item_col_count, are_swapped_dims, false, is_ptx);
                 let mut launch_args = inner_g.stream.launch_builder(&kernel);
                 launch_args.arg(&a_param)
                     .arg(&b)
@@ -590,7 +547,6 @@ impl CudaBackend
 
     fn check_and_launch_for_fun_and_tiles(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, n: usize, m: usize, item_row_count: usize, item_col_count: usize, are_swapped_dims: bool) -> Result<()>
     {
-        let is_mma = self.has_mma;
         let is_ptx = self.has_ptx;
         self.check_and_launch2(kernel_name, a, b, |a2, b2| {
                 if a2.len != n * m {
@@ -601,7 +557,7 @@ impl CudaBackend
                 }
                 Ok(())
         }, |inner_g, kernel, a_param, b_param| {
-                let config = preferred_launch_config(n, m, item_row_count, item_col_count, are_swapped_dims, false, is_mma, is_ptx);
+                let config = preferred_launch_config(n, m, item_row_count, item_col_count, are_swapped_dims, false, is_ptx);
                 let mut launch_args = inner_g.stream.launch_builder(&kernel);
                 launch_args.arg(&a_param)
                     .arg(&b_param)
@@ -618,7 +574,6 @@ impl CudaBackend
 
     fn check_and_launch_for_repeat_col(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, n: usize, m: usize, item_row_count: usize, item_col_count: usize, are_swapped_dims: bool) -> Result<()>
     {
-        let is_mma = self.has_mma;
         let is_ptx = self.has_ptx;
         self.check_and_launch2(kernel_name, a, b, |a2, b2| {
                 if a2.len != n {
@@ -629,7 +584,7 @@ impl CudaBackend
                 }
                 Ok(())
         }, |inner_g, kernel, a_param, b_param| {
-                let config = preferred_launch_config(n, m, item_row_count, item_col_count, are_swapped_dims, false, is_mma, is_ptx);
+                let config = preferred_launch_config(n, m, item_row_count, item_col_count, are_swapped_dims, false, is_ptx);
                 let mut launch_args = inner_g.stream.launch_builder(&kernel);
                 launch_args.arg(&a_param)
                     .arg(&b_param)
@@ -646,7 +601,6 @@ impl CudaBackend
 
     fn check_and_launch_for_repeat_row(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, n: usize, m: usize, item_row_count: usize, item_col_count: usize, are_swapped_dims: bool) -> Result<()>
     {
-        let is_mma = self.has_mma;
         let is_ptx = self.has_ptx;
         self.check_and_launch2(kernel_name, a, b, |a2, b2| {
                 if a2.len != m {
@@ -657,7 +611,7 @@ impl CudaBackend
                 }
                 Ok(())
         }, |inner_g, kernel, a_param, b_param| {
-                let config = preferred_launch_config(n, m, item_row_count, item_col_count, are_swapped_dims, false, is_mma, is_ptx);
+                let config = preferred_launch_config(n, m, item_row_count, item_col_count, are_swapped_dims, false, is_ptx);
                 let mut launch_args = inner_g.stream.launch_builder(&kernel);
                 launch_args.arg(&a_param)
                     .arg(&b_param)
@@ -674,7 +628,6 @@ impl CudaBackend
     
     fn check_and_launch_for_ptx_mul(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, c: &BackendArray, n: usize, m: usize, l: usize, item_row_count: usize, item_col_count: usize, are_swapped_dims: bool) -> Result<()>
     {
-        let is_mma = self.has_mma;
         let is_ptx = self.has_ptx;
         self.check_and_launch_ptx3(kernel_name, a, b, c, |a2, b2, c2| {
                 if a2.len != n * l {
@@ -688,7 +641,7 @@ impl CudaBackend
                 }
                 Ok(())
         }, |inner_g, kernel, a_param, b_param, c_param| {
-                let config = preferred_launch_config(n, m, item_row_count, item_col_count, are_swapped_dims, true, is_mma, is_ptx);
+                let config = preferred_launch_config(n, m, item_row_count, item_col_count, are_swapped_dims, true, is_ptx);
                 let mut launch_args = inner_g.stream.launch_builder(&kernel);
                 launch_args.arg(&a_param)
                     .arg(&b_param)
@@ -760,8 +713,6 @@ impl Backend for CudaBackend
     {
         if self.has_cublas {
             "CUDA(cuBLAS)"
-        } else if self.has_mma {
-            "CUDA(mma)"
         } else if self.has_ptx {
             "CUDA(PTX)"
         } else {

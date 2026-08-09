@@ -23,7 +23,7 @@ fn main()
 {
     {
         let mut frontend_g = FRONTEND.lock().unwrap();
-        let backend = CudaBackend::new_with_ordinal_and_flags_and_ptx_flag(0, false, false, true).unwrap();
+        let backend = CudaBackend::new_with_ordinal_and_cublas_flag_and_ptx_flag(0, false, true).unwrap();
         *frontend_g = Some(Frontend::new_with_backend(Arc::new(backend)));
         println!("Backend: {}", frontend_g.as_ref().unwrap().backend().name());
         let mut a_g = A.lock().unwrap();

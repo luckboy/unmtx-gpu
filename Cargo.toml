@@ -28,7 +28,6 @@ rand = "0.10.0"
 default = ["opencl"]
 test_only_backend = []
 default_cublas = []
-default_mma = []
 default_ptx = []
 opencl = ["dep:opencl3", "dep:cl3"]
 cuda = ["dep:cudarc"]
@@ -72,11 +71,6 @@ required-features = ["cuda"]
 
 [[bench]]
 name = "mul_cublas"
-harness = false
-required-features = ["cuda"]
-
-[[bench]]
-name = "mul_mma"
 harness = false
 required-features = ["cuda"]
 
