@@ -208,10 +208,7 @@ impl CudaBackend
         };
         Ok(CudaBackend { inner: Mutex::new(CudaInnerBackend { context, stream, module, ptx_module, cublas, }), has_cublas: is_cublas, has_ptx: is_real_ptx, })
     }
-    
-    pub fn has_cublas(&self) -> bool
-    { self.has_cublas }
-    
+        
     fn check_and_launch2<F, G>(&self, kernel_name: &str, a: &BackendArray, b: &BackendArray, f: F, g: G) -> Result<()>
         where F: FnOnce(&CudaBackendArray, &CudaBackendArray) -> Result<()>,
             G: FnOnce(&CudaInnerBackend, CudaFunction, CUdeviceptr, CUdeviceptr) -> Result<()>
