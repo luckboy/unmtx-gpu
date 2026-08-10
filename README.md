@@ -29,7 +29,7 @@ The following features of this library can be used by you:
 - `cuda` - use CUDA
 - `cuda-*` - choose CUDA version (for example `cuda-11050`)
 - `default_cublas` - use the cuBLAS library to multiplication of matrices as default for CUDA
-- `default_mma` - use the mma instruction to multiplication of matrices as default for CUDA
+- `default_ptx` - use the module in PTX to multiplication of matrices as default for CUDA
 - `test_only_backend` - test only backend
 
 ## Examples
