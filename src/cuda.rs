@@ -165,10 +165,19 @@ impl CudaBackend
             Self::new_with_ordinal_and_cublas_flag(0, false)
         }
     }
-    
+
+    /// Creates a CUDA backend with the ordinal number and the cuBLAS flag.
+    ///
+    /// See [`new_with_ordinal_and_cublas_flag_and_ptx_flag`](Self::new_with_ordinal_and_cublas_flag_and_ptx_flag).
     pub fn new_with_ordinal_and_cublas_flag(ordinal: usize, is_cublas: bool) -> Result<CudaBackend>
     { Self::new_with_ordinal_and_cublas_flag_and_ptx_flag(ordinal, is_cublas, false) }
 
+    /// Creates a CUDA backend with the ordinal number, the cuBLAS flag, and the PTX flag.
+    ///
+    /// This method takes the following flags:
+    ///
+    /// - `is_cublas` - use the cuBLAS library to multiplication of matrices
+    /// - `is_ptx` - use the module in PTX to multiplication of matrices
     pub fn new_with_ordinal_and_cublas_flag_and_ptx_flag(ordinal: usize, is_cublas: bool, is_ptx: bool) -> Result<CudaBackend>
     {
         let context = match CudaContext::new(ordinal) {
