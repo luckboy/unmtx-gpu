@@ -524,7 +524,7 @@ fn test_cuda_backend_mul_at_bt_for_elems_multiplies_backend_arrays()
                 Ok(c1) => assert_eq!(expected_mul_at_bt_for_elems(a1.as_slice(), b1.as_slice(), 2, 3), c1),
                 Err(_) => assert!(false),
             }
-            let (a2, b2) = fixture_a_b(4, 5, 4, 5);
+            let (a2, b2) = fixture_a_b(5, 4, 5, 4);
             match backend_mul_at_bt_for_elems(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
                 Ok(c2) => assert_eq!(expected_mul_at_bt_for_elems(a2.as_slice(), b2.as_slice(), 4, 5), c2),
                 Err(_) => assert!(false),
@@ -614,7 +614,7 @@ fn test_cuda_backend_div_a_bt_for_elems_divides_backend_arrays()
                 },
                 Err(_) => assert!(false),
             }
-            let (a2, b2) = fixture_a_b(4, 5, 4, 5);
+            let (a2, b2) = fixture_a_b(4, 5, 5, 4);
             match backend_div_a_bt_for_elems(&backend, a2.as_slice(), b2.as_slice(), 4, 5) {
                 Ok(c2) => {
                     let expected_c2 = expected_div_a_bt_for_elems(a2.as_slice(), b2.as_slice(), 4, 5);
@@ -732,7 +732,7 @@ fn test_cuda_backend_sub_at_b_for_scalar_subtracts_backend_array_and_scalar()
                 Ok(c1) => assert_eq!(expected_sub_at_b_for_scalar(a1.as_slice(), 10.5, 2, 3), c1),
                 Err(_) => assert!(false),
             }
-            let a2 = fixture_a(4, 5);
+            let a2 = fixture_a(5, 4);
             match backend_sub_at_b_for_scalar(&backend, a2.as_slice(), 10.5, 4, 5) {
                 Ok(c2) => assert_eq!(expected_sub_at_b_for_scalar(a2.as_slice(), 10.5, 4, 5), c2),
                 Err(_) => assert!(false),
@@ -2052,7 +2052,7 @@ fn test_cuda_backend_log10_at_calculates_log10_for_backend_array()
                 },
                 Err(_) => assert!(false),
             }
-            let a2 = fixture_a_for_log(4, 5);
+            let a2 = fixture_a_for_log(5, 4);
             match backend_log10_a(&backend, a2.as_slice(), 4, 5) {
                 Ok(b2) => {
                     let expected_b2 = expected_log10_a(a2.as_slice(), 4, 5);
