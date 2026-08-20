@@ -1874,7 +1874,7 @@ __kernel void exp_a(__global const float *a, __global float *b, ulong n, ulong m
   size_t i = get_global_id(1) << 1;
   size_t j = get_global_id(0) << 1;
   if(i + 0 < n2 && j + 0 < m2) {
-    b[m2 * (i + 0) + j + 0 ] = exp(a[m2 * (i + 0) + j + 0]);
+    b[m2 * (i + 0) + j + 0] = exp(a[m2 * (i + 0) + j + 0]);
   }
   if(i + 0 < n2 && j + 1 < m2) {
     b[m2 * (i + 0) + j + 1] = exp(a[m2 * (i + 0) + j + 1]);
