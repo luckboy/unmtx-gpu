@@ -1523,7 +1523,7 @@ extern "C" {
       if(j + 1 < m && k + bi + 0 < n) {
         es[thread_width * ti + tj].y = expf(a[m * (k + bi + 0) + j + 1]);
       }
-      es[thread_width * ti + tj + 0].z = 0.0f;
+      es[thread_width * ti + tj].z = 0.0f;
       if(j + 0 < m && k + bi + 1 < n) {
         es[thread_width * ti + tj].z = expf(a[m * (k + bi + 1) + j + 0]);
       }
