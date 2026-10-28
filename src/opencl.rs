@@ -135,7 +135,7 @@ impl ClBackend
     /// Creates an OpenCL backend with the context.
     pub fn new_with_context(context: Context) -> Result<ClBackend>
     {
-        let command_queue = match CommandQueue::create_default_with_properties(&context, 0, 0) {
+        let command_queue = match unsafe { CommandQueue::create(&context, context.default_device(), 0) } {
             Ok(tmp_command_queue) => tmp_command_queue,
             Err(err) => return Err(Error::OpenCl(err)),
         };
